@@ -1,0 +1,1202 @@
+[
+  {
+    "id": 1,
+    "name": "HP Printer Model 641",
+    "category": "printers",
+    "brand": "HP",
+    "use": "Office use",
+    "old_price": 1769.87,
+    "new_price": 1419.37,
+    "rating": 4.4
+  },
+  {
+    "id": 2,
+    "name": "Canon Printer Model 566",
+    "category": "printers",
+    "brand": "Canon",
+    "use": "Photo printing",
+    "old_price": 792.34,
+    "new_price": 630.51,
+    "rating": 4.7
+  },
+  {
+    "id": 3,
+    "name": "Canon Printer Model 962",
+    "category": "printers",
+    "brand": "Canon",
+    "use": "Office use",
+    "old_price": 1962.46,
+    "new_price": 1581.09,
+    "rating": 4.9
+  },
+  {
+    "id": 4,
+    "name": "Brother Printer Model 537",
+    "category": "printers",
+    "brand": "Brother",
+    "use": "Home printing",
+    "old_price": 1947.65,
+    "new_price": 1639.57,
+    "rating": 4.4
+  },
+  {
+    "id": 5,
+    "name": "Canon Printer Model 738",
+    "category": "printers",
+    "brand": "Canon",
+    "use": "Photo printing",
+    "old_price": 950.51,
+    "new_price": 825.32,
+    "rating": 4.5
+  },
+  {
+    "id": 6,
+    "name": "Brother Printer Model 118",
+    "category": "printers",
+    "brand": "Brother",
+    "use": "Home printing",
+    "old_price": 1216.93,
+    "new_price": 987.21,
+    "rating": 3.9
+  },
+  {
+    "id": 7,
+    "name": "Epson Printer Model 117",
+    "category": "printers",
+    "brand": "Epson",
+    "use": "Home printing",
+    "old_price": 1402.06,
+    "new_price": 1289.38,
+    "rating": 3.9
+  },
+  {
+    "id": 8,
+    "name": "Brother Printer Model 634",
+    "category": "printers",
+    "brand": "Brother",
+    "use": "Home printing",
+    "old_price": 319.84,
+    "new_price": 284.67,
+    "rating": 4.5
+  },
+  {
+    "id": 9,
+    "name": "Brother Printer Model 972",
+    "category": "printers",
+    "brand": "Brother",
+    "use": "Home printing",
+    "old_price": 1891.27,
+    "new_price": 1625.46,
+    "rating": 5.0
+  },
+  {
+    "id": 10,
+    "name": "HP Printer Model 719",
+    "category": "printers",
+    "brand": "HP",
+    "use": "Photo printing",
+    "old_price": 741.16,
+    "new_price": 576.91,
+    "rating": 3.6
+  },
+  {
+    "id": 11,
+    "name": "HP Printer Model 407",
+    "category": "printers",
+    "brand": "HP",
+    "use": "Photo printing",
+    "old_price": 1592.13,
+    "new_price": 1415.89,
+    "rating": 4.2
+  },
+  {
+    "id": 12,
+    "name": "Brother Printer Model 775",
+    "category": "printers",
+    "brand": "Brother",
+    "use": "Photo printing",
+    "old_price": 1797.43,
+    "new_price": 1614.26,
+    "rating": 3.9
+  },
+  {
+    "id": 13,
+    "name": "HP Printer Model 915",
+    "category": "printers",
+    "brand": "HP",
+    "use": "Home printing",
+    "old_price": 1208.43,
+    "new_price": 931.85,
+    "rating": 4.3
+  },
+  {
+    "id": 14,
+    "name": "HP Printer Model 765",
+    "category": "printers",
+    "brand": "HP",
+    "use": "Office use",
+    "old_price": 1576.47,
+    "new_price": 1373.14,
+    "rating": 3.4
+  },
+  {
+    "id": 15,
+    "name": "Canon Printer Model 851",
+    "category": "printers",
+    "brand": "Canon",
+    "use": "Home printing",
+    "old_price": 1929.66,
+    "new_price": 1384.73,
+    "rating": 4.5
+  },
+  {
+    "id": 16,
+    "name": "Epson Printer Model 119",
+    "category": "printers",
+    "brand": "Epson",
+    "use": "Office use",
+    "old_price": 227.69,
+    "new_price": 163.37,
+    "rating": 3.0
+  },
+  {
+    "id": 17,
+    "name": "Epson Printer Model 166",
+    "category": "printers",
+    "brand": "Epson",
+    "use": "Photo printing",
+    "old_price": 815.13,
+    "new_price": 731.36,
+    "rating": 4.7
+  },
+  {
+    "id": 18,
+    "name": "Canon Printer Model 297",
+    "category": "printers",
+    "brand": "Canon",
+    "use": "Photo printing",
+    "old_price": 852.37,
+    "new_price": 694.39,
+    "rating": 4.0
+  },
+  {
+    "id": 19,
+    "name": "Brother Printer Model 341",
+    "category": "printers",
+    "brand": "Brother",
+    "use": "Home printing",
+    "old_price": 389.67,
+    "new_price": 315.69,
+    "rating": 4.9
+  },
+  {
+    "id": 20,
+    "name": "Epson Printer Model 927",
+    "category": "printers",
+    "brand": "Epson",
+    "use": "Photo printing",
+    "old_price": 687.87,
+    "new_price": 619.47,
+    "rating": 3.9
+  },
+  {
+    "id": 21,
+    "name": "HP Laptop Model 671",
+    "category": "laptops",
+    "brand": "HP",
+    "use": "Business",
+    "old_price": 732.63,
+    "new_price": 670.14,
+    "rating": 3.9
+  },
+  {
+    "id": 22,
+    "name": "Lenovo Laptop Model 323",
+    "category": "laptops",
+    "brand": "Lenovo",
+    "use": "Everyday use",
+    "old_price": 341.42,
+    "new_price": 320.31,
+    "rating": 3.9
+  },
+  {
+    "id": 23,
+    "name": "HP Laptop Model 775",
+    "category": "laptops",
+    "brand": "HP",
+    "use": "School",
+    "old_price": 594.53,
+    "new_price": 555.19,
+    "rating": 3.2
+  },
+  {
+    "id": 24,
+    "name": "Asus Laptop Model 379",
+    "category": "laptops",
+    "brand": "Asus",
+    "use": "School",
+    "old_price": 1020.02,
+    "new_price": 928.01,
+    "rating": 4.3
+  },
+  {
+    "id": 25,
+    "name": "Asus Laptop Model 560",
+    "category": "laptops",
+    "brand": "Asus",
+    "use": "Everyday use",
+    "old_price": 541.73,
+    "new_price": 461.3,
+    "rating": 4.7
+  },
+  {
+    "id": 26,
+    "name": "Apple Laptop Model 442",
+    "category": "laptops",
+    "brand": "Apple",
+    "use": "Business",
+    "old_price": 1332.46,
+    "new_price": 1022.26,
+    "rating": 3.8
+  },
+  {
+    "id": 27,
+    "name": "Dell Laptop Model 866",
+    "category": "laptops",
+    "brand": "Dell",
+    "use": "Everyday use",
+    "old_price": 1875.2,
+    "new_price": 1757.91,
+    "rating": 4.0
+  },
+  {
+    "id": 28,
+    "name": "Apple Laptop Model 803",
+    "category": "laptops",
+    "brand": "Apple",
+    "use": "Business",
+    "old_price": 1760.39,
+    "new_price": 1478.72,
+    "rating": 4.1
+  },
+  {
+    "id": 29,
+    "name": "Apple Laptop Model 946",
+    "category": "laptops",
+    "brand": "Apple",
+    "use": "Gaming",
+    "old_price": 1073.19,
+    "new_price": 994.41,
+    "rating": 3.4
+  },
+  {
+    "id": 30,
+    "name": "HP Laptop Model 135",
+    "category": "laptops",
+    "brand": "HP",
+    "use": "Gaming",
+    "old_price": 1531.67,
+    "new_price": 1354.94,
+    "rating": 4.8
+  },
+  {
+    "id": 31,
+    "name": "Dell Laptop Model 677",
+    "category": "laptops",
+    "brand": "Dell",
+    "use": "Gaming",
+    "old_price": 1218.26,
+    "new_price": 1074.33,
+    "rating": 3.1
+  },
+  {
+    "id": 32,
+    "name": "Apple Laptop Model 423",
+    "category": "laptops",
+    "brand": "Apple",
+    "use": "School",
+    "old_price": 829.7,
+    "new_price": 762.51,
+    "rating": 3.4
+  },
+  {
+    "id": 33,
+    "name": "HP Laptop Model 455",
+    "category": "laptops",
+    "brand": "HP",
+    "use": "Everyday use",
+    "old_price": 515.78,
+    "new_price": 393.89,
+    "rating": 3.7
+  },
+  {
+    "id": 34,
+    "name": "Dell Laptop Model 147",
+    "category": "laptops",
+    "brand": "Dell",
+    "use": "Everyday use",
+    "old_price": 635.61,
+    "new_price": 564.83,
+    "rating": 3.5
+  },
+  {
+    "id": 35,
+    "name": "Apple Laptop Model 743",
+    "category": "laptops",
+    "brand": "Apple",
+    "use": "Gaming",
+    "old_price": 977.44,
+    "new_price": 831.22,
+    "rating": 3.1
+  },
+  {
+    "id": 36,
+    "name": "Dell Laptop Model 850",
+    "category": "laptops",
+    "brand": "Dell",
+    "use": "Everyday use",
+    "old_price": 1738.85,
+    "new_price": 1309.44,
+    "rating": 3.2
+  },
+  {
+    "id": 37,
+    "name": "Apple Laptop Model 697",
+    "category": "laptops",
+    "brand": "Apple",
+    "use": "School",
+    "old_price": 318.69,
+    "new_price": 287.98,
+    "rating": 5.0
+  },
+  {
+    "id": 38,
+    "name": "Apple Laptop Model 845",
+    "category": "laptops",
+    "brand": "Apple",
+    "use": "School",
+    "old_price": 294.3,
+    "new_price": 229.42,
+    "rating": 3.5
+  },
+  {
+    "id": 39,
+    "name": "Lenovo Laptop Model 705",
+    "category": "laptops",
+    "brand": "Lenovo",
+    "use": "Everyday use",
+    "old_price": 1230.37,
+    "new_price": 958.25,
+    "rating": 4.2
+  },
+  {
+    "id": 40,
+    "name": "Apple Laptop Model 552",
+    "category": "laptops",
+    "brand": "Apple",
+    "use": "Gaming",
+    "old_price": 832.86,
+    "new_price": 730.27,
+    "rating": 4.1
+  },
+  {
+    "id": 41,
+    "name": "Samsung Monitor Model 747",
+    "category": "monitors",
+    "brand": "Samsung",
+    "use": "Gaming",
+    "old_price": 1974.63,
+    "new_price": 1416.7,
+    "rating": 4.8
+  },
+  {
+    "id": 42,
+    "name": "Acer Monitor Model 175",
+    "category": "monitors",
+    "brand": "Acer",
+    "use": "Gaming",
+    "old_price": 1523.6,
+    "new_price": 1321.13,
+    "rating": 3.6
+  },
+  {
+    "id": 43,
+    "name": "Samsung Monitor Model 416",
+    "category": "monitors",
+    "brand": "Samsung",
+    "use": "Gaming",
+    "old_price": 1731.69,
+    "new_price": 1418.29,
+    "rating": 4.6
+  },
+  {
+    "id": 44,
+    "name": "Dell Monitor Model 733",
+    "category": "monitors",
+    "brand": "Dell",
+    "use": "Graphic design",
+    "old_price": 1756.32,
+    "new_price": 1508.44,
+    "rating": 4.8
+  },
+  {
+    "id": 45,
+    "name": "Dell Monitor Model 178",
+    "category": "monitors",
+    "brand": "Dell",
+    "use": "Graphic design",
+    "old_price": 271.14,
+    "new_price": 198.28,
+    "rating": 3.6
+  },
+  {
+    "id": 46,
+    "name": "Acer Monitor Model 524",
+    "category": "monitors",
+    "brand": "Acer",
+    "use": "Gaming",
+    "old_price": 1010.79,
+    "new_price": 930.81,
+    "rating": 3.2
+  },
+  {
+    "id": 47,
+    "name": "Samsung Monitor Model 114",
+    "category": "monitors",
+    "brand": "Samsung",
+    "use": "Gaming",
+    "old_price": 512.14,
+    "new_price": 403.45,
+    "rating": 3.5
+  },
+  {
+    "id": 48,
+    "name": "Dell Monitor Model 253",
+    "category": "monitors",
+    "brand": "Dell",
+    "use": "Graphic design",
+    "old_price": 272.88,
+    "new_price": 191.59,
+    "rating": 3.1
+  },
+  {
+    "id": 49,
+    "name": "Samsung Monitor Model 874",
+    "category": "monitors",
+    "brand": "Samsung",
+    "use": "Gaming",
+    "old_price": 1582.57,
+    "new_price": 1289.38,
+    "rating": 3.3
+  },
+  {
+    "id": 50,
+    "name": "LG Monitor Model 271",
+    "category": "monitors",
+    "brand": "LG",
+    "use": "Gaming",
+    "old_price": 285.69,
+    "new_price": 217.79,
+    "rating": 3.3
+  },
+  {
+    "id": 51,
+    "name": "Dell Monitor Model 221",
+    "category": "monitors",
+    "brand": "Dell",
+    "use": "Graphic design",
+    "old_price": 1978.91,
+    "new_price": 1746.06,
+    "rating": 4.0
+  },
+  {
+    "id": 52,
+    "name": "LG Monitor Model 463",
+    "category": "monitors",
+    "brand": "LG",
+    "use": "Graphic design",
+    "old_price": 402.99,
+    "new_price": 290.23,
+    "rating": 4.7
+  },
+  {
+    "id": 53,
+    "name": "Dell Monitor Model 617",
+    "category": "monitors",
+    "brand": "Dell",
+    "use": "Gaming",
+    "old_price": 1964.44,
+    "new_price": 1735.99,
+    "rating": 4.5
+  },
+  {
+    "id": 54,
+    "name": "Dell Monitor Model 315",
+    "category": "monitors",
+    "brand": "Dell",
+    "use": "Gaming",
+    "old_price": 1126.29,
+    "new_price": 1059.39,
+    "rating": 4.9
+  },
+  {
+    "id": 55,
+    "name": "Dell Monitor Model 715",
+    "category": "monitors",
+    "brand": "Dell",
+    "use": "Office work",
+    "old_price": 492.78,
+    "new_price": 345.76,
+    "rating": 3.5
+  },
+  {
+    "id": 56,
+    "name": "Acer Monitor Model 215",
+    "category": "monitors",
+    "brand": "Acer",
+    "use": "Gaming",
+    "old_price": 1219.67,
+    "new_price": 1063.25,
+    "rating": 3.4
+  },
+  {
+    "id": 57,
+    "name": "Acer Monitor Model 423",
+    "category": "monitors",
+    "brand": "Acer",
+    "use": "Gaming",
+    "old_price": 811.92,
+    "new_price": 708.18,
+    "rating": 4.8
+  },
+  {
+    "id": 58,
+    "name": "Samsung Monitor Model 926",
+    "category": "monitors",
+    "brand": "Samsung",
+    "use": "Graphic design",
+    "old_price": 606.48,
+    "new_price": 467.07,
+    "rating": 4.2
+  },
+  {
+    "id": 59,
+    "name": "LG Monitor Model 922",
+    "category": "monitors",
+    "brand": "LG",
+    "use": "Office work",
+    "old_price": 1748.83,
+    "new_price": 1238.14,
+    "rating": 4.4
+  },
+  {
+    "id": 60,
+    "name": "Acer Monitor Model 594",
+    "category": "monitors",
+    "brand": "Acer",
+    "use": "Graphic design",
+    "old_price": 1412.86,
+    "new_price": 1177.58,
+    "rating": 4.5
+  },
+  {
+    "id": 61,
+    "name": "Razer Accessorie Model 360",
+    "category": "accessories",
+    "brand": "Razer",
+    "use": "Gaming",
+    "old_price": 861.21,
+    "new_price": 631.32,
+    "rating": 4.5
+  },
+  {
+    "id": 62,
+    "name": "Razer Accessorie Model 940",
+    "category": "accessories",
+    "brand": "Razer",
+    "use": "Gaming",
+    "old_price": 1435.3,
+    "new_price": 1360.18,
+    "rating": 3.5
+  },
+  {
+    "id": 63,
+    "name": "Corsair Accessorie Model 510",
+    "category": "accessories",
+    "brand": "Corsair",
+    "use": "Gaming",
+    "old_price": 957.69,
+    "new_price": 681.3,
+    "rating": 4.6
+  },
+  {
+    "id": 64,
+    "name": "Logitech Accessorie Model 267",
+    "category": "accessories",
+    "brand": "Logitech",
+    "use": "Gaming",
+    "old_price": 253.85,
+    "new_price": 185.05,
+    "rating": 4.9
+  },
+  {
+    "id": 65,
+    "name": "Razer Accessorie Model 365",
+    "category": "accessories",
+    "brand": "Razer",
+    "use": "Gaming",
+    "old_price": 1054.26,
+    "new_price": 782.8,
+    "rating": 3.6
+  },
+  {
+    "id": 66,
+    "name": "Logitech Accessorie Model 115",
+    "category": "accessories",
+    "brand": "Logitech",
+    "use": "Productivity",
+    "old_price": 639.22,
+    "new_price": 458.77,
+    "rating": 4.4
+  },
+  {
+    "id": 67,
+    "name": "Logitech Accessorie Model 394",
+    "category": "accessories",
+    "brand": "Logitech",
+    "use": "Productivity",
+    "old_price": 1095.01,
+    "new_price": 912.03,
+    "rating": 4.4
+  },
+  {
+    "id": 68,
+    "name": "Logitech Accessorie Model 988",
+    "category": "accessories",
+    "brand": "Logitech",
+    "use": "Travel",
+    "old_price": 891.01,
+    "new_price": 761.23,
+    "rating": 3.6
+  },
+  {
+    "id": 69,
+    "name": "Corsair Accessorie Model 650",
+    "category": "accessories",
+    "brand": "Corsair",
+    "use": "Gaming",
+    "old_price": 1564.1,
+    "new_price": 1215.06,
+    "rating": 3.9
+  },
+  {
+    "id": 70,
+    "name": "Logitech Accessorie Model 327",
+    "category": "accessories",
+    "brand": "Logitech",
+    "use": "Gaming",
+    "old_price": 1141.78,
+    "new_price": 1001.07,
+    "rating": 3.3
+  },
+  {
+    "id": 71,
+    "name": "Corsair Accessorie Model 696",
+    "category": "accessories",
+    "brand": "Corsair",
+    "use": "Gaming",
+    "old_price": 787.52,
+    "new_price": 606.56,
+    "rating": 3.1
+  },
+  {
+    "id": 72,
+    "name": "Logitech Accessorie Model 215",
+    "category": "accessories",
+    "brand": "Logitech",
+    "use": "Travel",
+    "old_price": 1639.17,
+    "new_price": 1481.09,
+    "rating": 3.1
+  },
+  {
+    "id": 73,
+    "name": "Razer Accessorie Model 204",
+    "category": "accessories",
+    "brand": "Razer",
+    "use": "Gaming",
+    "old_price": 939.21,
+    "new_price": 801.14,
+    "rating": 3.7
+  },
+  {
+    "id": 74,
+    "name": "Logitech Accessorie Model 325",
+    "category": "accessories",
+    "brand": "Logitech",
+    "use": "Productivity",
+    "old_price": 397.1,
+    "new_price": 297.18,
+    "rating": 3.5
+  },
+  {
+    "id": 75,
+    "name": "Anker Accessorie Model 656",
+    "category": "accessories",
+    "brand": "Anker",
+    "use": "Productivity",
+    "old_price": 1985.92,
+    "new_price": 1427.68,
+    "rating": 4.0
+  },
+  {
+    "id": 76,
+    "name": "Razer Accessorie Model 301",
+    "category": "accessories",
+    "brand": "Razer",
+    "use": "Productivity",
+    "old_price": 931.8,
+    "new_price": 858.28,
+    "rating": 3.0
+  },
+  {
+    "id": 77,
+    "name": "Razer Accessorie Model 686",
+    "category": "accessories",
+    "brand": "Razer",
+    "use": "Gaming",
+    "old_price": 1432.44,
+    "new_price": 1135.47,
+    "rating": 3.7
+  },
+  {
+    "id": 78,
+    "name": "Anker Accessorie Model 706",
+    "category": "accessories",
+    "brand": "Anker",
+    "use": "Gaming",
+    "old_price": 1511.59,
+    "new_price": 1358.74,
+    "rating": 4.0
+  },
+  {
+    "id": 79,
+    "name": "Corsair Accessorie Model 968",
+    "category": "accessories",
+    "brand": "Corsair",
+    "use": "Productivity",
+    "old_price": 592.66,
+    "new_price": 461.8,
+    "rating": 3.7
+  },
+  {
+    "id": 80,
+    "name": "Corsair Accessorie Model 489",
+    "category": "accessories",
+    "brand": "Corsair",
+    "use": "Gaming",
+    "old_price": 606.61,
+    "new_price": 462.7,
+    "rating": 4.6
+  },
+  {
+    "id": 81,
+    "name": "HP Desktop Model 881",
+    "category": "desktops",
+    "brand": "HP",
+    "use": "Office work",
+    "old_price": 1970.79,
+    "new_price": 1547.49,
+    "rating": 4.1
+  },
+  {
+    "id": 82,
+    "name": "Acer Desktop Model 461",
+    "category": "desktops",
+    "brand": "Acer",
+    "use": "Gaming",
+    "old_price": 306.09,
+    "new_price": 250.58,
+    "rating": 4.3
+  },
+  {
+    "id": 83,
+    "name": "Acer Desktop Model 746",
+    "category": "desktops",
+    "brand": "Acer",
+    "use": "Gaming",
+    "old_price": 1275.79,
+    "new_price": 1187.38,
+    "rating": 3.8
+  },
+  {
+    "id": 84,
+    "name": "Dell Desktop Model 931",
+    "category": "desktops",
+    "brand": "Dell",
+    "use": "Development",
+    "old_price": 1584.66,
+    "new_price": 1468.56,
+    "rating": 4.9
+  },
+  {
+    "id": 85,
+    "name": "Acer Desktop Model 538",
+    "category": "desktops",
+    "brand": "Acer",
+    "use": "Office work",
+    "old_price": 741.87,
+    "new_price": 696.5,
+    "rating": 4.7
+  },
+  {
+    "id": 86,
+    "name": "Acer Desktop Model 950",
+    "category": "desktops",
+    "brand": "Acer",
+    "use": "Development",
+    "old_price": 1669.97,
+    "new_price": 1521.47,
+    "rating": 4.7
+  },
+  {
+    "id": 87,
+    "name": "HP Desktop Model 163",
+    "category": "desktops",
+    "brand": "HP",
+    "use": "Gaming",
+    "old_price": 640.01,
+    "new_price": 577.82,
+    "rating": 3.5
+  },
+  {
+    "id": 88,
+    "name": "Dell Desktop Model 457",
+    "category": "desktops",
+    "brand": "Dell",
+    "use": "Gaming",
+    "old_price": 1142.06,
+    "new_price": 824.1,
+    "rating": 4.8
+  },
+  {
+    "id": 89,
+    "name": "HP Desktop Model 851",
+    "category": "desktops",
+    "brand": "HP",
+    "use": "Development",
+    "old_price": 1095.9,
+    "new_price": 769.15,
+    "rating": 4.9
+  },
+  {
+    "id": 90,
+    "name": "HP Desktop Model 935",
+    "category": "desktops",
+    "brand": "HP",
+    "use": "Office work",
+    "old_price": 1537.68,
+    "new_price": 1077.75,
+    "rating": 3.3
+  },
+  {
+    "id": 91,
+    "name": "Dell Desktop Model 993",
+    "category": "desktops",
+    "brand": "Dell",
+    "use": "Office work",
+    "old_price": 983.18,
+    "new_price": 755.33,
+    "rating": 3.8
+  },
+  {
+    "id": 92,
+    "name": "HP Desktop Model 751",
+    "category": "desktops",
+    "brand": "HP",
+    "use": "Development",
+    "old_price": 414.42,
+    "new_price": 371.46,
+    "rating": 4.0
+  },
+  {
+    "id": 93,
+    "name": "HP Desktop Model 210",
+    "category": "desktops",
+    "brand": "HP",
+    "use": "Gaming",
+    "old_price": 776.65,
+    "new_price": 722.4,
+    "rating": 4.6
+  },
+  {
+    "id": 94,
+    "name": "Lenovo Desktop Model 266",
+    "category": "desktops",
+    "brand": "Lenovo",
+    "use": "Office work",
+    "old_price": 275.83,
+    "new_price": 227.35,
+    "rating": 4.9
+  },
+  {
+    "id": 95,
+    "name": "Dell Desktop Model 373",
+    "category": "desktops",
+    "brand": "Dell",
+    "use": "Development",
+    "old_price": 486.91,
+    "new_price": 378.25,
+    "rating": 4.5
+  },
+  {
+    "id": 96,
+    "name": "Dell Desktop Model 701",
+    "category": "desktops",
+    "brand": "Dell",
+    "use": "Gaming",
+    "old_price": 1516.68,
+    "new_price": 1129.05,
+    "rating": 3.1
+  },
+  {
+    "id": 97,
+    "name": "HP Desktop Model 352",
+    "category": "desktops",
+    "brand": "HP",
+    "use": "Development",
+    "old_price": 350.34,
+    "new_price": 266.78,
+    "rating": 3.3
+  },
+  {
+    "id": 98,
+    "name": "Acer Desktop Model 451",
+    "category": "desktops",
+    "brand": "Acer",
+    "use": "Gaming",
+    "old_price": 775.98,
+    "new_price": 556.18,
+    "rating": 4.2
+  },
+  {
+    "id": 99,
+    "name": "Lenovo Desktop Model 688",
+    "category": "desktops",
+    "brand": "Lenovo",
+    "use": "Office work",
+    "old_price": 1464.37,
+    "new_price": 1106.4,
+    "rating": 3.8
+  },
+  {
+    "id": 100,
+    "name": "Dell Desktop Model 337",
+    "category": "desktops",
+    "brand": "Dell",
+    "use": "Development",
+    "old_price": 1093.73,
+    "new_price": 989.99,
+    "rating": 4.6
+  },
+  {
+    "id": 101,
+    "name": "Google Phone Model 537",
+    "category": "phones",
+    "brand": "Google",
+    "use": "Gaming",
+    "old_price": 700.65,
+    "new_price": 525.69,
+    "rating": 4.9
+  },
+  {
+    "id": 102,
+    "name": "Apple Phone Model 349",
+    "category": "phones",
+    "brand": "Apple",
+    "use": "Photography",
+    "old_price": 1300.29,
+    "new_price": 1078.46,
+    "rating": 3.1
+  },
+  {
+    "id": 103,
+    "name": "Samsung Phone Model 490",
+    "category": "phones",
+    "brand": "Samsung",
+    "use": "Business",
+    "old_price": 435.28,
+    "new_price": 335.77,
+    "rating": 3.4
+  },
+  {
+    "id": 104,
+    "name": "OnePlus Phone Model 976",
+    "category": "phones",
+    "brand": "OnePlus",
+    "use": "Business",
+    "old_price": 1782.47,
+    "new_price": 1645.6,
+    "rating": 3.2
+  },
+  {
+    "id": 105,
+    "name": "Apple Phone Model 694",
+    "category": "phones",
+    "brand": "Apple",
+    "use": "Social media",
+    "old_price": 860.64,
+    "new_price": 756.24,
+    "rating": 3.9
+  },
+  {
+    "id": 106,
+    "name": "Samsung Phone Model 372",
+    "category": "phones",
+    "brand": "Samsung",
+    "use": "Social media",
+    "old_price": 1853.11,
+    "new_price": 1440.09,
+    "rating": 3.4
+  },
+  {
+    "id": 107,
+    "name": "Samsung Phone Model 311",
+    "category": "phones",
+    "brand": "Samsung",
+    "use": "Gaming",
+    "old_price": 363.56,
+    "new_price": 318.22,
+    "rating": 3.4
+  },
+  {
+    "id": 108,
+    "name": "Google Phone Model 867",
+    "category": "phones",
+    "brand": "Google",
+    "use": "Business",
+    "old_price": 1751.17,
+    "new_price": 1277.71,
+    "rating": 4.0
+  },
+  {
+    "id": 109,
+    "name": "Apple Phone Model 202",
+    "category": "phones",
+    "brand": "Apple",
+    "use": "Social media",
+    "old_price": 1298.35,
+    "new_price": 949.26,
+    "rating": 3.4
+  },
+  {
+    "id": 110,
+    "name": "OnePlus Phone Model 794",
+    "category": "phones",
+    "brand": "OnePlus",
+    "use": "Social media",
+    "old_price": 743.15,
+    "new_price": 684.53,
+    "rating": 3.2
+  },
+  {
+    "id": 111,
+    "name": "Google Phone Model 782",
+    "category": "phones",
+    "brand": "Google",
+    "use": "Gaming",
+    "old_price": 1527.49,
+    "new_price": 1385.84,
+    "rating": 4.7
+  },
+  {
+    "id": 112,
+    "name": "OnePlus Phone Model 724",
+    "category": "phones",
+    "brand": "OnePlus",
+    "use": "Social media",
+    "old_price": 305.77,
+    "new_price": 253.96,
+    "rating": 4.5
+  },
+  {
+    "id": 113,
+    "name": "OnePlus Phone Model 561",
+    "category": "phones",
+    "brand": "OnePlus",
+    "use": "Gaming",
+    "old_price": 231.06,
+    "new_price": 212.45,
+    "rating": 3.3
+  },
+  {
+    "id": 114,
+    "name": "Apple Phone Model 478",
+    "category": "phones",
+    "brand": "Apple",
+    "use": "Business",
+    "old_price": 517.45,
+    "new_price": 393.07,
+    "rating": 3.8
+  },
+  {
+    "id": 115,
+    "name": "OnePlus Phone Model 434",
+    "category": "phones",
+    "brand": "OnePlus",
+    "use": "Social media",
+    "old_price": 622.75,
+    "new_price": 547.55,
+    "rating": 4.6
+  },
+  {
+    "id": 116,
+    "name": "Google Phone Model 822",
+    "category": "phones",
+    "brand": "Google",
+    "use": "Business",
+    "old_price": 617.15,
+    "new_price": 433.07,
+    "rating": 3.3
+  },
+  {
+    "id": 117,
+    "name": "OnePlus Phone Model 866",
+    "category": "phones",
+    "brand": "OnePlus",
+    "use": "Photography",
+    "old_price": 1299.38,
+    "new_price": 1126.72,
+    "rating": 3.5
+  },
+  {
+    "id": 118,
+    "name": "Apple Phone Model 933",
+    "category": "phones",
+    "brand": "Apple",
+    "use": "Social media",
+    "old_price": 1995.82,
+    "new_price": 1824.89,
+    "rating": 4.2
+  },
+  {
+    "id": 119,
+    "name": "Google Phone Model 412",
+    "category": "phones",
+    "brand": "Google",
+    "use": "Social media",
+    "old_price": 1271.33,
+    "new_price": 1082.08,
+    "rating": 3.8
+  },
+  {
+    "id": 120,
+    "name": "Samsung Phone Model 698",
+    "category": "phones",
+    "brand": "Samsung",
+    "use": "Business",
+    "old_price": 604.49,
+    "new_price": 473.14,
+    "rating": 4.3
+  }
+]

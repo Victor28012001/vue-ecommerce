@@ -8,7 +8,7 @@
         </div>
 
         <div v-else class="cat">
-            <router-link to="/" class="nav-link">Home</router-link>
+            <router-link to="/" class="nav-link">Home / </router-link>
             <span class="nav-link">{{ routeCategoryName }}</span>
         </div>
     </nav>
