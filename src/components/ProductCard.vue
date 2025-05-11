@@ -6,7 +6,7 @@
         {{ props.product.inWishlist ? '♥' : '♡' }}
       </button>
       <span class="tag">{{ discountPercentage }}% Off</span>
-      <span class="gallery"><img src="`/src/assets/images/gallery.png`" alt="">1/8</span>
+      <span class="gallery"><img src="/src/assets/images/gallery.png" alt="">1/8</span>
     </div>
     <div class="sale-card-content">
       <p>{{ props.product.category }}</p>
