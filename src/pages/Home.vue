@@ -25,7 +25,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import Navbar from '../components/Navbar.vue'
-import HeroSection from '../components/HeroSection.vue'
+import HeroSection from '../components/Herosection.vue'
 import TopCategory from "../components/TopCategory.vue";
 import ServicesSection from '../components/ServicesSection.vue'
 import FeaturedProducts from '../components/FeaturedProducts.vue'
