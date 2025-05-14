@@ -1,20 +1,15 @@
 <template>
-    <div :class="['cta-container', $attrs.class]">
-        <!-- Left Content -->
+    <div :class="['cta-container', $attrs.class]"
+        :style="`background-image: radial-gradient(circle at left center, rgba(3, 11, 59, 0.7), transparent 70%), url('${imageSrc}')`">
         <div class="cta-text">
             <p v-if="tag" class="cta-tag">{{ tag }}</p>
             <h2 class="cta-title">{{ title }}</h2>
             <p class="cta-paragraph">{{ paragraph }}</p>
-            <button class="cta-button">Shop Now</button>
-        </div>
-
-        <!-- Right Image -->
-        <div class="cta-image-wrapper">
-            <img :src="imageSrc" alt="CTA Image" class="cta-image" />
-            <div class="cta-overlay"></div>
+            <button class="cta-button">{{ buttonText || 'Shop Now' }}</button>
         </div>
     </div>
 </template>
+
 
 <script setup>
 defineProps({
@@ -29,27 +24,22 @@ defineProps({
 <style scoped>
 /* Default styles */
 .cta-container {
-    display: flex;
-    flex-direction: row;
-    background: #fff;
+    background-repeat: no-repeat;
+    background-position: right;
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 5px 20px rgba(3, 3, 22, 0.1);
 }
 
-@media (min-width: 768px) {
-    .cta-container {
-        flex-direction: row;
-    }
-}
 
 .cta-text {
     padding: 2rem;
     flex: 1;
     z-index: 2;
     position: relative;
-    background: radial-gradient(circle at left center, rgba(3, 11, 59, 0.7), transparent 100%);
+    background: radial-gradient(circle at left center, rgb(1, 7, 41), rgba(1, 7, 41, 0.8) 60%, transparent 100%);
     color: white;
+    height: 100%;
 }
 
 
@@ -63,20 +53,20 @@ defineProps({
 }
 
 .cta-title {
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: bold;
     margin-bottom: 1rem;
     color: #fff;
 }
 
 .cta-paragraph {
-    font-size: 1rem;
+    font-size: 0.8rem;
     color: #fff;
     margin-bottom: 1.5rem;
 }
 
 .cta-button {
-    background-color: #030235;
+    background-color: #072a64;
     color: #fff;
     padding: 0.75rem 1.5rem;
     border: none;
@@ -85,7 +75,7 @@ defineProps({
 }
 
 .cta-button:hover {
-    background-color: #0d0f2c;
+    background-color: #072a64;
 }
 
 .cta-image-wrapper {
@@ -98,19 +88,8 @@ defineProps({
     .cta-image-wrapper {
         height: auto;
     }
-
-    .cta-container {
-        display: flex;
-        flex-direction: column;
-    }
 }
 
-.cta-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
 
 .cta-overlay {
     position: absolute;

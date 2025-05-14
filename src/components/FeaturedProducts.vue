@@ -72,6 +72,9 @@ p {
   .product-grid {
     grid-template-columns: repeat(3, 1fr);
   }
+  .featured-products{
+    padding: 12px 4rem;
+  }
 }
 
 /* Large screens (1024px and above) */

@@ -10,7 +10,7 @@
       </select>
     </div>
 
-    <div class="usage-filters" v-if="usageTypes.length">
+    <div class="usage-filters" v-if="isDesktop && usageTypes.length">
       <!-- Show first 4 buttons -->
       <button v-for="(use, index) in visibleUsages" :key="use" @click="handleUsageClick(use)"
         :class="{ active: use === selectedUsage }">
@@ -39,6 +39,7 @@ const { usageTypes } = defineProps({
     type: Array,
     default: () => [],
   },
+  isDesktop: Boolean,
 })
 
 const emit = defineEmits(['usage-changed'])
@@ -66,8 +67,9 @@ const hiddenUsages = computed(() => usageTypes.slice(4))
   display: flex;
   flex-direction: row-reverse;
   justify-content: space-between;
-  padding: 20px 10px;
-  margin-bottom: 12px;
+  padding: 20px 0;
+  margin: 12px 0;
+  width: 100%;
 }
 
 .dropdown {

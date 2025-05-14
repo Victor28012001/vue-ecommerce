@@ -108,7 +108,7 @@ function changePage(p) {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    padding: 12px;
+    padding: 12px 4rem;
 }
 
 .cta-column {
@@ -121,6 +121,7 @@ function changePage(p) {
 @media (min-width: 768px) {
     .cta-layout {
         flex-direction: row;
+        padding: 12px 2rem;
     }
 
     .cta-large {
@@ -131,5 +132,9 @@ function changePage(p) {
         flex: 1;
         justify-content: space-between;
     }
+}
+
+.home{
+    overflow-x: hidden;
 }
 </style>

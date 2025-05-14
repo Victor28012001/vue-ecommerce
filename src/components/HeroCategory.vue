@@ -41,7 +41,7 @@ defineProps({
     position: relative;
     z-index: 1;
     max-width: 800px;
-    padding: 1rem;
+    padding: 1rem 4rem;
 }
 
 .hero-content h1 {
@@ -51,6 +51,12 @@ defineProps({
 
 .hero-content p {
     font-size: 1.2rem;
+}
+
+@media (max-width : 768px) {
+    .hero-content {
+    padding: 1rem 2rem;
+}
 }
 
 </style>

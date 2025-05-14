@@ -29,7 +29,7 @@
   justify-content: space-between;
   background-color: #f7f7f7;
   /* very light gray */
-  padding: 40px 30px;
+  padding: 40px 4rem;
 }
 
 .hero-content {
@@ -111,21 +111,23 @@ p {
 @media (max-width: 768px) {
   .hero {
     flex-direction: column;
+    padding: 1.5rem 2rem;
+    height: 80vh;
   }
-  
-.hero-image {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
+
+  .hero-image {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
 
 
-.hero-content {
-  width: 100%;
-  max-width: 1500px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
+  .hero-content {
+    width: 100%;
+    max-width: 1500px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
 }
 </style>

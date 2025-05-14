@@ -50,7 +50,12 @@ const routeCategoryName = route.params.name?.charAt(0).toUpperCase() + route.par
     font-family: "Roboto", sans-serif;
 }
 nav{
-    padding: 24px 4px;
+    padding: 24px 4rem;
     border-bottom: 1px #dddddd solid;
+}
+@media (max-width : 768px) {
+    nav{
+        padding: 12px 2rem;
+    }
 }
 </style>

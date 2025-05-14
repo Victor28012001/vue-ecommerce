@@ -1,32 +1,40 @@
 <template>
-    <header class="header-wrapper">
-      <div class="top-row">
+  <header class="header-wrapper">
+    <div class="top-row">
+      <div class="logo-wrapper">
         <div class="logo">
           <router-link to="/" class="router-link links">
             <h1>LOGO</h1>
           </router-link>
         </div>
-        <div class="end">
-          <router-link to="/wishlist" class="router-link links">
-            <HeartIcon class="icon" />
-            <span>Wishlist</span>
-          </router-link>
-          <router-link to="/cart" class="router-link links">
-            <ShoppingCartIcon class="icon" />
-            <span>Cart</span>
-          </router-link>
-        </div>
-      </div>
-  
-      <div class="search-row">
-        <div class="search-bar">
+        <div class="search-bar1">
           <input placeholder="Search for products, brands.." class="input" name="search" type="text" />
           <button class="button1">Search</button>
         </div>
       </div>
-    </header>
-  </template>
-  
+
+      <div class="end">
+        <router-link to="/wishlist" class="router-link links">
+          <HeartIcon class="icon" />
+          <span>Wishlist</span>
+        </router-link>
+        <router-link to="/cart" class="router-link links">
+          <ShoppingCartIcon class="icon" />
+          <span>Cart</span>
+        </router-link>
+      </div>
+    </div>
+
+    <div class="search-row">
+      <div class="search-bar">
+        <input placeholder="Search for products, brands.." class="input" name="search" type="text" />
+        <button class="button1">Search</button>
+      </div>
+    </div>
+  </header>
+</template>
+
+
 
 <script setup>
 import { ShoppingCartIcon, HeartIcon } from '@heroicons/vue/outline'
@@ -108,6 +116,10 @@ import { ShoppingCartIcon, HeartIcon } from '@heroicons/vue/outline'
   font-family: "Roboto", sans-serif;
 }
 
+.search-bar1 {
+  display: none;
+}
+
 /* Desktop layout */
 @media (min-width: 768px) {
   .header-wrapper {
@@ -122,7 +134,57 @@ import { ShoppingCartIcon, HeartIcon } from '@heroicons/vue/outline'
 
   .search-row {
     width: 70%;
+    display: none;
+  }
+
+  .search-bar1 {
+    display: flex;
+  }
+}
+
+.logo-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+/* Hide .search-bar1 by default (mobile) */
+.search-bar1 {
+  display: none;
+}
+
+/* Desktop layout */
+@media (min-width: 768px) {
+  .header-wrapper {
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 12px 4rem;
+  }
+
+  .top-row {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo-wrapper {
+    width: 50%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .search-bar1 {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 500px;
+  }
+
+  .search-row {
+    display: none;
   }
 }
 </style>
-

@@ -39,7 +39,7 @@ import footer_img from "../assets/images/footer_img.png";
 .footer {
   background-color: #111827;
   color: white;
-  padding: 2rem;
+  padding: 2rem 4rem;
   padding-bottom: 0;
   font-family: sans-serif;
 }
@@ -178,6 +178,7 @@ import footer_img from "../assets/images/footer_img.png";
   .footer {
     height: 40vh;
     position: relative;
+    padding: 2rem 2rem;
   }
 
 }

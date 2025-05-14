@@ -19,7 +19,7 @@ defineProps(['categories'])
 <style scoped>
 .top-category {
   text-align: left;
-  padding: 2rem;
+  padding: 2rem 4rem;
   background-color: #f9f9f9;
 }
 
@@ -66,4 +66,20 @@ p {
   color: #777;
 }
 
+@media (max-width : 768px) {
+  .top-category {
+    padding: 12px 2rem;
+  }
+
+  .categories-grid {
+    display: grid;
+    width: 100%;
+    gap: 1rem;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .category-card {
+    width: auto;
+  }
+}
 </style>

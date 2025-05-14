@@ -149,12 +149,7 @@ function applyFilters() {
 /* Filter Panel Styles */
 .filter-panel {
   border-radius: 8px;
-  padding: 20px;
-  width: 100%;
-  max-width: 350px;
   margin: auto auto;
-  /* padding-top: 0; */
-  /* margin-top: 0; */
 }
 
 .filter-panel h4 {
