@@ -13,13 +13,13 @@
           <div class="price-slider" :style="sliderStyle"></div>
         </div>
         <div class="range-input">
-          <input type="range" class="min-range" :min="minLimit" :max="maxLimit" v-model="minPrice" />
-          <input type="range" class="max-range" :min="minLimit" :max="maxLimit" v-model="maxPrice" />
+          <input type="range" class="min-range" :min="minLimit" :max="maxLimit" v-model="tempMinPrice" />
+          <input type="range" class="max-range" :min="minLimit" :max="maxLimit" v-model="tempMaxPrice" />
         </div>
       </div>
       <div class="flex  items-center gap-4 flex1">
-        <input type="number" v-model.number="minPrice" :min="minLimit" :max="maxPrice" class="input-number" />
-        <input type="number" v-model.number="maxPrice" :min="minPrice" :max="maxLimit" class="input-number" />
+        <input type="number" v-model.number="tempMinPrice" :min="minLimit" :max="maxPrice" class="input-number" />
+        <input type="number" v-model.number="tempMaxPrice" :min="minPrice" :max="maxLimit" class="input-number" />
       </div>
     </div>
 
@@ -27,7 +27,7 @@
     <div class="cate">
       <label class="checkbox-label">By Categories</label>
       <div v-for="u in uniqueUsages" :key="u" class="flex items-center gap-2">
-        <input type="checkbox" :value="u" v-model="selectedUsages" :id="`use-${u}`" />
+        <input type="checkbox" :value="u" v-model="tempSelectedUsages" :id="`use-${u}`" />
         <label :for="`use-${u}`">{{ u }}</label>
       </div>
     </div>
@@ -36,7 +36,7 @@
     <div class="cate">
       <label class="checkbox-label">By Brands</label>
       <div v-for="b in uniqueBrands" :key="b" class="flex items-center gap-2">
-        <input type="checkbox" :value="b" v-model="selectedBrands" :id="`brand-${b}`" />
+        <input type="checkbox" :value="b" v-model="tempSelectedBrands" :id="`brand-${b}`" />
         <label :for="`brand-${b}`">{{ b }}</label>
       </div>
     </div>
@@ -64,9 +64,13 @@ const minLimit = 0
 const maxLimit = 10000
 const priceGap = 500
 
+const tempMinPrice = ref(minLimit)
+const tempMaxPrice = ref(maxLimit)
+const tempSelectedBrands = ref([])
+const tempSelectedUsages = ref([])
+
 const minPrice = ref(minLimit)
 const maxPrice = ref(maxLimit)
-
 const selectedBrands = ref([])
 const selectedUsages = ref([])
 
@@ -108,13 +112,14 @@ const uniqueUsages = computed(() => {
 
 // Slider style binding
 const sliderStyle = computed(() => {
-  const left = (minPrice.value / maxLimit) * 100
-  const right = 100 - (maxPrice.value / maxLimit) * 100
+  const left = (tempMinPrice.value / maxLimit) * 100
+  const right = 100 - (tempMaxPrice.value / maxLimit) * 100
   return {
     left: `${left}%`,
     right: `${right}%`
   }
 })
+
 
 // Reset Filters
 function resetFilters() {
@@ -123,17 +128,24 @@ function resetFilters() {
   selectedBrands.value = []
   selectedUsages.value = []
 
-  // Emit reset filters event
+  tempMinPrice.value = minLimit
+  tempMaxPrice.value = maxLimit
+  tempSelectedBrands.value = []
+  tempSelectedUsages.value = []
+
   emit('filter-changed', {
     price: { min: minPrice.value, max: maxPrice.value },
-    brands: selectedBrands.value,
-    usages: selectedUsages.value
+    brands: [],
+    usages: []
   })
 }
+
 
 function applyFilters() {
-  selectedBrands.value = [...uniqueBrands.value]
-  selectedUsages.value = [...uniqueUsages.value]
+  minPrice.value = tempMinPrice.value
+  maxPrice.value = tempMaxPrice.value
+  selectedBrands.value = [...tempSelectedBrands.value]
+  selectedUsages.value = [...tempSelectedUsages.value]
 
   emit('filter-changed', {
     price: { min: minPrice.value, max: maxPrice.value },
@@ -141,6 +153,7 @@ function applyFilters() {
     usages: selectedUsages.value
   })
 }
+
 
 
 </script>
