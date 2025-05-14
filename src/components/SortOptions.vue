@@ -5,8 +5,12 @@
       <select class="dropdown" @change="$emit('sort-changed', $event.target.value)">
         <option value="">None</option>
         <option value="featured">Featured</option>
+        <option value="rating">Rating</option>
+        <option value="newest">Newest</option>
         <option value="price-asc">Price: Low to High</option>
         <option value="price-desc">Price: High to Low</option>
+        <option value="title-a-z">Title: A to Z</option>
+        <option value="title-z-a">Title: Z to A</option>
       </select>
     </div>
 

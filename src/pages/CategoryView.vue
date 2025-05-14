@@ -160,9 +160,22 @@ function applyFilters() {
       return matchesCategory && matchesPrice && matchesBrand && matchesUsage
     })
     .sort((a, b) => {
-      if (sortOrder.value === 'price-asc') return (a.new_price || 0) - (b.new_price || 0)
-      if (sortOrder.value === 'price-desc') return (b.new_price || 0) - (a.new_price || 0)
-      return 0
+      switch (sortOrder.value) {
+        case 'price-asc':
+          return (a.new_price || 0) - (b.new_price || 0)
+        case 'price-desc':
+          return (b.new_price || 0) - (a.new_price || 0)
+        case 'rating':
+          return (b.rating || 0) - (a.rating || 0)
+        case 'newest':
+          return b.id - a.id // assuming higher id = newer
+        case 'title-a-z':
+          return a.name.localeCompare(b.name)
+        case 'title-z-a':
+          return b.name.localeCompare(a.name)
+        default:
+          return 0 // 'featured' or no sort
+      }
     })
 }
 

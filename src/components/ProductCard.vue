@@ -133,7 +133,7 @@ const discountPercentage = computed(() => {
 
 .add-to-cart-btn {
   text-align: center;
-  background-color: #072a64;
+  background-color: #224893;
   color: white;
   padding: 0.625rem 1.25rem;
   font-size: 0.875rem;
@@ -154,7 +154,7 @@ const discountPercentage = computed(() => {
 
 .tag {
   text-align: center;
-  background-color: #072a64;
+  background-color: #224893;
   color: white;
   font-size: smaller;
   border-bottom-right-radius: 16px;
