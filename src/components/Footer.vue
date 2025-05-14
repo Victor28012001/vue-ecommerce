@@ -119,8 +119,9 @@ import footer_img from "../assets/images/footer_img.png";
 .footer_bottom p {
   margin: 0;
   font-size: 0.8rem;
-  position: relative;
-  margin-top: 18px;
+  position: relative;    
+  margin-top: 58px;
+  margin-bottom: 28px;
 }
 
 
