@@ -1,12 +1,12 @@
 <template>
   <div class="sale-card">
     <div class="img-class">
-      <img class="sale-card-image" :src="`/src/assets/images/product_img.png`" :alt="props.product.name" />
+      <img class="sale-card-image" :src="product_img" :alt="props.product.name" />
       <button @click="$emit('toggle-wishlist', props.product)" class="wishlist-btn">
         {{ props.product.inWishlist ? '♥' : '♡' }}
       </button>
       <span class="tag">{{ discountPercentage }}% Off</span>
-      <span class="gallery"><img src="/src/assets/images/gallery.png" alt="">1/8</span>
+      <span class="gallery"><img :src="gallery_img" alt="">1/8</span>
     </div>
     <div class="sale-card-content">
       <p>{{ props.product.category }}</p>
@@ -38,6 +38,8 @@
 
 <script setup>
 import { computed } from 'vue'
+import product_img from '/src/assets/images/product_img.png'
+import gallery_img from '/src/assets/images/gallery.png'
 
 // Destructure product prop
 const props = defineProps({

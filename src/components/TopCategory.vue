@@ -4,7 +4,7 @@
     <p>Checkout our top-categories</p>
     <ul class="categories-grid">
       <li v-for="cat in categories" :key="cat.name" class="category-card">
-        <img :src="`/src/assets/images/${cat.image}`" :alt="cat.name" class="category-image" />
+        <img :src="cat.image" :alt="cat.name" class="category-image" />
         <div class="category-name">{{ cat.name }}</div>
         <div class="category-count">{{ cat.count }} products</div>
       </li>

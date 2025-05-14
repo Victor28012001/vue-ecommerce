@@ -35,6 +35,12 @@ import Wishlist from '../components/Wishlist.vue'
 import imgSrc from "../assets/images/spec_offer.png"
 import desktop from "../assets/images/desktop.png"
 import accessories from "../assets/images/accessories.png"
+import laptop from "../assets/images/laptop.jpg"
+import desktop1 from "../assets/images/desktop.jpg"
+import accessories1 from "../assets/images/accessories.jpg"
+import printer from "../assets/images/printer.jpg"
+import monitor from "../assets/images/monitor.jpg"
+import phone from "../assets/images/phone.jpg"
 
 
 const products = ref([])
@@ -47,12 +53,12 @@ const page = ref(1)
 // Helper: assign default image for categories
 const getCategoryImage = (categoryName) => {
     const lower = categoryName.toLowerCase()
-    if (lower.includes('laptop')) return 'laptop.jpg'
-    if (lower.includes('desktop')) return 'desktop.jpg'
-    if (lower.includes('printer')) return 'printer.jpg'
-    if (lower.includes('monitor')) return 'monitor.jpg'
-    if (lower.includes('phone')) return 'phone.jpg'
-    if (lower.includes('accessor')) return 'accessories.jpg'
+    if (lower.includes('laptop')) return laptop
+    if (lower.includes('desktop')) return desktop1
+    if (lower.includes('printer')) return printer
+    if (lower.includes('monitor')) return monitor
+    if (lower.includes('phone')) return phone
+    if (lower.includes('accessor')) return accessories1
     return 'cat.png' // default fallback
 }
 
