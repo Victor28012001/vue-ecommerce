@@ -1,3 +1,4 @@
+// src/stores/wishlist.js
 import { defineStore } from 'pinia'
 
 export const useWishlistStore = defineStore('wishlist', {
@@ -12,6 +13,9 @@ export const useWishlistStore = defineStore('wishlist', {
       } else {
         this.items.push(product)
       }
+    },
+    isWishlisted(productId) {
+      return this.items.some(item => item.id === productId)
     },
   },
 })

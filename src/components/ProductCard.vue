@@ -1,9 +1,10 @@
 <template>
   <div class="sale-card">
     <div class="img-class">
-      <img class="sale-card-image" :src="product_img" :alt="props.product.name" />
-      <button @click="$emit('toggle-wishlist', props.product)" class="wishlist-btn">
-        {{ props.product.inWishlist ? '♥' : '♡' }}
+      <img class="sale-card-image" :src="props.product.image || 'https://via.placeholder.com/300'"
+        :alt="props.product.name" />
+      <button @click="toggleWishlist" class="wishlist-btn">
+        {{ isWishlisted ? '♥' : '♡' }}
       </button>
       <span class="tag">{{ discountPercentage }}% Off</span>
       <span class="gallery"><img :src="gallery_img" alt="">1/8</span>
@@ -28,7 +29,7 @@
           <span class="price-new">${{ props.product.new_price }}</span>
           <span class="price-old">${{ props.product.old_price }}</span>
         </div>
-        <button @click="$emit('add-to-cart', props.product)" class="add-to-cart-btn">
+        <button @click="addToCart" class="add-to-cart-btn">
           Add
         </button>
       </div>
@@ -40,6 +41,8 @@
 import { computed } from 'vue'
 import product_img from '/src/assets/images/product_img.png'
 import gallery_img from '/src/assets/images/gallery.png'
+import { useWishlistStore } from '../stores/wishlist'
+import { useCartStore } from '../stores/cart'
 
 // Destructure product prop
 const props = defineProps({
@@ -51,6 +54,21 @@ const discountPercentage = computed(() => {
   if (!props.product || !props.product.old_price || !props.product.new_price) return 0;
   return ((props.product.old_price - props.product.new_price) / props.product.old_price * 100).toFixed(0);
 });
+
+const wishlist = useWishlistStore()
+const cart = useCartStore()
+
+const isWishlisted = computed(() =>
+  wishlist.items.some(item => item.id === props.product.id)
+)
+
+function toggleWishlist() {
+  wishlist.toggleItem(props.product)
+}
+
+function addToCart() {
+  cart.addItem(props.product)
+}
 </script>
 
 <style scoped>
@@ -182,5 +200,6 @@ const discountPercentage = computed(() => {
 
 .add-to-cart-btn:hover {
   background-color: #051e47;
+  border: none;
 }
 </style>

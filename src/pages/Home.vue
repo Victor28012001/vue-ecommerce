@@ -18,7 +18,6 @@
         </div>
         <ServicesSection />
         <!-- <OrderSummary :cart="cart" /> -->
-        <!-- <Wishlist :items="wishlist" @remove="removeFromWishlist" /> -->
     </div>
 </template>
 
@@ -31,7 +30,6 @@ import ServicesSection from '../components/ServicesSection.vue'
 import FeaturedProducts from '../components/FeaturedProducts.vue'
 import Cta from '../components/Cta.vue';
 import OrderSummary from '../components/OrderSummary.vue'
-import Wishlist from '../components/Wishlist.vue'
 import imgSrc from "../assets/images/spec_offer.png"
 import desktop from "../assets/images/desktop.png"
 import accessories from "../assets/images/accessories.png"
