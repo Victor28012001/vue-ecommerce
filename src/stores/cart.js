@@ -3,6 +3,22 @@ import { defineStore } from "pinia";
 export const useCartStore = defineStore("cart", {
   state: () => ({
     items: [],
+    shipping: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      address: '',
+      city: '',
+      state: '',
+      zip: '',
+    },
+    payment: {
+      nameOnCard: '',
+      cardNumber: '',
+      expiry: '',
+      cvv: '',
+    },
   }),
   getters: {
     total: (state) =>

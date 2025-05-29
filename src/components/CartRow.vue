@@ -2,7 +2,10 @@
   <tr>
     <td class="product-info">
       <img :src="item.image" :alt="item.name" />
-      <span>{{ item.name }}</span>
+      <div class="prod-infos">
+        <span>{{ item.name }}</span>
+        <span>{{ item.category }}</span>
+      </div>
     </td>
     <td>${{ item.new_price?.toFixed(2) ?? '0.00' }}</td>
     <td>
@@ -70,6 +73,13 @@ watch(quantity, (newQuantity) => {
   gap: 10px;
 }
 
+.prod-infos {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
 .product-info img {
   width: 20%;
   height: 60px;
@@ -84,19 +94,21 @@ watch(quantity, (newQuantity) => {
 }
 
 .quantity button {
-  background-color: #858585;
-  color: #fff;
+  background-color: #E2E8F0;
+  color: #000;
   border: none;
   cursor: pointer;
   font-size: 20px;
   width: 30px;
   text-align: center;
   transition: background-color 0.2s;
+  border-radius: 6px;
 }
 
 .quantity button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
+  background-color: transparent;
+    cursor: not-allowed;
+    border: 1px solid #E7E7E7;
 }
 
 .quantity button:hover:not(:disabled) {
@@ -140,6 +152,4 @@ td span.remove-icon {
   top: -4px;
   font-size: 1.2rem;
 }
-
-
 </style>
