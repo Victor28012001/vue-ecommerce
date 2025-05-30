@@ -3,7 +3,7 @@
         <Navbar />
 
         <HeroCategory :background="Bg"
-            :title="selectedCategories.length ? `Shop The Best ${selectedCategories.join(', ')}` : 'All Products'"
+            :title="'All Products'"
             description="Browse our complete collection of premium tech products. Use the filters to find exactly what you're looking for." />
 
 
