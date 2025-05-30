@@ -1,26 +1,22 @@
 <!-- src/components/Navbar.vue -->
 <template>
   <nav class="p-4 bg-gray-100">
-    <div v-if="isCategoryView || isWishlistView || isCartView" class="cat">
+    <div v-if="isCategoryView || isWishlistView || isCartView || isCheckoutView" class="cat">
       <router-link to="/" class="nav-link">Home / </router-link>
       <span class="nav-link">
         {{
-          isWishlistView
-            ? 'Wishlist'
-            : isCartView
-            ? 'Cart'
-            : routeCategoryName
+          isWishlistView ? 'Wishlist' :
+            isCartView ? 'Cart' :
+              isCheckoutView ? 'Checkout' :
+        routeCategoryName
         }}
+
       </span>
     </div>
 
     <div v-else class="cat">
-      <router-link
-        v-for="category in categories"
-        :key="category"
-        :to="`/category/${category.toLowerCase()}`"
-        class="nav-link"
-      >
+      <router-link v-for="category in categories" :key="category" :to="`/category/${category.toLowerCase()}`"
+        class="nav-link">
         {{ category }}
       </router-link>
     </div>
@@ -45,6 +41,7 @@ const categories = [
 const isCategoryView = route.path.startsWith('/category/')
 const isWishlistView = route.path === '/wishlist'
 const isCartView = route.path === '/cart'
+const isCheckoutView = route.path === '/checkout'
 
 const routeCategoryName =
   route.params.name?.charAt(0).toUpperCase() + route.params.name?.slice(1)

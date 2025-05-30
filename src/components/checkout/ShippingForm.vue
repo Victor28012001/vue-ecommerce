@@ -1,80 +1,154 @@
 <template>
-    <div class="form-section table-cont">
-        <h3>Shipping Information</h3>
-        <form @submit.prevent>
+  <div class="form-section table-cont">
+    <h3>Shipping Information</h3>
+    <form @submit.prevent="validateForm">
+      <!-- Row 1: First Name & Last Name -->
+      <div class="row">
+        <div class="col">
+          <label for="firstName">First Name</label>
+          <input id="firstName" type="text" @blur="validateFirstName" v-model="form.firstName" placeholder="John" required />
+          <small v-if="errors.firstName" class="error">{{ errors.firstName }}</small>
+        </div>
+        <div class="col">
+          <label for="lastName">Last Name</label>
+          <input id="lastName" type="text" @blur="validateLastName" v-model="form.lastName" placeholder="Doe" required />
+          <small v-if="errors.lastName" class="error">{{ errors.lastName }}</small>
+        </div>
+      </div>
 
-            <!-- Row 1: First Name & Last Name -->
-            <div class="row">
-                <div class="col">
-                    <label for="firstName">First Name</label>
-                    <input id="firstName" type="text" v-model="form.firstName" placeholder="John" required />
-                </div>
-                <div class="col">
-                    <label for="lastName">Last Name</label>
-                    <input id="lastName" type="text" v-model="form.lastName" placeholder="Doe" required />
-                </div>
-            </div>
+      <!-- Row 2: Address & Phone Number -->
+      <div class="row">
+        <div class="col">
+          <label for="address">Address</label>
+          <input id="address" type="text" @blur="validateAddress" v-model="form.address" placeholder="542 W. 15th Street" required />
+          <small v-if="errors.address" class="error">{{ errors.address }}</small>
+        </div>
+        <div class="col">
+          <label for="phone">Phone Number</label>
+          <input id="phone" type="text" @blur="validatePhone" v-model="form.phone" placeholder="+234 812 345 6789" required />
+          <small v-if="errors.phone" class="error">{{ errors.phone }}</small>
+        </div>
+      </div>
 
-            <!-- Row 2: Address & Phone Number -->
-            <div class="row">
-                <div class="col">
-                    <label for="address">Address</label>
-                    <input id="address" type="text" v-model="form.address" placeholder="542 W. 15th Street" required />
-                </div>
-                <div class="col">
-                    <label for="phone">Phone Number</label>
-                    <input id="phone" type="text" v-model="form.phone" placeholder="+1 123 456 7890" required />
-                </div>
-            </div>
+      <!-- Row 3: Email & Zip Code -->
+      <div class="row">
+        <div class="col">
+          <label for="email">Email Address</label>
+          <input id="email" type="email" @blur="validateEmail" v-model="form.email" placeholder="john@example.com" required />
+          <small v-if="errors.email" class="error">{{ errors.email }}</small>
+        </div>
+        <div class="col">
+          <label for="zip">Zip/Postal Code</label>
+          <input id="zip" type="text" @blur="validateZip" v-model="form.zip" placeholder="100001" required />
+          <small v-if="errors.zip" class="error">{{ errors.zip }}</small>
+        </div>
+      </div>
 
-            <!-- Row 3: Email & Zip Code -->
-            <div class="row">
-                <div class="col">
-                    <label for="email">Email Address</label>
-                    <input id="email" type="email" v-model="form.email" placeholder="john@example.com" required />
-                </div>
-                <div class="col">
-                    <label for="zip">Zip/Postal Code</label>
-                    <input id="zip" type="text" v-model="form.zip" placeholder="10001" required />
-                </div>
-            </div>
-
-            <!-- Row 4: City & State -->
-            <div class="row">
-                <div class="col">
-                    <label for="city">City</label>
-                    <select id="city" v-model="form.city" required>
-                        <option disabled value="">Select a city</option>
-                        <option>New York</option>
-                        <option>Los Angeles</option>
-                        <option>Chicago</option>
-                        <option>San Francisco</option>
-                    </select>
-                </div>
-                <div class="col">
-                    <label for="state">State/Province</label>
-                    <select id="state" v-model="form.state" required>
-                        <option disabled value="">Select a state</option>
-                        <option>California</option>
-                        <option>New York</option>
-                        <option>Illinois</option>
-                        <option>Texas</option>
-                    </select>
-                </div>
-            </div>
-
-        </form>
-    </div>
+      <!-- Row 4: State & City -->
+      <div class="row">
+        <div class="col">
+          <label for="state">State</label>
+          <select id="state" v-model="form.state" @change="fetchCities" required>
+            <option disabled value="">Select a state</option>
+            <option v-for="state in states" :key="state" :value="state">{{ state }}</option>
+          </select>
+          <small v-if="errors.state" class="error">{{ errors.state }}</small>
+        </div>
+        <div class="col">
+          <label for="city">City</label>
+          <select id="city" v-model="form.city" :disabled="!cities.length" required>
+            <option disabled value="">Select a city</option>
+            <option v-for="city in cities" :key="city" :value="city">{{ city }}</option>
+          </select>
+          <small v-if="errors.city" class="error">{{ errors.city }}</small>
+        </div>
+      </div>
+    </form>
+  </div>
 </template>
 
 
 <script setup>
+import { ref, onMounted, watch, reactive } from 'vue';
 import { useCartStore } from '../../stores/cart';
+import nigeriaData from  "../../assets/data/statesAndCities.json"
 
-const cart = useCartStore()
-const form = cart.shipping
+const cart = useCartStore();
+const form = cart.shipping;
 
+const errors = reactive({
+  firstName: '',
+  lastName: '',
+  address: '',
+  phone: '',
+  email: '',
+  zip: '',
+  city: '',
+  state: ''
+});
+
+const states = ref([]);
+const cities = ref([]);
+
+const fetchStates = () => {
+  states.value = nigeriaData.map(entry => entry.state.name.trim());
+};
+
+const fetchCities = () => {
+  const stateObj = nigeriaData.find(
+    entry => entry.state.name.trim() === form.state.trim()
+  );
+  cities.value = stateObj ? stateObj.state.cities.map(c => c.name) : [];
+  if (!cities.value.includes(form.city)) {
+    form.city = '';
+  }
+};
+
+onMounted(fetchStates);
+watch(() => form.state, fetchCities);
+
+const validateFirstName = () => {
+  errors.firstName = /^[a-zA-Z\s]+$/.test(form.firstName)
+    ? ''
+    : 'Only letters and spaces allowed.';
+};
+const validateLastName = () => {
+  errors.lastName = /^[a-zA-Z\s]+$/.test(form.lastName)
+    ? ''
+    : 'Only letters and spaces allowed.';
+};
+const validateAddress = () => {
+  errors.address = form.address.length >= 5
+    ? ''
+    : 'Address must be at least 5 characters.';
+};
+const validatePhone = () => {
+  errors.phone = /^\+?\d{7,15}$/.test(form.phone)
+    ? ''
+    : 'Invalid phone number.';
+};
+const validateEmail = () => {
+  errors.email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)
+    ? ''
+    : 'Invalid email address.';
+};
+const validateZip = () => {
+  errors.zip = /^[0-9]{4,10}$/.test(form.zip)
+    ? ''
+    : 'Invalid ZIP/postal code.';
+};
+const validateForm = () => {
+  validateFirstName();
+  validateLastName();
+  validateAddress();
+  validatePhone();
+  validateEmail();
+  validateZip();
+  errors.city = form.city ? '' : 'Please select a city.';
+  errors.state = form.state ? '' : 'Please select a state.';
+};
 </script>
+
 
 <style scoped>
 .form-section {
@@ -157,5 +231,11 @@ select {
     .row {
         flex-direction: column;
     }
+}
+
+.error {
+  color: red;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
 }
 </style>

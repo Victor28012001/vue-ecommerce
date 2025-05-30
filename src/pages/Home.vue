@@ -29,7 +29,6 @@ import TopCategory from "../components/TopCategory.vue";
 import ServicesSection from '../components/ServicesSection.vue'
 import FeaturedProducts from '../components/FeaturedProducts.vue'
 import Cta from '../components/Cta.vue';
-import OrderSummary from '../components/OrderSummary.vue'
 import imgSrc from "../assets/images/spec_offer.png"
 import desktop from "../assets/images/desktop.png"
 import accessories from "../assets/images/accessories.png"

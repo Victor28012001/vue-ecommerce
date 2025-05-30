@@ -161,4 +161,10 @@ select {
         flex-direction: column;
     }
 }
+
+.error {
+  color: red;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
 </style>
