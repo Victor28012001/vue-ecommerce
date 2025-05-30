@@ -33,7 +33,7 @@ import imgSrc from "../assets/images/spec_offer.png"
 import desktop from "../assets/images/desktop.png"
 import accessories from "../assets/images/accessories.png"
 import laptop from "../assets/images/laptop.jpg"
-import desktop1 from "../assets/images/desktop.jpg"
+import tablet from "../assets/images/desktop.jpg"
 import accessories1 from "../assets/images/accessories.jpg"
 import printer from "../assets/images/printer.jpg"
 import monitor from "../assets/images/monitor.jpg"
@@ -44,14 +44,12 @@ const products = ref([])
 const filteredProducts = ref([])
 const categories = ref([]) // now dynamic
 const cart = ref([])
-const wishlist = ref([])
-const page = ref(1)
 
 // Helper: assign default image for categories
 const getCategoryImage = (categoryName) => {
     const lower = categoryName.toLowerCase()
     if (lower.includes('laptop')) return laptop
-    if (lower.includes('desktop')) return desktop1
+    if (lower.includes('tablet')) return tablet
     if (lower.includes('printer')) return printer
     if (lower.includes('monitor')) return monitor
     if (lower.includes('phone')) return phone
@@ -87,22 +85,6 @@ function handleCategory(category) {
 
 function addToCart(product) {
     cart.value.push({ ...product, quantity: 1 })
-}
-
-function removeFromWishlist(id) {
-    wishlist.value = wishlist.value.filter(item => item.id !== id)
-}
-
-function applyFilters(filters) {
-    // Add actual filtering logic here
-}
-
-function sortProducts(type) {
-    // Add actual sort logic here
-}
-
-function changePage(p) {
-    page.value = p
 }
 
 </script>

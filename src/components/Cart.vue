@@ -179,4 +179,14 @@ function clearCart() {
     border-radius: 6px;
     cursor: pointer;
 }
+
+@media (max-width: 768px) {
+    thead {
+        display: none;
+    }
+
+    .table-cont {
+        overflow-x: hidden;
+    }
+}
 </style>

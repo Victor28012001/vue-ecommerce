@@ -35,8 +35,9 @@
                             style="width: 50%;display: flex;flex-direction: column;justify-content: space-between;align-items: flex-start;font-size: smaller;"><span>{{
                                 item.name }}</span> <span style="color: #0f0f0f; font-size: smaller;">Qty:
                                 {{ item.quantity }}</span></span>
-                        <span style="width: 20%;font-weight: 500;font-size: smaller;display: flex;align-items: center;">{{
-                            formatCurrency(item.new_price * item.quantity) }}</span>
+                        <span
+                            style="width: 20%;font-weight: 500;font-size: smaller;display: flex;align-items: center;">{{
+                                formatCurrency(item.new_price * item.quantity) }}</span>
                     </div>
                 </div>
 
@@ -98,8 +99,10 @@ h3 {
     gap: 12px;
 }
 
+
 .cont1 {
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
     width: 100%;
 }
@@ -107,9 +110,20 @@ h3 {
 .cont2 {
     display: flex;
     flex-direction: column;
-    width: 50%;
+    width: 100%;
     align-items: flex-start;
     gap: 6px;
+}
+
+@media (min-width: 768px) {
+    .cont1 {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .cont2 {
+        width: 50%;
+    }
 }
 
 .info {
@@ -122,6 +136,7 @@ h3 {
     border-radius: 12px;
     font-size: small;
     width: 90%;
+    text-align: left;
 }
 
 

@@ -30,7 +30,7 @@
           <span class="price-old">${{ props.product.old_price }}</span>
         </div>
         <button @click="addToCart" class="add-to-cart-btn">
-          Add
+          {{ isCarted ? 'Remove' : 'Add' }}
         </button>
       </div>
     </div>
@@ -39,7 +39,6 @@
 
 <script setup>
 import { computed } from 'vue'
-import product_img from '/src/assets/images/product_img.png'
 import gallery_img from '/src/assets/images/gallery.png'
 import { useWishlistStore } from '../stores/wishlist'
 import { useCartStore } from '../stores/cart'
@@ -60,6 +59,10 @@ const cart = useCartStore()
 
 const isWishlisted = computed(() =>
   wishlist.items.some(item => item.id === props.product.id)
+)
+
+const isCarted = computed(() =>
+  cart.items.some(item => item.id === props.product.id)
 )
 
 function toggleWishlist() {
@@ -160,6 +163,7 @@ function addToCart() {
   border-radius: 0.375rem;
   text-decoration: none;
   transition: background-color 0.3s ease;
+  border: none;
 }
 
 .wishlist-btn {

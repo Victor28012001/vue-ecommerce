@@ -175,7 +175,7 @@ const getBackButtonLabel = () => {
 
 <style scoped>
 .container {
-    padding: 50px 20px;
+    padding: 50px 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -184,11 +184,32 @@ const getBackButtonLabel = () => {
 
 .big-cont {
     display: flex;
+    flex-direction: column;
     gap: 2rem;
     padding: 12px 4rem;
     min-height: 60vh;
     margin: 30px 0;
     width: 100%;
+}
+
+@media (min-width: 768px) {
+    .big-cont {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .container {
+        padding: 50px 20px;
+    }
+
+    .content-container {
+        width: 60%;
+    }
+
+    .cont2 {
+        width: 30%;
+    }
+
 }
 
 .empty-wishlist {
@@ -221,7 +242,7 @@ const getBackButtonLabel = () => {
 }
 
 .cont2 {
-    width: 30%;
+    width: 100%;
 }
 
 .step-wrapper {
@@ -300,7 +321,7 @@ const getBackButtonLabel = () => {
 .content-container {
     flex: 1;
     text-align: center;
-    width: 60%;
+    width: 100%;
     border-radius: 12px;
     overflow: hidden;
     border: 1px solid #d4d2d2;

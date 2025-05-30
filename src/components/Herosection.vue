@@ -12,7 +12,9 @@
       </p>
       <div class="hero-buttons">
         <button class="btn primary">Shop Now</button>
-        <button class="btn secondary">View All Products</button>
+        <router-link to="/allProducts">
+          <button class="btn secondary">View All Products</button>
+        </router-link>
       </div>
     </div>
 

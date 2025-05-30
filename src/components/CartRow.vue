@@ -7,8 +7,8 @@
         <span>{{ item.category }}</span>
       </div>
     </td>
-    <td>${{ item.new_price?.toFixed(2) ?? '0.00' }}</td>
-    <td>
+    <td class="tr1">${{ item.new_price?.toFixed(2) ?? '0.00' }}</td>
+    <td class="tr2">
       <div class="quantity">
         <button class="minus" aria-label="Decrease" @click="decrease" :disabled="quantity <= minQuantity">
           &minus;
@@ -21,7 +21,7 @@
       </div>
     </td>
     <td>
-      ${{ (item.new_price * quantity)?.toFixed(2) ?? '0.00' }}
+      <span class="total">${{ (item.new_price * quantity)?.toFixed(2) ?? '0.00' }}</span>
       <span class="remove-icon" @click="$emit('remove', item.id)">✖</span>
     </td>
   </tr>
@@ -107,8 +107,8 @@ watch(quantity, (newQuantity) => {
 
 .quantity button:disabled {
   background-color: transparent;
-    cursor: not-allowed;
-    border: 1px solid #E7E7E7;
+  cursor: not-allowed;
+  border: 1px solid #E7E7E7;
 }
 
 .quantity button:hover:not(:disabled) {
@@ -134,6 +134,41 @@ watch(quantity, (newQuantity) => {
 .input-box[type='number'] {
   appearance: textfield;
   -moz-appearance: textfield;
+}
+
+@media (max-width: 768px) {
+  tr {
+    position: relative;
+  }
+
+  .product-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: max-content;
+  }
+
+  .tr1 {
+    position: absolute;
+    left: 22%;
+    top: 80%;
+    font-size: smaller;
+    font-weight: 500;
+    padding: 0;
+  }
+
+  .tr2 {
+    position: absolute;
+    left: 55%;
+    top: 55%;
+    font-size: smaller;
+    font-weight: 500;
+    padding: 0;
+  }
+
+  .total {
+    display: none;
+  }
 }
 
 td {

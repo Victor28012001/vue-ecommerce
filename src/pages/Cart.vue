@@ -23,20 +23,32 @@ const cart = useCartStore()
 <style scoped>
 .cont {
   display: flex;
+  flex-direction: column;
   gap: 4rem;
-  padding: 12px 4rem;
+  padding: 12px 2rem;
   min-height: 60vh;
 }
 
-.cont1 {
-  width: 70%;
+
+@media (min-width: 768px) {
+  .cont1 {
+    width: 70%;
+  }
+
+  .cont2 {
+    width: 30%;
+  }
+
+  .cont {
+    display: flex;
+    flex-direction: row;
+    gap: 4rem;
+    padding: 12px 4rem;
+    min-height: 60vh;
+  }
 }
 
-.cont2 {
-  width: 30%;
-}
 
-/* Make the cart full-width when empty */
 .single-column {
   flex-direction: column;
 }

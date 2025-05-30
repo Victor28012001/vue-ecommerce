@@ -882,7 +882,7 @@
   {
     "id": 81,
     "name": "HP Desktop Model 881",
-    "category": "desktops",
+    "category": "tablets",
     "brand": "HP",
     "use": "Office work",
     "old_price": 1970.79,
@@ -893,7 +893,7 @@
   {
     "id": 82,
     "name": "Acer Desktop Model 461",
-    "category": "desktops",
+    "category": "tablets",
     "brand": "Acer",
     "use": "Gaming",
     "old_price": 306.09,
@@ -904,7 +904,7 @@
   {
     "id": 83,
     "name": "Acer Desktop Model 746",
-    "category": "desktops",
+    "category": "tablets",
     "brand": "Acer",
     "use": "Gaming",
     "old_price": 1275.79,
@@ -915,7 +915,7 @@
   {
     "id": 84,
     "name": "Dell Desktop Model 931",
-    "category": "desktops",
+    "category": "tablets",
     "brand": "Dell",
     "use": "Development",
     "old_price": 1584.66,
@@ -926,7 +926,7 @@
   {
     "id": 85,
     "name": "Acer Desktop Model 538",
-    "category": "desktops",
+    "category": "tablets",
     "brand": "Acer",
     "use": "Office work",
     "old_price": 741.87,
@@ -937,7 +937,7 @@
   {
     "id": 86,
     "name": "Acer Desktop Model 950",
-    "category": "desktops",
+    "category": "tablets",
     "brand": "Acer",
     "use": "Development",
     "old_price": 1669.97,
@@ -948,7 +948,7 @@
   {
     "id": 87,
     "name": "HP Desktop Model 163",
-    "category": "desktops",
+    "category": "tablets",
     "brand": "HP",
     "use": "Gaming",
     "old_price": 640.01,
@@ -959,7 +959,7 @@
   {
     "id": 88,
     "name": "Dell Desktop Model 457",
-    "category": "desktops",
+    "category": "tablets",
     "brand": "Dell",
     "use": "Gaming",
     "old_price": 1142.06,
@@ -970,7 +970,7 @@
   {
     "id": 89,
     "name": "HP Desktop Model 851",
-    "category": "desktops",
+    "category": "tablets",
     "brand": "HP",
     "use": "Development",
     "old_price": 1095.9,
@@ -981,7 +981,7 @@
   {
     "id": 90,
     "name": "HP Desktop Model 935",
-    "category": "desktops",
+    "category": "tablets",
     "brand": "HP",
     "use": "Office work",
     "old_price": 1537.68,
@@ -992,7 +992,7 @@
   {
     "id": 91,
     "name": "Dell Desktop Model 993",
-    "category": "desktops",
+    "category": "tablets",
     "brand": "Dell",
     "use": "Office work",
     "old_price": 983.18,
@@ -1003,7 +1003,7 @@
   {
     "id": 92,
     "name": "HP Desktop Model 751",
-    "category": "desktops",
+    "category": "tablets",
     "brand": "HP",
     "use": "Development",
     "old_price": 414.42,
@@ -1014,7 +1014,7 @@
   {
     "id": 93,
     "name": "HP Desktop Model 210",
-    "category": "desktops",
+    "category": "tablets",
     "brand": "HP",
     "use": "Gaming",
     "old_price": 776.65,
@@ -1025,7 +1025,7 @@
   {
     "id": 94,
     "name": "Lenovo Desktop Model 266",
-    "category": "desktops",
+    "category": "tablets",
     "brand": "Lenovo",
     "use": "Office work",
     "old_price": 275.83,
@@ -1036,7 +1036,7 @@
   {
     "id": 95,
     "name": "Dell Desktop Model 373",
-    "category": "desktops",
+    "category": "tablets",
     "brand": "Dell",
     "use": "Development",
     "old_price": 486.91,
@@ -1047,7 +1047,7 @@
   {
     "id": 96,
     "name": "Dell Desktop Model 701",
-    "category": "desktops",
+    "category": "tablets",
     "brand": "Dell",
     "use": "Gaming",
     "old_price": 1516.68,
@@ -1058,7 +1058,7 @@
   {
     "id": 97,
     "name": "HP Desktop Model 352",
-    "category": "desktops",
+    "category": "tablets",
     "brand": "HP",
     "use": "Development",
     "old_price": 350.34,
@@ -1069,7 +1069,7 @@
   {
     "id": 98,
     "name": "Acer Desktop Model 451",
-    "category": "desktops",
+    "category": "tablets",
     "brand": "Acer",
     "use": "Gaming",
     "old_price": 775.98,
@@ -1080,7 +1080,7 @@
   {
     "id": 99,
     "name": "Lenovo Desktop Model 688",
-    "category": "desktops",
+    "category": "tablets",
     "brand": "Lenovo",
     "use": "Office work",
     "old_price": 1464.37,
@@ -1091,7 +1091,7 @@
   {
     "id": 100,
     "name": "Dell Desktop Model 337",
-    "category": "desktops",
+    "category": "tablets",
     "brand": "Dell",
     "use": "Development",
     "old_price": 1093.73,

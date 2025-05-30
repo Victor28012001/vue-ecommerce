@@ -18,10 +18,10 @@
           <HeartIcon class="icon" />
           <span>Wishlist</span>
         </router-link>
-        <router-link to="/cart" class="router-link links">
+        <div class="router-link links" @click="isCartOpen = true">
           <ShoppingCartIcon class="icon" />
           <span>Cart</span>
-        </router-link>
+        </div>
       </div>
     </div>
 
@@ -31,13 +31,19 @@
         <button class="button1">Search</button>
       </div>
     </div>
+
+    <CartSlideOver :isOpen="isCartOpen" @close="isCartOpen = false" />
   </header>
 </template>
 
 
 
 <script setup>
+import { ref } from 'vue'
 import { ShoppingCartIcon, HeartIcon } from '@heroicons/vue/outline'
+import CartSlideOver from './CartSlideOver.vue'
+
+const isCartOpen = ref(false)
 </script>
 
 <style scoped>
@@ -104,6 +110,7 @@ import { ShoppingCartIcon, HeartIcon } from '@heroicons/vue/outline'
   align-items: center;
   font-family: "Roboto", sans-serif;
   font-size: 12px;
+  cursor: pointer;
 }
 
 .end {

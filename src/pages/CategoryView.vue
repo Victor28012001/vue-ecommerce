@@ -2,7 +2,7 @@
   <div>
     <Navbar />
 
-    <HeroCategory :background="Bg" :title="`Shop The Best ${categoryParam}`"
+    <HeroCategory :background="getCategoryImage(categoryParam)" :title="`Shop The Best ${categoryParam}`"
       description="Discover premium tech products with flexible payment options." />
 
     <div class="layout">
@@ -56,6 +56,12 @@ import FilterPanel from '../components/FilterPanel.vue'
 import SortOptions from '../components/SortOptions.vue'
 import Paginator from '../components/Paginator.vue'
 import Bg from '../assets/images/Bg1.png'
+import Accessories from '../assets/images/BgAccessory.png'
+import Laptops from '../assets/images/BgLaptop.png'
+import Monitors from '../assets/images/BgMonitor.png'
+import Phones from '../assets/images/BgPhone.png'
+import Printers from '../assets/images/BgPrinter.png'
+import Tablets from '../assets/images/BgTablet.png'
 const isDesktop = ref(window.innerWidth >= 768)
 
 
@@ -70,8 +76,17 @@ const products = ref([])
 const filteredProducts = ref([])
 const categories = ref([])
 
-function getCategoryImage(cat) {
-  return `${cat.toLowerCase().replace(/\s+/g, '-')}.png`
+
+// Helper: assign default image for categories
+const getCategoryImage = (categoryName) => {
+    const lower = categoryName.toLowerCase()
+    if (lower.includes('laptop')) return Laptops
+    if (lower.includes('tablet')) return Tablets
+    if (lower.includes('printer')) return Printers
+    if (lower.includes('monitor')) return Monitors
+    if (lower.includes('phone')) return Phones
+    if (lower.includes('accessor')) return Accessories
+    return Bg // default fallback
 }
 
 // Load data

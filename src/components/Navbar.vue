@@ -31,7 +31,7 @@ const route = useRoute()
 
 const categories = [
   'Laptops',
-  'Desktops',
+  'Tablets',
   'Printers',
   'Monitors',
   'Phones',
