@@ -241,9 +241,9 @@ const getBackButtonLabel = () => {
     width: 70%;
 }
 
-.cont2 {
+/*.cont2 {
     width: 100%;
-}
+}*/
 
 .step-wrapper {
     display: flex;
