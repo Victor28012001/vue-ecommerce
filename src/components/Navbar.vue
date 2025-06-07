@@ -1,17 +1,18 @@
 <!-- src/components/Navbar.vue -->
 <template>
   <nav class="p-4 bg-gray-100">
-    <div v-if="isCategoryView || isWishlistView || isCartView || isCheckoutView" class="cat">
-      <router-link to="/" class="nav-link">Home / </router-link>
+    <div v-if="customLabel || isCategoryView || isWishlistView || isCartView || isCheckoutView" class="cat">
+      <router-link to="/" class="nav-link">Home /</router-link>
       <span class="nav-link">
         {{
-          isWishlistView ? 'Wishlist' :
-            isCartView ? 'Cart' :
-              isCheckoutView ? 'Checkout' :
+          customLabel ? 'Account / ' + customLabel :
+            isWishlistView ? 'Wishlist' :
+              isCartView ? 'Cart' :
+                isCheckoutView ? 'Checkout' :
         routeCategoryName
         }}
-
       </span>
+
     </div>
 
     <div v-else class="cat">
@@ -26,6 +27,13 @@
 
 <script setup>
 import { useRoute } from 'vue-router'
+import { computed } from 'vue'
+
+
+const props = defineProps({
+  customLabel: String
+})
+
 
 const route = useRoute()
 

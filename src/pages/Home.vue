@@ -17,7 +17,6 @@
             </div>
         </div>
         <ServicesSection />
-        <!-- <OrderSummary :cart="cart" /> -->
     </div>
 </template>
 

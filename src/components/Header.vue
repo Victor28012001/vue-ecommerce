@@ -14,6 +14,9 @@
       </div>
 
       <div class="end">
+        <router-link to="/loginRegister" class="router-link links">
+          <span>login || Register</span>
+        </router-link>
         <router-link to="/wishlist" class="router-link links">
           <HeartIcon class="icon" />
           <span>Wishlist</span>
