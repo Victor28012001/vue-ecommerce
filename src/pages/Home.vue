@@ -2,9 +2,7 @@
     <div class="home">
         <Navbar />
         <HeroSection />
-        <!-- <div class="p-4 text-gray-500">Select a category to view products.</div> -->
         <TopCategory v-if="categories.length" :categories="categories" @select="handleCategory" />
-        <!-- <CategorySelector :categories="categories" @select="handleCategory" /> -->
         <FeaturedProducts v-if="filteredProducts.length" :products="filteredProducts" @add-to-cart="addToCart" />
         <div class="cta-layout">
             <Cta class="cta-large" title="Premium Laptops" tag="Limited Time Offer"

@@ -4,7 +4,7 @@
       <div class="logo-wrapper">
         <div class="logo">
           <router-link to="/" class="router-link links">
-            <h1>LOGO</h1>
+            <img src="/images/logo.jpg" alt="" width="60">
           </router-link>
         </div>
         <div class="search-bar1">
@@ -14,9 +14,16 @@
       </div>
 
       <div class="end">
-        <router-link to="/loginRegister" class="router-link links">
-          <span>login || Register</span>
-        </router-link>
+        <template v-if="isLoggedIn">
+          <router-link to="/dashboard" class="router-link links">
+            <span>Profile</span>
+          </router-link>
+        </template>
+        <template v-else>
+          <router-link to="/loginRegister" class="router-link links">
+            <span>Login || Register</span>
+          </router-link>
+        </template>
         <router-link to="/wishlist" class="router-link links">
           <HeartIcon class="icon" />
           <span>Wishlist</span>
@@ -42,11 +49,24 @@
 
 
 <script setup>
-import { ref } from 'vue'
-import { ShoppingCartIcon, HeartIcon } from '@heroicons/vue/outline'
+import { ref, onMounted } from 'vue'
+import { ShoppingCartIcon, HeartIcon, PhotographIcon } from '@heroicons/vue/outline'
 import CartSlideOver from './CartSlideOver.vue'
 
 const isCartOpen = ref(false)
+const isLoggedIn = ref(false)
+
+onMounted(() => {
+  // Simple login check
+  isLoggedIn.value = !!(localStorage.getItem('token') || getCookie('token'))
+})
+
+// Utility to get cookie by name
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+}
 </script>
 
 <style scoped>

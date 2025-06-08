@@ -4,6 +4,10 @@ import App from './App.vue'
 import router from './router'
 import { createPinia } from 'pinia'
 import './assets/main.css'
+import axios from 'axios';
+
+axios.defaults.withCredentials = true;
+
 
 const app = createApp(App)
 

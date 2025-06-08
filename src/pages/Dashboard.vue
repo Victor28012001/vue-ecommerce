@@ -21,12 +21,23 @@
                 <component :is="activeComponent" />
             </main>
         </div>
+        <div>
+            <h3>Your Cart Items</h3>
+            <ul>
+                <li v-for="line in basketLines" :key="line.id">
+                    {{ line.product_name || line.product || 'Unnamed product' }} -
+                    Quantity: {{ line.quantity }} -
+                    Price: {{ line.price_excl_tax }}
+                </li>
+            </ul>
+        </div>
     </div>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import { useRouter, RouterLink } from 'vue-router'
+import { useRouter } from 'vue-router'
+import axios from 'axios'
 
 const router = useRouter()
 
@@ -35,11 +46,9 @@ const router = useRouter()
 import ProfileSection from '../components/dashboard/ProfileSection.vue'
 import OrderHistory from '../components/dashboard/OrderHistory.vue'
 import AddressBook from '../components/dashboard/AddressBook.vue'
-import EmailHistory from '../components/dashboard/EmailHistory.vue'
-import ProductAlerts from '../components/dashboard/ProductAlerts.vue'
-import Notifications from '../components/dashboard/Notifications.vue'
-import WishLists from '../components/dashboard/WishLists.vue'
 import Navbar from '../components/Navbar.vue'
+
+const basketLines = ref([]);
 
 const activeSection = ref('profile')
 
@@ -47,10 +56,6 @@ const menuItems = [
     { key: 'profile', label: 'Profile' },
     { key: 'orders', label: 'Order History' },
     { key: 'addresses', label: 'Address Book' },
-    { key: 'emails', label: 'Email History' },
-    { key: 'alerts', label: 'Product Alerts' },
-    { key: 'notifications', label: 'Notifications' },
-    { key: 'wishlists', label: 'Wish Lists' },
 ]
 
 const activeComponent = computed(() => {
@@ -58,10 +63,6 @@ const activeComponent = computed(() => {
         case 'profile': return ProfileSection
         case 'orders': return OrderHistory
         case 'addresses': return AddressBook
-        case 'emails': return EmailHistory
-        case 'alerts': return ProductAlerts
-        case 'notifications': return Notifications
-        case 'wishlists': return WishLists
         default: return ProfileSection
     }
 })
@@ -70,15 +71,62 @@ const activeSectionLabel = computed(() => {
     return menuItems.find(i => i.key === activeSection.value)?.label || ''
 })
 
+
 const logout = () => {
-    localStorage.removeItem('token')
-    router.push('/loginRegister')
+  localStorage.removeItem('token')
+  document.cookie = "token=; path=/; max-age=0"
+  isLoggedIn.value = false
+  router.push('/')
 }
+
 
 onMounted(() => {
     const token = localStorage.getItem('token')
-    //   if (!token) router.push('/loginRegister')
+    if (!token) router.push('/loginRegister')
 })
+
+
+const getCart = async () => {
+    try {
+        const token = localStorage.getItem('token') || getCookie('token');
+        const response = await axios.get('https://api.defonix.com/api/basket/', {
+            withCredentials: true, // important to send session cookie
+            headers: {
+                'Accept': 'application/json',
+                Authorization: `Token ${token}`,
+            }
+        });
+
+        console.log('Cart:', response.data);
+
+        const linesUrl = response.data.lines;
+        await getCartLines(linesUrl);
+
+    } catch (error) {
+        console.error('Failed to fetch cart:', error.response?.data || error.message);
+    }
+};
+getCart();
+
+const getCartLines = async (url) => {
+    try {
+        const token = localStorage.getItem('token') || getCookie('token');
+
+        const response = await axios.get(url, {
+            withCredentials: true,
+            headers: {
+                'Accept': 'application/json',
+                Authorization: `Token ${token}`,
+            }
+        });
+
+        basketLines.value = response.data; // usually an array of line items
+        console.log('Basket lines:', basketLines.value);
+
+    } catch (error) {
+        console.error('Failed to fetch basket lines:', error.response?.data || error.message);
+    }
+};
 </script>
 
 <style scoped>
