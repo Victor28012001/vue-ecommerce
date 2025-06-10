@@ -11,10 +11,9 @@
     </div>
     <div class="sale-card-content">
       <p>{{ props.product.category }}</p>
-      <h5 class="sale-card-title">{{ props.product.name }}</h5>
+      <h5 class="sale-card-title">{{ props.product.title.split(' - ')[0] }}</h5>
       <div class="sale-card-rating">
         <div class="stars">
-          <!-- Repeat stars based on props.product.rating -->
           <svg v-for="star in 5" :key="star" :class="star <= props.product.rating ? 'filled' : ''" class="star"
             viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
             <path
@@ -26,8 +25,9 @@
       </div>
       <div class="sale-card-price">
         <div class="prices">
-          <span class="price-new">${{ props.product.new_price }}</span>
-          <span class="price-old">${{ props.product.old_price }}</span>
+          <span class="price-new">{{ props.product.currency || '$' }}{{ props.product.new_price?.toFixed(2) ?? '0.00'
+            }}</span>
+          <span class="price-old">{{ props.product.old_price }}</span>
         </div>
         <button @click="addToCart" class="add-to-cart-btn">
           {{ isCarted ? 'Remove' : 'Add' }}
@@ -42,6 +42,8 @@ import { computed } from 'vue'
 import gallery_img from '/src/assets/images/gallery.png'
 import { useWishlistStore } from '../stores/wishlist'
 import { useCartStore } from '../stores/cart'
+import { v4 as uuidv4 } from 'uuid'; // top of the file
+
 
 // Destructure product prop
 const props = defineProps({
@@ -69,9 +71,75 @@ function toggleWishlist() {
   wishlist.toggleItem(props.product)
 }
 
-function addToCart() {
-  cart.addItem(props.product)
+// function addToCart() {
+//   console.log(props.product)
+//   cart.addItem(props.product)
+// }
+async function addToCart() {
+  const product = props.product;
+
+  if (!product?.url || !product?.stockrecords) {
+    console.warn("Product is missing required fields:", product);
+    return;
+  }
+
+  const productUrl = product.url;
+  const stockrecordBase = typeof product.stockrecords === 'string'
+    ? product.stockrecords
+    : (Array.isArray(product.stockrecords) && product.stockrecords.length > 0
+      ? product.stockrecords[0].url
+      : null);
+
+  const stockrecordUrl = stockrecordBase
+    ? `${stockrecordBase}${product.id}/`
+    : null;
+
+  const quantity = 1;
+  const priceCurrency = product.priceData?.currency || 'USD';
+  const priceExclTax = parseFloat(product.priceData?.excl_tax ?? 0);
+  const priceInclTax = parseFloat(product.priceData?.incl_tax ?? 0);
+
+  if (!productUrl || !stockrecordUrl) {
+    console.warn('Missing productUrl or stockrecordUrl');
+    return;
+  }
+
+  const stockrecordId = stockrecordUrl.split('/').filter(Boolean).pop();
+
+  const lineReference = product.id && stockrecordId
+    ? `prod-${product.id}-stock-${stockrecordId}`
+    : `line-${uuidv4()}`;
+
+  // ✅ Use Pinia store directly
+  const existingItem = cart.items.find(item => item.line_reference === lineReference);
+
+  if (existingItem) {
+    // Let your store handle quantity updates
+    await cart.addItem({
+      product: productUrl,
+      stockrecord: stockrecordUrl,
+      quantity,
+      price_currency: priceCurrency,
+      price_excl_tax: priceExclTax,
+      price_incl_tax: priceInclTax,
+      line_reference: lineReference,
+    });
+  } else {
+    await cart.addItem({
+      product: productUrl,
+      stockrecord: stockrecordUrl,
+      quantity,
+      price_currency: priceCurrency,
+      price_excl_tax: priceExclTax,
+      price_incl_tax: priceInclTax,
+      line_reference: lineReference,
+    });
+  }
 }
+
+
+
+
 </script>
 
 <style scoped>

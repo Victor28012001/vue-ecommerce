@@ -3,7 +3,7 @@
     <td class="product-info">
       <img :src="item.image" :alt="item.name" />
       <div class="prod-infos">
-        <span>{{ item.name }}</span>
+        <span>{{ item.title.split(' - ')[0] }}</span>
         <span>{{ item.category }}</span>
       </div>
     </td>
@@ -27,7 +27,7 @@
   </tr>
 </template>
 
-<script setup>
+<!-- <script setup>
 import { ref, watch } from 'vue'
 
 const props = defineProps({
@@ -64,7 +64,80 @@ function increase() {
 watch(quantity, (newQuantity) => {
   emit('update-quantity', { id: props.item.id, quantity: newQuantity })
 })
+</script> -->
+
+<script setup>
+import { ref, watch } from 'vue'
+import axios from 'axios'
+
+// Props passed in from cart store/component
+const props = defineProps({
+  item: {
+    type: Object,
+    required: true
+  }
+})
+
+const emit = defineEmits(['remove', 'update-quantity'])
+
+const minQuantity = 1
+const maxQuantity = 10
+
+const quantity = ref(props.item.quantity ?? 1)
+
+// Helper to read CSRF token from cookies
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+// Update backend with new quantity
+async function updateQuantityAPI(newQuantity) {
+  try {
+    const csrfToken = getCookie('csrftoken');
+    const token = localStorage.getItem('token');
+
+    const formData = new FormData();
+    formData.append('quantity', newQuantity);
+
+    await axios.patch(props.item.basketLineUrl, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'X-CSRFTOKEN': csrfToken,
+        'Authorization': `Token ${token}`,
+        'Accept': 'application/json',
+      },
+      withCredentials: true,
+    });
+
+    emit('update-quantity', { id: props.item.id, quantity: newQuantity });
+  } catch (error) {
+    console.error('Failed to update quantity:', error);
+  }
+}
+
+// Quantity input and buttons
+function validateQuantity() {
+  if (quantity.value < minQuantity) quantity.value = minQuantity;
+  if (quantity.value > maxQuantity) quantity.value = maxQuantity;
+}
+
+function decrease() {
+  if (quantity.value > minQuantity) quantity.value--;
+}
+
+function increase() {
+  if (quantity.value < maxQuantity) quantity.value++;
+}
+
+// Watch quantity and trigger API update
+watch(quantity, (newQuantity) => {
+  updateQuantityAPI(newQuantity);
+});
 </script>
+
+
 
 <style scoped>
 .product-info {

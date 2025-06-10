@@ -20,11 +20,11 @@
                 <ul v-else class="cart-items">
                     <li class="cart-item" v-for="item in cartItems" :key="item.id">
                         <div class="item-img">
-                            <img :src="item.image" :alt="item.name" />
+                            <img :src="item.image" :alt="item.title.split(' - ')[0]" />
                         </div>
                         <div class="item-details">
                             <div class="item-title-price">
-                                <h3>{{ item.name }}</h3>
+                                <h3>{{ item.title.split(' - ')[0] }}</h3>
                                 <button @click="removeItem(item.id)" class="remove-btn">✕</button>
                             </div>
                             <div class="item-footer">

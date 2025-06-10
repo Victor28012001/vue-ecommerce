@@ -66,8 +66,8 @@ function updateQuantity({ id, quantity }) {
     }
 }
 
-function clearCart() {
-    cart.items = []  // or call a store action like: cart.clearCart()
+async function clearCart() {
+    await cart.clearCart()  
 }
 
 
