@@ -1,7 +1,7 @@
 <template>
   <tr>
     <td class="product-info">
-      <img :src="item.image" :alt="item.name" />
+      <img :src="item.image" :alt="item.title.split(' - ')[0]" />
       <div class="prod-infos">
         <span>{{ item.title.split(' - ')[0] }}</span>
         <span>{{ item.category }}</span>

@@ -15,6 +15,12 @@ export const useCartStore = defineStore("cart", {
       state: "",
       zip: "",
     },
+    basketTotals: {
+      total_excl_tax: "0.00",
+      total_incl_tax: "0.00",
+      total_tax: "0.00",
+      currency: "NGN",
+    },
     payment: {
       nameOnCard: "",
       cardNumber: "",
@@ -32,6 +38,80 @@ export const useCartStore = defineStore("cart", {
   },
 
   actions: {
+    async checkout() {
+      try {
+        const token = localStorage.getItem("token");
+        const csrfToken = getCookie("csrftoken");
+
+        if (!this.basketUrl) {
+          console.warn("No basket URL found, cannot proceed to checkout");
+          return;
+        }
+
+        const payload = {
+          basket: this.basketUrl,
+          guest_email: this.shipping.email,
+          total: this.total.toFixed(2),
+          shipping_method_code: "no-shipping-required",
+          shipping_charge: {
+            currency: this.basketTotals.currency,
+            excl_tax: this.basketTotals.total_excl_tax,
+            incl_tax: this.basketTotals.total_incl_tax,
+            tax: this.basketTotals.total_tax,
+          },
+          shipping_address: {
+            title: "Mr",
+            first_name: this.shipping.firstName,
+            last_name: this.shipping.lastName,
+            line1: this.shipping.address,
+            line2: "",
+            line3: "",
+            line4: this.shipping.city,
+            state: this.shipping.state,
+            postcode: this.shipping.zip,
+            phone_number: this.shipping.phone,
+            notes: "",
+            country: "https://api.defonix.com/api/countries/NG/",
+          },
+          billing_address: {
+            title: "Mr",
+            first_name: this.shipping.firstName,
+            last_name: this.shipping.lastName,
+            line1: this.shipping.address,
+            line2: "",
+            line3: "",
+            line4: this.shipping.city,
+            state: this.shipping.state,
+            postcode: this.shipping.zip,
+            country: "https://api.defonix.com/api/countries/NG/",
+          },
+        };
+
+        const response = await axios.post(
+          "https://api.defonix.com/api/checkout/",
+          payload,
+          {
+            withCredentials: true,
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Token ${token}`,
+              "X-CSRFTOKEN": csrfToken,
+              Accept: "application/json",
+            },
+          }
+        );
+
+        console.log("Checkout successful:", response.data);
+        return response.data;
+      } catch (error) {
+        console.error(
+          "Checkout failed:",
+          error.response?.data || error.message
+        );
+        throw error;
+      }
+    },
+
     async loadBasketItems() {
       try {
         const token = localStorage.getItem("token");
@@ -49,6 +129,13 @@ export const useCartStore = defineStore("cart", {
         console.log("Basket response:", basketRes.data);
 
         this.basketUrl = basketRes.data.url; // <-- UPDATED: save basket url here
+        this.basketTotals = {
+          total_excl_tax: basketRes.data.total_excl_tax,
+          total_incl_tax: basketRes.data.total_incl_tax,
+          total_tax: basketRes.data.total_tax,
+          currency: basketRes.data.currency,
+        };
+        console.log("Basket totals:", this.basketTotals);
         // this.items = []  // <-- Reset items before loading new ones
         const linesUrl = basketRes.data.lines;
         const linesRes = await axios.get(linesUrl, {
@@ -110,6 +197,11 @@ export const useCartStore = defineStore("cart", {
         ...payload,
       };
 
+      const PostPayload = {
+        url: finalPayload.product,
+        quantity: finalPayload.quantity,
+      };
+
       const token = localStorage.getItem("token");
       const csrfToken = getCookie("csrftoken");
 
@@ -148,8 +240,10 @@ export const useCartStore = defineStore("cart", {
         // Add new item to the basket
         try {
           const response = await axios.post(
-            `${this.basketUrl}lines/`,
-            finalPayload,
+            // `${this.basketUrl}lines/`,
+            "https://api.defonix.com/api/basket/add-product/",
+            // finalPayload,
+            PostPayload,
             {
               withCredentials: true,
               headers: {

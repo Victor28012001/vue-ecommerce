@@ -6,7 +6,7 @@
             <div v-for="item in cart.items" :key="item.id" class="summary-row">
                 <span style="width: 30%;"><img :src="item.image" alt="" style="width: 70%;"></span>
                 <span style="width: 50%; display: flex; flex-direction: column;justify-content: space-between;"><span>{{
-                        item.name }}</span> <span style="color: #0f0f0f; font-size: smaller;">Qty:
+                        item.title.split(' - ')[0] }}</span> <span style="color: #0f0f0f; font-size: smaller;">Qty:
                         {{ item.quantity }}</span></span>
                 <span style="width: 20%;font-weight: 500;font-size: smaller;display: flex;align-items: end;">{{
                     formatCurrency(item.new_price * item.quantity) }}</span>

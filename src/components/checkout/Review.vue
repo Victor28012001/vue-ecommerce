@@ -33,7 +33,7 @@
                                 style="width: 70%;"></span>
                         <span
                             style="width: 50%;display: flex;flex-direction: column;justify-content: space-between;align-items: flex-start;font-size: smaller;"><span>{{
-                                item.name }}</span> <span style="color: #0f0f0f; font-size: smaller;">Qty:
+                                item.title.split(' - ')[0] }}</span> <span style="color: #0f0f0f; font-size: smaller;">Qty:
                                 {{ item.quantity }}</span></span>
                         <span
                             style="width: 20%;font-weight: 500;font-size: smaller;display: flex;align-items: center;">{{

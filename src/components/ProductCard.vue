@@ -2,7 +2,7 @@
   <div class="sale-card">
     <div class="img-class">
       <img class="sale-card-image" :src="props.product.image || 'https://via.placeholder.com/300'"
-        :alt="props.product.name" />
+        :alt="props.product.title.split(' - ')[0]" />
       <button @click="toggleWishlist" class="wishlist-btn">
         {{ isWishlisted ? '♥' : '♡' }}
       </button>

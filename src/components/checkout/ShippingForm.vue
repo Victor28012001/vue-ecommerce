@@ -1,17 +1,19 @@
 <template>
   <div class="form-section table-cont">
     <h3>Shipping Information</h3>
-    <form @submit.prevent="validateForm">
+    <form @submit.prevent="submitCheckout">
       <!-- Row 1: First Name & Last Name -->
       <div class="row">
         <div class="col">
           <label for="firstName">First Name</label>
-          <input id="firstName" type="text" @blur="validateFirstName" v-model="form.firstName" placeholder="John" required />
+          <input id="firstName" type="text" @blur="validateFirstName" v-model="form.firstName" placeholder="John"
+            required />
           <small v-if="errors.firstName" class="error">{{ errors.firstName }}</small>
         </div>
         <div class="col">
           <label for="lastName">Last Name</label>
-          <input id="lastName" type="text" @blur="validateLastName" v-model="form.lastName" placeholder="Doe" required />
+          <input id="lastName" type="text" @blur="validateLastName" v-model="form.lastName" placeholder="Doe"
+            required />
           <small v-if="errors.lastName" class="error">{{ errors.lastName }}</small>
         </div>
       </div>
@@ -20,12 +22,14 @@
       <div class="row">
         <div class="col">
           <label for="address">Address</label>
-          <input id="address" type="text" @blur="validateAddress" v-model="form.address" placeholder="542 W. 15th Street" required />
+          <input id="address" type="text" @blur="validateAddress" v-model="form.address"
+            placeholder="542 W. 15th Street" required />
           <small v-if="errors.address" class="error">{{ errors.address }}</small>
         </div>
         <div class="col">
           <label for="phone">Phone Number</label>
-          <input id="phone" type="text" @blur="validatePhone" v-model="form.phone" placeholder="+234 812 345 6789" required />
+          <input id="phone" type="text" @blur="validatePhone" v-model="form.phone" placeholder="+234 812 345 6789"
+            required />
           <small v-if="errors.phone" class="error">{{ errors.phone }}</small>
         </div>
       </div>
@@ -34,7 +38,8 @@
       <div class="row">
         <div class="col">
           <label for="email">Email Address</label>
-          <input id="email" type="email" @blur="validateEmail" v-model="form.email" placeholder="john@example.com" required />
+          <input id="email" type="email" @blur="validateEmail" v-model="form.email" placeholder="john@example.com"
+            required />
           <small v-if="errors.email" class="error">{{ errors.email }}</small>
         </div>
         <div class="col">
@@ -71,7 +76,7 @@
 <script setup>
 import { ref, onMounted, watch, reactive } from 'vue';
 import { useCartStore } from '../../stores/cart';
-import nigeriaData from  "../../assets/data/statesAndCities.json"
+import nigeriaData from "../../assets/data/statesAndCities.json"
 
 const cart = useCartStore();
 const form = cart.shipping;
@@ -147,90 +152,111 @@ const validateForm = () => {
   errors.city = form.city ? '' : 'Please select a city.';
   errors.state = form.state ? '' : 'Please select a state.';
 };
+
+const submitCheckout = async () => {
+  validateForm();
+
+  // Check for any errors
+  const hasErrors = Object.values(errors).some((e) => e !== '');
+  if (hasErrors) {
+    console.warn("Fix form errors before submitting.");
+    return;
+  }
+
+  try {
+    const order = await cart.checkout();
+    console.log("Order response:", order);
+    // optionally route to confirmation or show a success message
+  } catch (error) {
+    console.error("Checkout error:", error);
+    // show error to user if needed
+  }
+};
+
 </script>
 
 
 <style scoped>
 .form-section {
-    width: 100%;
-    /* max-width: 700px; */
-    /* border-radius: 10px; */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  /* max-width: 700px; */
+  /* border-radius: 10px; */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
 }
 
 .table-cont {
-    /* border-radius: 12px; */
-    overflow: auto;
-    /* border: 1px solid #d4d2d2; */
+  /* border-radius: 12px; */
+  overflow: auto;
+  /* border: 1px solid #d4d2d2; */
 }
 
 h3 {
-    padding: 16px;
-    font-weight: bold;
-    border-bottom: 1px solid #ddd;
-    border-top: none;
+  padding: 16px;
+  font-weight: bold;
+  border-bottom: 1px solid #ddd;
+  border-top: none;
 }
 
 h3 {
-    margin-bottom: 20px;
-    color: #262525;
-    font-size: 22px;
-    text-align: left;
-    background-color: #F9F9F9;
+  margin-bottom: 20px;
+  color: #262525;
+  font-size: 22px;
+  text-align: left;
+  background-color: #F9F9F9;
 }
 
 form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    padding: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 25px;
 }
 
 label {
-    font-weight: 600;
-    margin-bottom: 5px;
-    display: block;
-    text-align: left;
+  font-weight: 600;
+  margin-bottom: 5px;
+  display: block;
+  text-align: left;
 }
 
 input,
 select {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 16px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
 }
 
 .row {
-    display: flex;
-    gap: 15px;
+  display: flex;
+  gap: 15px;
 }
 
 .col {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .submit-button {
-    margin-top: 20px;
-    background-color: #224893;
-    color: white;
-    padding: 12px;
-    font-weight: bold;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
+  margin-top: 20px;
+  background-color: #224893;
+  color: white;
+  padding: 12px;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
 .submit-button:hover {
-    background-color: #1b3a6e;
+  background-color: #1b3a6e;
 }
 
 @media (max-width: 600px) {
-    .row {
-        flex-direction: column;
-    }
+  .row {
+    flex-direction: column;
+  }
 }
 
 .error {
