@@ -53,24 +53,6 @@
     </div>
 </template>
 
-<!-- 
-<script setup>
-import { computed } from 'vue'
-import { useCartStore } from '../stores/cart' // adjust path as needed
-
-const props = defineProps({
-    isOpen: Boolean
-})
-const emit = defineEmits(['close'])
-
-const cart = useCartStore()
-
-const cartItems = computed(() => cart.items)
-const total = computed(() => cart.total)
-
-const closeCart = () => emit('close')
-const removeItem = (id) => cart.removeItem(id)
-</script> -->
 
 <script setup>
 import { computed, onMounted } from 'vue'

@@ -59,30 +59,68 @@ const handleSubmit = async () => {
 }
 
 
-const login = async () => {
-  try {
-    const csrfToken = getCookie('csrftoken');
 
-    const res = await axios.post('https://api.defonix.com/api/login/', {
+// const login = async () => {
+//   try {
+//     // 1. Get CSRF token (must have visited the API server before to receive it)
+//     const csrfToken = getCookie('csrftoken');
+
+//     const res = await axios.post('https://api.defonix.com/api/login/', {
+//       username: email.value,
+//       password: password.value,
+//     }, {
+//       headers: {
+//         'X-CSRFToken': csrfToken,
+//         'Accept': 'application/json',
+//       },
+//     });
+
+//     console.log('Login session response:', res.data);
+
+//     const tokenRes = await axios.post('https://api.defonix.com/api/auth-token/', {
+//       username: email.value,
+//       password: password.value,
+//     });
+
+//     const token = tokenRes.data.token;
+//     console.log('Token:', token);
+
+//     localStorage.setItem('token', token);
+//     document.cookie = `token=${token}; path=/; secure; samesite=strict`;
+
+//     // Now fetch the updated (owned) basket
+//     await fetchBasket();
+
+//     router.push('/dashboard');
+//   } catch (error) {
+//     console.error('Login failed:', error);
+//     message.value = error.response?.data?.detail || 'Login failed';
+//   }
+// };
+
+const login = async () => {
+  console.log('Attempting login with:', email.value, password.value);
+  try {
+    const res = await axios.post('https://api.defonix.com/api/auth-token/', {
       username: email.value,
       password: password.value,
-    }, {
-      headers: {
-        'X-CSRFToken': csrfToken,
-        'Accept': 'application/json',
-      },
-      withCredentials: true, // ensure sessionid is stored
     });
 
-    console.log('Login session response:', res.data);
+    const authToken = res.data.token;
 
-    router.push('/dashboard');
+    if (authToken) {
+      localStorage.setItem('token', authToken);
+      console.log('Token saved:', authToken);
+      router.push('/dashboard');
+    } else {
+      console.warn('No token received from auth-token endpoint');
+      message.value = 'Login failed: no token received';
+    }
   } catch (error) {
     console.error('Login failed:', error);
-    message.value = error.response?.data?.detail || 'Login failed';
+    message.value = error.response?.data?.non_field_errors?.[0] || 'Login failed';
   }
 };
-
 
 
 const registerAndLogin = async () => {
@@ -96,11 +134,11 @@ const registerAndLogin = async () => {
   await login()
 }
 
-function getCookie(name) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(';').shift();
-}
+//function getCookie(name) {
+  //const value = `; ${document.cookie}`;
+  //const parts = value.split(`; ${name}=`);
+  //if (parts.length === 2) return parts.pop().split(';').shift();
+//}
 
 </script>
 

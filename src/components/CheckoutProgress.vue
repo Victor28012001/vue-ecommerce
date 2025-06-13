@@ -16,7 +16,7 @@
         <div class="indicator-container">
             <div class="step-container">
                 <template v-for="i in totalSteps" :key="'step-' + i">
-                    <div class="step-wrapper">
+                    <div :class="['step-wrapper', { 'last-step': i === totalSteps }]">
                         <!-- Circle + Title -->
                         <div class="step-indicator-group">
                             <div :class="['step-indicator', { 'active-step': i <= step }]">
@@ -240,6 +240,12 @@ const getBackButtonLabel = () => {
 .cont1 {
     width: 70%;
 }
+
+.step-wrapper.last-step {
+  flex: 0;
+}
+
+
 
 /*.cont2 {
     width: 100%;

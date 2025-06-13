@@ -1,10 +1,10 @@
 <template>
-    <main class="main-content">
+    <main class="main-content" v-if="user">
         <h2>Profile</h2>
-            <div class="profile-header">
-                <h3>{{ user.name }}</h3>
-                <p>{{ user.email }}</p>
-            </div>
+        <div class="profile-header">
+            <h3>{{ user.name }}</h3>
+            <p>{{ user.email }}</p>
+        </div>
 
         <table>
             <tbody>
@@ -23,7 +23,6 @@
             </tbody>
         </table>
 
-
         <div class="actions">
             <button class="btn">Edit Profile</button>
             <button class="btn">Change Password</button>
@@ -32,23 +31,59 @@
     </main>
 </template>
 
-<script setup>
-import { ref } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
 
-const user = ref({
-    name: 'MacAnthony Okeke',
-    email: 'macanthonyokeke1@gmail.com',
-    registeredAt: 'June 6, 2025, 9:56 a.m.',
-    avatar: '/images/profile-placeholder.png'
+<script setup>
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
+
+const user = ref(null)
+
+const fetchUserProfile = async () => {
+    try {
+        const token = localStorage.getItem('token')
+        const basketRes = await axios.get('https://api.defonix.com/api/basket/', {
+            headers: {
+                Authorization: `Token ${token}`,
+                Accept: 'application/json',
+            },
+        })
+
+        const userUrl = basketRes.data.owner
+
+        if (userUrl) {
+            const userRes = await axios.get(userUrl, {
+                headers: {
+                    Authorization: `Token ${token}`,
+                    Accept: 'application/json',
+                },
+            })
+
+            console.log('User profile fetched:', userRes)
+
+            user.value = {
+                name: `${userRes.data.first_name} ${userRes.data.last_name}`.trim(),
+                email: userRes.data.email,
+                registeredAt: new Date(userRes.data.date_joined).toLocaleString(),
+            }
+        } else {
+            console.warn('User URL not found in basket response.')
+        }
+    } catch (err) {
+        console.error('Failed to fetch user profile:', err)
+    }
+}
+
+onMounted(() => {
+    fetchUserProfile()
 })
 </script>
 
+
 <style scoped>
 :root {
-  --dark-blue: #0b1e3f;
-  --dim-white: #f2f3f5;
-  --text-color: #fff;
+    --dark-blue: #0b1e3f;
+    --dim-white: #f2f3f5;
+    --text-color: #fff;
 }
 
 .main-content {

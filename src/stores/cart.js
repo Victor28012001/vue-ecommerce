@@ -115,10 +115,10 @@ export const useCartStore = defineStore("cart", {
     async loadBasketItems() {
       try {
         const token = localStorage.getItem("token");
+
         const basketRes = await axios.get(
           "https://api.defonix.com/api/basket/",
           {
-            withCredentials: true,
             headers: {
               Authorization: `Token ${token}`,
               Accept: "application/json",
@@ -139,7 +139,6 @@ export const useCartStore = defineStore("cart", {
         // this.items = []  // <-- Reset items before loading new ones
         const linesUrl = basketRes.data.lines;
         const linesRes = await axios.get(linesUrl, {
-          withCredentials: true,
           headers: {
             Authorization: `Token ${token}`,
             Accept: "application/json",

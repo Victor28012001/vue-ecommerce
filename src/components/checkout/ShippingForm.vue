@@ -6,13 +6,13 @@
       <div class="row">
         <div class="col">
           <label for="firstName">First Name</label>
-          <input id="firstName" type="text" @blur="validateFirstName" v-model="form.firstName" placeholder="John"
+          <input id="firstName" type="text" @blur="validateFirstName" @input="validateFirstName" v-model="form.firstName" placeholder="John"
             required />
           <small v-if="errors.firstName" class="error">{{ errors.firstName }}</small>
         </div>
         <div class="col">
           <label for="lastName">Last Name</label>
-          <input id="lastName" type="text" @blur="validateLastName" v-model="form.lastName" placeholder="Doe"
+          <input id="lastName" type="text" @blur="validateLastName" @input="validateLastName" v-model="form.lastName" placeholder="Doe"
             required />
           <small v-if="errors.lastName" class="error">{{ errors.lastName }}</small>
         </div>
@@ -22,13 +22,13 @@
       <div class="row">
         <div class="col">
           <label for="address">Address</label>
-          <input id="address" type="text" @blur="validateAddress" v-model="form.address"
+          <input id="address" type="text" @blur="validateAddress" @input="validateAddress" v-model="form.address"
             placeholder="542 W. 15th Street" required />
           <small v-if="errors.address" class="error">{{ errors.address }}</small>
         </div>
         <div class="col">
           <label for="phone">Phone Number</label>
-          <input id="phone" type="text" @blur="validatePhone" v-model="form.phone" placeholder="+234 812 345 6789"
+          <input id="phone" type="text" @blur="validatePhone" @input="validatePhone" v-model="form.phone" placeholder="+234 812 345 6789"
             required />
           <small v-if="errors.phone" class="error">{{ errors.phone }}</small>
         </div>
@@ -38,13 +38,13 @@
       <div class="row">
         <div class="col">
           <label for="email">Email Address</label>
-          <input id="email" type="email" @blur="validateEmail" v-model="form.email" placeholder="john@example.com"
+          <input id="email" type="email" @blur="validateEmail" @input="validateEmail" v-model="form.email" placeholder="john@example.com"
             required />
           <small v-if="errors.email" class="error">{{ errors.email }}</small>
         </div>
         <div class="col">
           <label for="zip">Zip/Postal Code</label>
-          <input id="zip" type="text" @blur="validateZip" v-model="form.zip" placeholder="100001" required />
+          <input id="zip" type="text" @blur="validateZip" @input="validateZip" v-model="form.zip" placeholder="100001" required />
           <small v-if="errors.zip" class="error">{{ errors.zip }}</small>
         </div>
       </div>
@@ -156,7 +156,6 @@ const validateForm = () => {
 const submitCheckout = async () => {
   validateForm();
 
-  // Check for any errors
   const hasErrors = Object.values(errors).some((e) => e !== '');
   if (hasErrors) {
     console.warn("Fix form errors before submitting.");
@@ -166,10 +165,8 @@ const submitCheckout = async () => {
   try {
     const order = await cart.checkout();
     console.log("Order response:", order);
-    // optionally route to confirmation or show a success message
   } catch (error) {
     console.error("Checkout error:", error);
-    // show error to user if needed
   }
 };
 
