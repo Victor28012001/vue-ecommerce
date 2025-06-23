@@ -6,7 +6,7 @@
             <p>{{ user.email }}</p>
         </div>
 
-        <table>
+        <table class="profile-table">
             <tbody>
                 <tr>
                     <th>Full Name</th>
@@ -22,12 +22,6 @@
                 </tr>
             </tbody>
         </table>
-
-        <div class="actions">
-            <button class="btn">Edit Profile</button>
-            <button class="btn">Change Password</button>
-            <button class="btn danger">Delete Profile</button>
-        </div>
     </main>
 </template>
 
@@ -40,43 +34,38 @@ const user = ref(null)
 
 const fetchUserProfile = async () => {
     try {
-        const token = localStorage.getItem('token')
-        const basketRes = await axios.get('https://api.defonix.com/api/basket/', {
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+            throw new Error('No token found. User is probably not logged in.');
+        }
+
+        const response = await axios.get('https://api.defonix.com/api/users/3/', {
             headers: {
-                Authorization: `Token ${token}`,
+                Authorization: `Token ${token}`,  // 👈 Add the token here
                 Accept: 'application/json',
             },
-        })
+        });
 
-        const userUrl = basketRes.data.owner
+        const data = response.data;
+        console.log(data);
 
-        if (userUrl) {
-            const userRes = await axios.get(userUrl, {
-                headers: {
-                    Authorization: `Token ${token}`,
-                    Accept: 'application/json',
-                },
-            })
-
-            console.log('User profile fetched:', userRes)
-
-            user.value = {
-                name: `${userRes.data.first_name} ${userRes.data.last_name}`.trim(),
-                email: userRes.data.email,
-                registeredAt: new Date(userRes.data.date_joined).toLocaleString(),
-            }
-        } else {
-            console.warn('User URL not found in basket response.')
-        }
+        user.value = {
+            name: data.username,
+            email: data.email,
+            registeredAt: new Date(data.date_joined).toLocaleString(),
+        };
     } catch (err) {
-        console.error('Failed to fetch user profile:', err)
+        console.error('Failed to fetch user profile:', err);
     }
-}
+};
+
 
 onMounted(() => {
     fetchUserProfile()
 })
 </script>
+
 
 
 <style scoped>
@@ -94,7 +83,8 @@ onMounted(() => {
 
 .profile-header {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    /* align-items: center; */
     gap: 1rem;
     margin-bottom: 1.5rem;
 }

@@ -61,7 +61,7 @@ const props = defineProps({
 const emit = defineEmits(['filter-changed'])
 
 const minLimit = 0
-const maxLimit = 10000
+const maxLimit = 1000000
 const priceGap = 500
 
 const tempMinPrice = ref(minLimit)

@@ -55,7 +55,7 @@ const getCategoryImage = (categoryName) => {
     if (lower.includes('monitor')) return monitor
     if (lower.includes('mobile')) return phone
     if (lower.includes('accessor')) return accessories1
-    return 'cat.png' // default fallback
+    return 'images/cat.png' // default fallback
 }
 
 

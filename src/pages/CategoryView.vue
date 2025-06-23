@@ -7,36 +7,34 @@
 
     <div class="layout">
       <div class="top">
-        <!-- Show filter-toggle on mobile -->
+        <!-- Mobile filter toggle -->
         <button v-if="!isDesktop" class="filter-toggle" @click="showFilter = !showFilter">
           FILTER
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}
-            stroke="currentColor" className="size-6">
-            <path strokeLinecap="round" strokeLinejoin="round"
-              d="M6 13.5V3.75m0 9.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 3.75V16.5m12-3V3.75m0 9.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 3.75V16.5m-6-9V3.75m0 3.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 9.75V10.5" />
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 13.5V3.75m0 9.75…" />
           </svg>
         </button>
 
-        <!-- Show SortOptions with usage filters only on desktop -->
+        <!-- Desktop sort & usage -->
         <SortOptions :usageTypes="uniqueUsages" :isDesktop="isDesktop" @sort-changed="handleSortChange"
           @usage-changed="handleUsageChange" />
-
-
       </div>
 
       <div class="bottom">
-        <!-- Filter Panel: Always visible on desktop, toggleable on mobile -->
+        <!-- Filter panel -->
         <div :class="['filter-panel-wrapper', { open: showFilter }]">
           <FilterPanel :products="categoryProducts" :usages="categoryUsages" :brands="categoryBrands"
             @filter-changed="handleFilterChange" />
         </div>
 
-        <!-- Backdrop (only for mobile) -->
+        <!-- Backdrop for mobile -->
         <div v-if="showFilter" class="backdrop" @click="showFilter = false"></div>
 
-        <!-- Products Section -->
+        <!-- Products grid -->
         <div class="product">
           <div class="product-grid">
+            <!-- <p>Rendering {{ paginatedProducts.length }} products</p> -->
             <ProductCard v-for="product in paginatedProducts" :key="product.id" :product="product" />
           </div>
           <Paginator :page="currentPage" :total-pages="totalPages" @change="handlePageChange" />
@@ -47,14 +45,17 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import axios from 'axios'
+
 import Navbar from '../components/Navbar.vue'
 import HeroCategory from '../components/HeroCategory.vue'
 import ProductCard from '../components/ProductCard.vue'
 import FilterPanel from '../components/FilterPanel.vue'
 import SortOptions from '../components/SortOptions.vue'
 import Paginator from '../components/Paginator.vue'
+
 import Bg from '../assets/images/Bg1.png'
 import Accessories from '../assets/images/BgAccessory.png'
 import Laptops from '../assets/images/BgLaptop.png'
@@ -62,89 +63,178 @@ import Monitors from '../assets/images/BgMonitor.png'
 import Phones from '../assets/images/BgPhone.png'
 import Printers from '../assets/images/BgPrinter.png'
 import Tablets from '../assets/images/BgTablet.png'
+
+// Reactive state
 const isDesktop = ref(window.innerWidth >= 768)
+const showFilter = ref(isDesktop.value)
 
-
-
-// Route param
-const route = useRoute()
-const categoryParam = computed(() => route.params.name || 'Category')
-
-// State
-const showFilter = ref(false)
 const products = ref([])
 const filteredProducts = ref([])
 const categories = ref([])
 
+const route = useRoute()
+const categoryParam = computed(() => route.params.name || 'Category')
 
-// Helper: assign default image for categories
-const getCategoryImage = (categoryName) => {
-    const lower = categoryName.toLowerCase()
-    if (lower.includes('laptop')) return Laptops
-    if (lower.includes('tablet')) return Tablets
-    if (lower.includes('printer')) return Printers
-    if (lower.includes('monitor')) return Monitors
-    if (lower.includes('phone')) return Phones
-    if (lower.includes('accessor')) return Accessories
-    return Bg // default fallback
-}
-
-// Load data
-onMounted(async () => {
-  const jsonData = await import('../assets/data/products.json')
-  products.value = jsonData.default
-
-  const categoryMap = {}
-  products.value.forEach(p => {
-    const cat = p.category || 'Uncategorized'
-    if (!categoryMap[cat]) {
-      categoryMap[cat] = { name: cat, image: getCategoryImage(cat), count: 0 }
-    }
-    categoryMap[cat].count++
-  })
-
-  categories.value = Object.values(categoryMap)
-  filteredProducts.value = categoryProducts.value
-
-  // Auto set filter panel visibility based on screen size
-  const handleResize = () => {
-    isDesktop.value = window.innerWidth >= 768
-    showFilter.value = isDesktop.value
-  }
-  window.addEventListener('resize', handleResize)
-  handleResize()
-})
-
-const categoryProducts = computed(() =>
-  products.value.filter(p =>
-    p.category?.toLowerCase() === categoryParam.value.toLowerCase()
-  )
-)
-
-const categoryUsages = computed(() => {
-  const usages = new Set()
-  categoryProducts.value.forEach(p => {
-    if (p.use) usages.add(p.use)
-  })
-  return Array.from(usages)
-})
-
-const categoryBrands = computed(() => {
-  const brands = new Set()
-  categoryProducts.value.forEach(p => {
-    if (p.brand) brands.add(p.brand)
-  })
-  return Array.from(brands)
-})
-
+// Filters & sorting
 const activeFilters = ref({
   price: { min: 0, max: Infinity },
   brands: [],
   usages: []
 })
-
 const sortOrder = ref('featured')
 const selectedUsage = ref(null)
+
+// Pagination
+const currentPage = ref(1)
+const itemsPerPage = 12
+
+// Resize handling
+function setupResize() {
+  const onResize = () => {
+    isDesktop.value = window.innerWidth >= 768
+    showFilter.value = isDesktop.value
+  }
+  window.addEventListener('resize', onResize)
+  onResize()
+}
+
+// Normalize for matching
+function normalize(str) {
+  return str?.toLowerCase().replace(/[^a-z0-9]/g, '') || ''
+}
+
+// Explicit slug → category map
+function slugToCategory(slug) {
+  const map = {
+    'laptops-desktops': 'Laptops & Desktops',
+    'phone-accessories': 'Phone Accessories',
+    'printers': 'Printers',
+    'monitors': 'Monitors',
+    'tablets': 'Tablets',
+    'phones': 'Phones',
+    'accessories': 'Accessories',
+  }
+
+  const mapped = map[slug] || slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+  return mapped
+}
+
+const currentCategoryName = computed(() => slugToCategory(categoryParam.value))
+
+// Category image helper
+function getCategoryImage(categoryName) {
+  const lower = categoryName.toLowerCase()
+  if (lower.includes('laptop')) return Laptops
+  if (lower.includes('tablet')) return Tablets
+  if (lower.includes('printer')) return Printers
+  if (lower.includes('monitor')) return Monitors
+  if (lower.includes('phone')) return Phones
+  if (lower.includes('accessor')) return Accessories
+  return Bg
+}
+
+// Fetch and map products
+async function fetchProducts() {
+  try {
+    const { data: productList } = await axios.get('https://api.defonix.com/api/products/')
+    const detailed = await Promise.all(productList.map(async p => {
+      try {
+        const { data: d } = await axios.get(p.url)
+        let priceData = null
+        if (d.price) {
+          try {
+            const { data: pr } = await axios.get(d.price)
+            priceData = pr
+          } catch { }
+        }
+
+        const categoryStr = d.categories?.[0] || ''
+        const [mainCategory, brandFromCategory] = categoryStr.split('>').map(s => s.trim())
+
+        const product = {
+          id: d.id,
+          url: d.url,
+          stockrecords: d.stockrecords,
+          title: d.title,
+          description: d.description,
+          category: mainCategory || 'Uncategorized',
+          brand: d.brand || brandFromCategory || null,
+          image: d.images?.[0]?.original || 'https://dummyimage.com/1280x720/fff/aaa',
+          images: d.images?.map(img => img.original) || [],
+          old_price: null,
+          new_price: priceData ? parseFloat(priceData.incl_tax) : null,
+          currency: priceData?.currency || 'USD',
+          priceData: priceData || null,
+          use: d.use,
+          rating: d.rating
+        }
+
+        return product
+      } catch {
+        return null
+      }
+    }))
+
+    products.value = detailed.filter(Boolean)
+    filteredProducts.value = [...products.value]
+
+    // Build categories list
+    const map = {}
+    products.value.forEach(p => {
+      const cat = p.category
+      if (!map[cat]) map[cat] = { name: cat, image: getCategoryImage(cat), count: 0 }
+      map[cat].count++
+    })
+    categories.value = Object.values(map)
+  } catch (e) {
+  }
+}
+
+// Computed sets
+const categoryProducts = computed(() => {
+  const category = currentCategoryName.value
+  const matched = products.value.filter(p => normalize(p.category) === normalize(category))
+  return matched
+})
+
+const categoryBrands = computed(() => {
+  const brands = Array.from(new Set(categoryProducts.value.map(p => p.brand).filter(Boolean)))
+  return brands
+})
+
+const categoryUsages = computed(() =>
+  Array.from(new Set(categoryProducts.value.map(p => p.use).filter(Boolean)))
+)
+
+const uniqueUsages = computed(() => categoryUsages.value)
+
+// Filter, sort, paginate
+function applyFilters() {
+  let list = categoryProducts.value
+
+  list = list.filter(p => {
+    const price = p.new_price || 0
+    const byPrice = price >= activeFilters.value.price.min && price <= activeFilters.value.price.max
+    const byBrand = !activeFilters.value.brands.length || activeFilters.value.brands.includes(p.brand)
+    const byUsage = !activeFilters.value.usages.length || activeFilters.value.usages.includes(p.use)
+    return byPrice && byBrand && byUsage
+  })
+
+  list.sort((a, b) => {
+    switch (sortOrder.value) {
+      case 'price-asc': return (a.new_price || 0) - (b.new_price || 0)
+      case 'price-desc': return (b.new_price || 0) - (a.new_price || 0)
+      case 'rating': return (b.rating || 0) - (a.rating || 0)
+      case 'newest': return b.id - a.id
+      case 'title-a-z': return a.title.localeCompare(b.title)
+      case 'title-z-a': return b.title.localeCompare(a.title)
+      default: return 0
+    }
+  })
+
+  filteredProducts.value = list
+  currentPage.value = 1
+}
 
 function handleFilterChange(filters) {
   activeFilters.value = filters
@@ -158,44 +248,9 @@ function handleSortChange(order) {
 
 function handleUsageChange(usage) {
   selectedUsage.value = usage
-  activeFilters.value.usages = usage ? [usage] : [] // <-- Fix here
+  activeFilters.value.usages = usage ? [usage] : []
   applyFilters()
 }
-
-
-function applyFilters() {
-  filteredProducts.value = products.value
-    .filter(p => {
-      const matchesCategory = p.category?.toLowerCase() === categoryParam.value.toLowerCase()
-      const price = p.new_price || 0
-      const matchesPrice = price >= activeFilters.value.price.min && price <= activeFilters.value.price.max
-      const matchesBrand = !activeFilters.value.brands?.length || activeFilters.value.brands.includes(p.brand)
-      const matchesUsage = !activeFilters.value.usages?.length || activeFilters.value.usages.includes(p.use)
-
-      return matchesCategory && matchesPrice && matchesBrand && matchesUsage
-    })
-    .sort((a, b) => {
-      switch (sortOrder.value) {
-        case 'price-asc':
-          return (a.new_price || 0) - (b.new_price || 0)
-        case 'price-desc':
-          return (b.new_price || 0) - (a.new_price || 0)
-        case 'rating':
-          return (b.rating || 0) - (a.rating || 0)
-        case 'newest':
-          return b.id - a.id // assuming higher id = newer
-        case 'title-a-z':
-          return a.name.localeCompare(b.name)
-        case 'title-z-a':
-          return b.name.localeCompare(a.name)
-        default:
-          return 0 // 'featured' or no sort
-      }
-    })
-}
-
-const currentPage = ref(1)
-const itemsPerPage = 12
 
 const totalPages = computed(() =>
   Math.ceil(filteredProducts.value.length / itemsPerPage)
@@ -203,19 +258,30 @@ const totalPages = computed(() =>
 
 const paginatedProducts = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage
-  const end = start + itemsPerPage
-  return filteredProducts.value.slice(start, end)
+  const items = filteredProducts.value.slice(start, start + itemsPerPage)
+  return items
 })
 
-function handlePageChange(newPage) {
-  if (newPage >= 1 && newPage <= totalPages.value) {
-    currentPage.value = newPage
+function handlePageChange(page) {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 }
 
-const uniqueUsages = computed(() => Array.from(new Set(categoryProducts.value.map(p => p.use)).values()))
+// Init
+onMounted(() => {
+  fetchProducts()
+  applyFilters()
+  setupResize()
+})
+
+watch(categoryProducts, () => {
+  applyFilters()
+})
 </script>
+
+
 
 <style scoped>
 .layout {

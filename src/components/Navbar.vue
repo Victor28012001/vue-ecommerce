@@ -1,50 +1,69 @@
 <!-- src/components/Navbar.vue -->
 <template>
   <nav class="p-4 bg-gray-100">
+    <!-- Special views: account pages, wishlist, cart, etc. -->
     <div v-if="customLabel || isCategoryView || isWishlistView || isCartView || isCheckoutView" class="cat">
       <router-link to="/" class="nav-link">Home /</router-link>
       <span class="nav-link">
         {{
-          customLabel ? 'Account / ' + customLabel :
-            isWishlistView ? 'Wishlist' :
-              isCartView ? 'Cart' :
-                isCheckoutView ? 'Checkout' :
-        routeCategoryName
+          customLabel
+            ? 'Account / ' + customLabel
+            : isWishlistView
+              ? 'Wishlist'
+              : isCartView
+                ? 'Cart'
+                : isCheckoutView
+                  ? 'Checkout'
+                  : routeCategoryName
         }}
       </span>
-
     </div>
 
+    <!-- Product or category breadcrumb passed as props -->
+    <div v-else-if="categories?.length" class="cat">
+      <router-link to="/" class="nav-link">Home /</router-link>
+
+      <template v-for="(cat, index) in categories" :key="index">
+        <router-link :to="`/category/${encodeURIComponent(cat)}/`" class="nav-link">
+          {{ cat }}
+          <span v-if="index < categories.length - 1"> /</span>
+        </router-link>
+      </template>
+
+      <span v-if="current" class="nav-link"> / {{ current }}</span>
+    </div>
+
+
+    <!-- Default: show static category links -->
     <div v-else class="cat">
-      <router-link v-for="category in categories" :key="category" :to="`/category/${category.toLowerCase()}`"
+      <router-link v-for="(category, index) in apiCategories" :key="category.slug" :to="`/category/${category.slug}`"
         class="nav-link">
-        {{ category }}
+        {{ category.name }}
+        <span v-if="index < apiCategories.length - 1"> </span>
       </router-link>
+
     </div>
   </nav>
 </template>
 
-
 <script setup>
+import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-
+import axios from 'axios'
 
 const props = defineProps({
-  customLabel: String
+  customLabel: String,
+  categories: {
+    type: Array,
+    default: () => [],
+  },
+  current: {
+    type: String,
+    default: '',
+  },
 })
 
-
 const route = useRoute()
-
-const categories = [
-  'Laptops',
-  'Tablets',
-  'Printers',
-  'Monitors',
-  'Phones',
-  'Accessories',
-]
-
 const isCategoryView = route.path.startsWith('/category/')
 const isWishlistView = route.path === '/wishlist'
 const isCartView = route.path === '/cart'
@@ -52,7 +71,26 @@ const isCheckoutView = route.path === '/checkout'
 
 const routeCategoryName =
   route.params.name?.charAt(0).toUpperCase() + route.params.name?.slice(1)
+
+// ✅ This will replace staticCategories
+const apiCategories = ref([])
+
+onMounted(async () => {
+  try {
+    const { data } = await axios.get('https://api.defonix.com/api/categories/')
+    apiCategories.value = data
+      .filter(c => c.is_public && c.ancestors_are_public)
+      .map(c => ({
+        name: c.name,
+        slug: c.slug,
+      }))
+  } catch (err) {
+    console.error('Failed to load categories:', err)
+  }
+})
 </script>
+
+
 
 <style scoped>
 .nav-link {

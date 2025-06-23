@@ -24,3 +24,18 @@ a.router-link-exact-active,
   border-radius: 6px;
   background-color: transparent;
 }
+
+.nav-link {
+  margin-right: 4px;
+  text-decoration: none;
+  color: #333;
+}
+.nav-link:last-child {
+  font-weight: 600;
+}
+
+a:-webkit-any-link {
+    color: #5e5c5c;
+    cursor: pointer;
+    text-decoration: none;
+}
