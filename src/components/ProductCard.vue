@@ -1,5 +1,5 @@
 <template>
-  <router-link :to="`/products/${props.product.id}`" class="sale-card-link">
+  <!-- <router-link :to="`/products/${props.product.id}`" class="sale-card-link"> -->
     <div class="sale-card">
       <div class="img-class">
         <img class="sale-card-image" :src="props.product.image || 'https://via.placeholder.com/300'"
@@ -11,10 +11,12 @@
         <span class="gallery"><img :src="gallery_img" alt="">1/8</span>
       </div>
       <div class="sale-card-content">
-        <p>{{ props.product.category }}</p>
-        <h5 class="sale-card-title">
-          {{ productTitle }}
-        </h5>
+        <router-link :to="`/products/${props.product.id}`" class="sale-card-link">
+          <p>{{ props.product.category }}</p>
+          <h5 class="sale-card-title">
+            {{ productTitle }}
+          </h5>
+        </router-link>
         <div class="sale-card-rating">
           <div class="stars">
             <svg v-for="star in 5" :key="star" :class="star <= props.product.rating ? 'filled' : ''" class="star"
@@ -29,7 +31,7 @@
         <div class="sale-card-price">
           <div class="prices">
             <span class="price-new">{{ props.product.currency || '$' }}{{ props.product.new_price?.toFixed(2) ?? '0.00'
-              }}</span>
+            }}</span>
             <span class="price-old">{{ props.product.old_price }}</span>
           </div>
           <button @click="addToCart" class="add-to-cart-btn">
@@ -38,7 +40,7 @@
         </div>
       </div>
     </div>
-  </router-link>
+  <!-- </router-link> -->
 </template>
 
 <script setup>

@@ -38,9 +38,9 @@
         <div class="big-cont">
             <!-- Step Content -->
             <div class="content-container cont1">
-                <ShippingForm v-if="step === 1" />
+                <ShippingForm ref="shippingFormRef" v-if="step === 1" />
                 <PaymentForm v-if="step === 2" />
-                <Review v-if="step === 3" />
+                <Review ref="reviewRef" v-if="step === 3" />
 
                 <!-- Navigation Buttons -->
                 <div class="button-container table-footer">
@@ -77,8 +77,10 @@ import { useCartStore } from '../stores/cart'
 import Cart from "../assets/images/return1.png"
 
 const cart = useCartStore()
+const shippingFormRef = ref(null);
 const step = ref(1)
 const totalSteps = 3
+const reviewRef = ref(null);
 
 const paymentSuccess = ref(false)
 
@@ -87,54 +89,68 @@ const goBack = () => {
     paymentSuccess.value = false
 }
 
-const handleNext = () => {
-    if (step.value < totalSteps) step.value++
-}
+const handleNext = async () => {
+    if (step.value === 1) {
+        const success = await shippingFormRef.value?.submitCheckout();
+        if (success) {
+            step.value++;
+        }
+    } else if (step.value < totalSteps) {
+        step.value++;
+    }
+};
 
 const handlePrevious = () => {
     if (step.value > 1) step.value--
 }
 
-const handleDone = () => {
-    const { firstName, lastName, email, phone, address, city, state: shippingState, zip } = cart.shipping;
+const handleDone = async () => {
+    const success = await reviewRef.value?.checkout();
+    if (success) {
+        // const { email } = cart.shipping;
 
-    const handler = PaystackPop.setup({
-        key: 'pk_test_78d3d54a8141e85996cb25d6cbd082558f9e0b35', // Replace with your real Paystack key
-        email: email,
-        amount: cart.total * 100, // total from the store, in kobo
-        currency: 'NGN',
-        ref: 'ref-' + Math.floor(Math.random() * 1000000000 + 1),
-        metadata: {
-            custom_fields: [
-                {
-                    display_name: "Customer Name",
-                    variable_name: "customer_name",
-                    value: `${firstName} ${lastName}`
-                },
-                {
-                    display_name: "Phone Number",
-                    variable_name: "phone_number",
-                    value: phone
-                },
-                {
-                    display_name: "Address",
-                    variable_name: "shipping_address",
-                    value: `${address}, ${city}, ${shippingState}, ${zip}`
-                }
-            ]
-        },
-        callback: function (response) {
-            alert('Payment successful! Reference: ' + response.reference)
-            paymentSuccess.value = true
-            cart.items = []
-        },
-        onClose: function () {
-            alert('Transaction was not completed');
-        }
-    });
+        const { firstName, lastName, email, phone, address, city, state: shippingState, zip } = cart.shipping;
 
-    handler.openIframe();
-}
+        const handler = PaystackPop.setup({
+            key: 'pk_test_78d3d54a8141e85996cb25d6cbd082558f9e0b35', // Replace with your real Paystack key
+            email: email,
+            amount: cart.total * 100, // total from the store, in kobo
+            currency: 'NGN',
+            ref: 'ref-' + Math.floor(Math.random() * 1000000000 + 1),
+            metadata: {
+                custom_fields: [
+                    {
+                        display_name: "Customer Name",
+                        variable_name: "customer_name",
+                        value: `${firstName} ${lastName}`
+                    },
+                    {
+                        display_name: "Phone Number",
+                        variable_name: "phone_number",
+                        value: phone
+                    },
+                    {
+                        display_name: "Address",
+                        variable_name: "shipping_address",
+                        value: `${address}, ${city}, ${shippingState}, ${zip}`
+                    }
+                ]
+            },
+            callback: function (response) {
+                alert('Payment successful! Reference: ' + response.reference)
+                paymentSuccess.value = true
+                cart.items = []
+            },
+            onClose: function () {
+                alert('Transaction was not completed');
+            }
+        });
+
+        handler.openIframe();
+    } else {
+        alert("Checkout failed. Please try again.");
+    }
+};
 
 
 const getIconComponent = (index) => {
@@ -242,7 +258,7 @@ const getBackButtonLabel = () => {
 }
 
 .step-wrapper.last-step {
-  flex: 0;
+    flex: 0;
 }
 
 

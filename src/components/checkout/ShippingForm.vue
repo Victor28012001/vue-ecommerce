@@ -1,19 +1,26 @@
 <template>
   <div class="form-section table-cont">
     <h3>Shipping Information</h3>
+
+
+    <div class="auto-fill-default" style="margin-bottom: 1em;">
+      <input type="checkbox" id="useDefaultAddress" v-model="useDefaultAddress" />
+      <label for="useDefaultAddress">Use my default shipping address</label>
+    </div>
+
     <form @submit.prevent="submitCheckout">
       <!-- Row 1: First Name & Last Name -->
       <div class="row">
         <div class="col">
           <label for="firstName">First Name</label>
-          <input id="firstName" type="text" @blur="validateFirstName" @input="validateFirstName" v-model="form.firstName" placeholder="John"
-            required />
+          <input id="firstName" type="text" @blur="validateFirstName" @input="validateFirstName"
+            v-model="form.firstName" placeholder="John" required />
           <small v-if="errors.firstName" class="error">{{ errors.firstName }}</small>
         </div>
         <div class="col">
           <label for="lastName">Last Name</label>
-          <input id="lastName" type="text" @blur="validateLastName" @input="validateLastName" v-model="form.lastName" placeholder="Doe"
-            required />
+          <input id="lastName" type="text" @blur="validateLastName" @input="validateLastName" v-model="form.lastName"
+            placeholder="Doe" required />
           <small v-if="errors.lastName" class="error">{{ errors.lastName }}</small>
         </div>
       </div>
@@ -28,8 +35,8 @@
         </div>
         <div class="col">
           <label for="phone">Phone Number</label>
-          <input id="phone" type="text" @blur="validatePhone" @input="validatePhone" v-model="form.phone" placeholder="+234 812 345 6789"
-            required />
+          <input id="phone" type="text" @blur="validatePhone" @input="validatePhone" v-model="form.phone"
+            placeholder="+234 812 345 6789" required />
           <small v-if="errors.phone" class="error">{{ errors.phone }}</small>
         </div>
       </div>
@@ -38,13 +45,14 @@
       <div class="row">
         <div class="col">
           <label for="email">Email Address</label>
-          <input id="email" type="email" @blur="validateEmail" @input="validateEmail" v-model="form.email" placeholder="john@example.com"
-            required />
+          <input id="email" type="email" @blur="validateEmail" @input="validateEmail" v-model="form.email"
+            placeholder="john@example.com" required />
           <small v-if="errors.email" class="error">{{ errors.email }}</small>
         </div>
         <div class="col">
           <label for="zip">Zip/Postal Code</label>
-          <input id="zip" type="text" @blur="validateZip" @input="validateZip" v-model="form.zip" placeholder="100001" required />
+          <input id="zip" type="text" @blur="validateZip" @input="validateZip" v-model="form.zip" placeholder="100001"
+            required />
           <small v-if="errors.zip" class="error">{{ errors.zip }}</small>
         </div>
       </div>
@@ -77,9 +85,12 @@
 import { ref, onMounted, watch, reactive } from 'vue';
 import { useCartStore } from '../../stores/cart';
 import nigeriaData from "../../assets/data/statesAndCities.json"
+import axios from 'axios'
 
 const cart = useCartStore();
 const form = cart.shipping;
+const defaultAddress = ref(null)
+const useDefaultAddress = ref(false)
 
 const errors = reactive({
   firstName: '',
@@ -159,16 +170,55 @@ const submitCheckout = async () => {
   const hasErrors = Object.values(errors).some((e) => e !== '');
   if (hasErrors) {
     console.warn("Fix form errors before submitting.");
-    return;
-  }
-
-  try {
-    const order = await cart.checkout();
-    console.log("Order response:", order);
-  } catch (error) {
-    console.error("Checkout error:", error);
+    return false;
+  }else{
+    console.log("Form is valid, proceeding with checkout...");
+    return true; // Indicate success
   }
 };
+
+defineExpose({ submitCheckout }); 
+
+async function fetchDefaultAddress() {
+  try {
+    const token = localStorage.getItem('token')
+    const res = await axios.get('https://api.defonix.com/api/useraddresses/', {
+      headers: {
+        Authorization: `Token ${token}`,
+        Accept: 'application/json'
+      }
+    })
+    defaultAddress.value = res.data.find(
+      addr => addr.is_default_for_shipping || addr.is_default_for_billing
+    ) || null
+  } catch (err) {
+    console.error('Failed to fetch default user address', err)
+  }
+}
+
+function capitalize(str) {
+  if (!str) return ''
+  return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
+watch(useDefaultAddress, (checked) => {
+  if (checked && defaultAddress.value) {
+    form.firstName = capitalize(defaultAddress.value.first_name)
+    form.lastName = capitalize(defaultAddress.value.last_name)
+    form.address = defaultAddress.value.line1 || ''
+    form.phone = defaultAddress.value.phone_number || ''
+    form.zip = defaultAddress.value.postcode || ''
+    form.state = capitalize(defaultAddress.value.state)
+    fetchCities()
+    form.city = '' // optionally map city if you have it from your API
+    validateForm() // re-validate after autofill
+  }
+})
+
+onMounted(() => {
+  fetchStates()
+  fetchDefaultAddress()
+})
 
 </script>
 
@@ -260,5 +310,13 @@ select {
   color: red;
   font-size: 0.85rem;
   margin-top: 0.25rem;
+}
+
+.auto-fill-default {
+  margin-bottom: 1em;
+  display: flex;
+  padding: 0 24px;
+  gap: 12px;
+  align-items: center;
 }
 </style>

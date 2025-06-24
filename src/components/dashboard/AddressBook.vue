@@ -32,6 +32,7 @@
             <input v-model="form.last_name" placeholder="Last Name" />
             <input v-model="form.line1" placeholder="Line 1" />
             <input v-model="form.line2" placeholder="Line 2" />
+            <input v-model="form.city" placeholder="City" />
             <input v-model="form.state" placeholder="State" />
             <input v-model="form.postcode" placeholder="Postcode" />
 
@@ -89,6 +90,7 @@ const form = reactive({
   line2: '',
   line3: '',
   line4: '',
+  city: '',
   state: '',
   postcode: '',
   phone_number: '',
@@ -146,6 +148,7 @@ const resetForm = () => {
     line2: '',
     line3: '',
     line4: '',
+    city: '',
     state: '',
     postcode: '',
     phone_number: '',
