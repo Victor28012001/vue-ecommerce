@@ -56,17 +56,15 @@ const props = defineProps({
 
 const cart = useCartStore()
 
-const subtotal = computed(() =>
-    cart.items.reduce((sum, item) => sum + item.new_price * item.quantity, 0)
-)
+const subtotal = computed(() => cart.basketTotals.total_excl_tax || 0)
+const tax = computed(() => cart.basketTotals.total_tax || 0)
+const total = computed(() => cart.basketTotals.total_incl_tax || 0)
 
-const tax = computed(() => subtotal.value * 0.1)
-const total = computed(() => subtotal.value + tax.value)
 
 function formatCurrency(value) {
     return new Intl.NumberFormat('en-US', {
         style: 'currency',
-        currency: 'USD',
+        currency: cart.basketTotals.currency || 'USD',
     }).format(value)
 }
 </script>
