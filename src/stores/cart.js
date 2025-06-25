@@ -38,6 +38,80 @@ export const useCartStore = defineStore("cart", {
   },
 
   actions: {
+    // async checkout() {
+    //   try {
+    //     const token = localStorage.getItem("token");
+    //     const csrfToken = getCookie("csrftoken");
+
+    //     if (!this.basketUrl) {
+    //       console.warn("No basket URL found, cannot proceed to checkout");
+    //       return;
+    //     }
+
+    //     const payload = {
+    //       basket: this.basketUrl,
+    //       guest_email: this.shipping.email,
+    //       total: this.total.toFixed(2),
+    //       shipping_method_code: "no-shipping-required",
+    //       shipping_charge: {
+    //         currency: this.basketTotals.currency,
+    //         excl_tax: this.basketTotals.total_excl_tax,
+    //         incl_tax: this.basketTotals.total_incl_tax,
+    //         tax: this.basketTotals.total_tax,
+    //       },
+    //       shipping_address: {
+    //         title: "Mr",
+    //         first_name: this.shipping.firstName,
+    //         last_name: this.shipping.lastName,
+    //         line1: this.shipping.address,
+    //         line2: "",
+    //         line3: "",
+    //         line4: this.shipping.city,
+    //         state: this.shipping.state,
+    //         postcode: this.shipping.zip,
+    //         phone_number: this.shipping.phone,
+    //         notes: "",
+    //         country: "https://api.defonix.com/api/countries/NG/",
+    //       },
+    //       billing_address: {
+    //         title: "Mr",
+    //         first_name: this.shipping.firstName,
+    //         last_name: this.shipping.lastName,
+    //         line1: this.shipping.address,
+    //         line2: "",
+    //         line3: "",
+    //         line4: this.shipping.city,
+    //         state: this.shipping.state,
+    //         postcode: this.shipping.zip,
+    //         country: "https://api.defonix.com/api/countries/NG/",
+    //       },
+    //     };
+
+    //     const response = await axios.post(
+    //       "https://api.defonix.com/api/checkout/",
+    //       payload,
+    //       {
+    //         withCredentials: true,
+    //         headers: {
+    //           "Content-Type": "application/json",
+    //           Authorization: `Token ${token}`,
+    //           "X-CSRFTOKEN": csrfToken,
+    //           Accept: "application/json",
+    //         },
+    //       }
+    //     );
+
+    //     console.log("Checkout successful:", response.data);
+    //     return response.data;
+    //   } catch (error) {
+    //     console.error(
+    //       "Checkout failed:",
+    //       error.response?.data || error.message
+    //     );
+    //     throw error;
+    //   }
+    // },
+
     async checkout() {
       try {
         const token = localStorage.getItem("token");
@@ -47,6 +121,15 @@ export const useCartStore = defineStore("cart", {
           console.warn("No basket URL found, cannot proceed to checkout");
           return;
         }
+
+        const countryPayload = {
+          url: "https://api.defonix.com/api/countries/NG/",
+          iso_3166_1_a3: "NGA",
+          iso_3166_1_numeric: "566",
+          printable_name: "Nigeria",
+          name: "Federal Republic of Nigeria",
+          is_shipping_country: true,
+        };
 
         const payload = {
           basket: this.basketUrl,
@@ -71,7 +154,7 @@ export const useCartStore = defineStore("cart", {
             postcode: this.shipping.zip,
             phone_number: this.shipping.phone,
             notes: "",
-            country: "https://api.defonix.com/api/countries/NG/",
+            country: countryPayload,
           },
           billing_address: {
             title: "Mr",
@@ -83,7 +166,7 @@ export const useCartStore = defineStore("cart", {
             line4: this.shipping.city,
             state: this.shipping.state,
             postcode: this.shipping.zip,
-            country: "https://api.defonix.com/api/countries/NG/",
+            country: countryPayload,
           },
         };
 
@@ -120,7 +203,7 @@ export const useCartStore = defineStore("cart", {
           "https://api.defonix.com/api/basket/",
           {
             headers: {
-              Authorization: `Token ${token}`,
+              // Authorization: `Token ${token}`,
               Accept: "application/json",
             },
           }
@@ -247,7 +330,7 @@ export const useCartStore = defineStore("cart", {
               withCredentials: true,
               headers: {
                 "Content-Type": "application/json",
-                Authorization: `Token ${token}`,
+                // Authorization: `Token ${token}`,
                 "X-CSRFTOKEN": csrfToken,
                 Accept: "application/json",
               },
