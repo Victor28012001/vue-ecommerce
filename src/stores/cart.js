@@ -230,7 +230,7 @@ export const useCartStore = defineStore("cart", {
         const payload = {
           basket: this.basketUrl,
           guest_email: this.shipping.email,
-          total: this.total.toFixed(2),
+          total: this.basketTotals.total_incl_tax,
           shipping_method_code: "no-shipping-required",
           shipping_charge: shippingCharge, // Using the zero values
           shipping_address: {
@@ -267,6 +267,7 @@ export const useCartStore = defineStore("cart", {
           ...(csrfToken && { "X-CSRFToken": csrfToken }),
           ...(token && { Authorization: `Token ${token}` }),
         };
+        console.log(payload)
 
         const response = await axios.post(
           "https://api.defonix.com/api/checkout/",
