@@ -6,8 +6,9 @@ import { createPinia } from 'pinia'
 import './assets/main.css'
 import axios from 'axios';
 
-axios.defaults.withCredentials = true;
-
+// axios.defaults.withCredentials = true;
+// axios.defaults.baseURL = "https://api.defonix.com"; // Optional
+// axios.defaults.headers.common['Accept'] = 'application/json';
 
 const app = createApp(App)
 

@@ -27,6 +27,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import axios from 'axios'
 
 const router = useRouter()
 
@@ -36,7 +37,9 @@ import ProfileSection from '../components/dashboard/ProfileSection.vue'
 import OrderHistory from '../components/dashboard/OrderHistory.vue'
 import AddressBook from '../components/dashboard/AddressBook.vue'
 import Navbar from '../components/Navbar.vue'
+import { useCartStore } from '../stores/cart'
 
+const cart = useCartStore()
 const activeSection = ref('profile')
 
 const menuItems = [
@@ -59,11 +62,28 @@ const activeSectionLabel = computed(() => {
 })
 
 
-const logout = () => {
-  localStorage.removeItem('token')
-  document.cookie = "token=; path=/; max-age=0"
-  router.push('/')
+// const logout = () => {
+//   localStorage.removeItem('token')
+//   document.cookie = "token=; path=/; max-age=0"
+//   router.push('/')
+// }
+
+const logout = async () => {
+  try {
+
+    await axios.delete('https://api.defonix.com/api/login/')
+
+    // Clear token, basket, etc.
+    localStorage.removeItem('token')
+    document.cookie = 'token=; Max-Age=0; path=/;'
+
+    cart.clearCart()
+    router.push('/login')
+  } catch (error) {
+    console.error('Logout failed:', error)
+  }
 }
+
 
 
 onMounted(() => {

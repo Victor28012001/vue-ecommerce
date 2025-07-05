@@ -154,7 +154,7 @@ export const useCartStore = defineStore("cart", {
             postcode: this.shipping.zip,
             phone_number: this.shipping.phone,
             notes: "",
-            country: countryPayload,
+            country: countryPayload.url,
           },
           billing_address: {
             title: "Mr",
@@ -166,7 +166,7 @@ export const useCartStore = defineStore("cart", {
             line4: this.shipping.city,
             state: this.shipping.state,
             postcode: this.shipping.zip,
-            country: countryPayload,
+            country: countryPayload.url,
           },
         };
 
@@ -177,7 +177,7 @@ export const useCartStore = defineStore("cart", {
             withCredentials: true,
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Token ${token}`,
+              // Authorization: `Token ${token}`,
               "X-CSRFTOKEN": csrfToken,
               Accept: "application/json",
             },
@@ -198,39 +198,41 @@ export const useCartStore = defineStore("cart", {
     async loadBasketItems() {
       try {
         const token = localStorage.getItem("token");
+        const csrfToken = getCookie("csrftoken");
+        console.log(csrfToken);
 
+        // Build request config with headers and credentials
+        const config = {
+          headers: {
+            Accept: "application/json",
+            ...(token && { Authorization: `Token ${token}` }),
+          },
+          withCredentials: true, // <-- Important to send session cookies (e.g., for anonymous users)
+        };
+
+        // Step 1: Get the basket (works with or without token)
         const basketRes = await axios.get(
           "https://api.defonix.com/api/basket/",
-          {
-            headers: {
-              // Authorization: `Token ${token}`,
-              Accept: "application/json",
-            },
-          }
+          config
         );
 
-        console.log("Basket response:", basketRes.data);
+        const basket = basketRes.data;
+        console.log("Basket response:", basket);
 
-        this.basketUrl = basketRes.data.url; // <-- UPDATED: save basket url here
+        this.basketUrl = basket.url;
         this.basketTotals = {
-          total_excl_tax: basketRes.data.total_excl_tax,
-          total_incl_tax: basketRes.data.total_incl_tax,
-          total_tax: basketRes.data.total_tax,
-          currency: basketRes.data.currency,
+          total_excl_tax: basket.total_excl_tax,
+          total_incl_tax: basket.total_incl_tax,
+          total_tax: basket.total_tax,
+          currency: basket.currency,
         };
-        console.log("Basket totals:", this.basketTotals);
-        // this.items = []  // <-- Reset items before loading new ones
-        const linesUrl = basketRes.data.lines;
-        const linesRes = await axios.get(linesUrl, {
-          headers: {
-            Authorization: `Token ${token}`,
-            Accept: "application/json",
-          },
-        });
+
+        // Step 2: Only fetch basket lines if user is authenticated
+        // if (token && basket.lines) {
+        const linesRes = await axios.get(basket.lines, config);
 
         const lineItems = linesRes.data;
 
-        // Fetch product details for each line item
         const detailedItems = await Promise.all(
           lineItems.map(async (line) => {
             try {
@@ -256,7 +258,6 @@ export const useCartStore = defineStore("cart", {
           })
         );
 
-        // Filter out any failed items
         this.items = detailedItems.filter(Boolean);
 
         console.log("Loaded cart items:", this.items);
@@ -269,82 +270,62 @@ export const useCartStore = defineStore("cart", {
     },
 
     async addItem(payload) {
-      if (!this.basketUrl) {
-        console.warn("Basket URL is not loaded yet.");
+      if (!payload?.product || !payload?.quantity) {
+        console.warn("Invalid payload: missing product URL or quantity");
         return;
       }
 
-      const finalPayload = {
-        basket: this.basketUrl,
-        ...payload,
-      };
-
-      const PostPayload = {
-        url: finalPayload.product,
-        quantity: finalPayload.quantity,
-      };
-
       const token = localStorage.getItem("token");
       const csrfToken = getCookie("csrftoken");
+      console.log(csrfToken);
 
-      // Check if the item already exists in the basket
+      const postPayload = {
+        url: payload.product,
+        quantity: payload.quantity,
+      };
+
+      // Check if product already exists in basket
       const existingLine = this.items.find(
-        (line) => line.line_reference === finalPayload.line_reference
+        (line) => line.productUrl === payload.product
       );
 
-      if (existingLine) {
-        // Update the quantity of the existing item
-        const updatedQuantity = existingLine.quantity + finalPayload.quantity;
-        try {
+      try {
+        if (existingLine) {
+          const updatedQuantity = existingLine.quantity + payload.quantity;
           const response = await axios.patch(
-            existingLine.url,
+            existingLine.basketLineUrl,
             { quantity: updatedQuantity },
             {
-              withCredentials: true,
               headers: {
                 "Content-Type": "application/json",
-                Authorization: `Token ${token}`,
+                ...(token && { Authorization: `Token ${token}` }),
                 "X-CSRFTOKEN": csrfToken,
-                Accept: "application/json",
               },
             }
           );
-
           console.log("Updated item quantity:", response.data);
-          await this.loadBasketItems(); // Refresh basket
-        } catch (error) {
-          console.error(
-            "Failed to update quantity:",
-            error.response?.data || error.message
-          );
-        }
-      } else {
-        // Add new item to the basket
-        try {
+        } else {
           const response = await axios.post(
-            // `${this.basketUrl}lines/`,
-            "https://api.defonix.com/api/basket/add-product/",
-            // finalPayload,
-            PostPayload,
+            "/api/basket/add-product/",
+            postPayload,
             {
-              withCredentials: true,
               headers: {
                 "Content-Type": "application/json",
-                // Authorization: `Token ${token}`,
+                ...(token && { Authorization: `Token ${token}` }),
                 "X-CSRFTOKEN": csrfToken,
-                Accept: "application/json",
               },
             }
           );
-
           console.log("Added new item to basket:", response.data);
-          await this.loadBasketItems(); // Refresh basket
-        } catch (error) {
-          console.error(
-            "Failed to add item to basket:",
-            error.response?.data || error.message
-          );
         }
+
+        // Refresh basket
+        await this.loadBasketItems();
+      } catch (error) {
+        console.error(
+          "Error adding/updating item:",
+          error.response?.data || error.message
+        );
       }
     },
 

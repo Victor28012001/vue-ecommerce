@@ -24,7 +24,9 @@
 import { ref } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
+import { useCartStore } from '../stores/cart'
 
+const cart = useCartStore()
 const isLogin = ref(true)
 const email = ref('')
 const password = ref('')
@@ -58,67 +60,53 @@ const handleSubmit = async () => {
   }
 }
 
+async function fetchBasket() {
+  try {
+    const token = localStorage.getItem('token') || document.cookie.split('; ').find(row => row.startsWith('token=')).split('=')[1];
+    if (!token) throw new Error('No authentication token found');
 
+    const res = await axios.get('https://api.defonix.com/api/basket/', {
+      headers: {
+        // 'Authorization': `Token ${token}`,
+        'Accept': 'application/json',
+      },
+    });
+  } catch (error) {
+    console.error('Failed to fetch basket:', error);
+    message.value = error.response?.data?.detail || 'Failed to fetch basket';
+  }
+}
 
-// const login = async () => {
-//   try {
-//     // 1. Get CSRF token (must have visited the API server before to receive it)
-//     const csrfToken = getCookie('csrftoken');
-
-//     const res = await axios.post('https://api.defonix.com/api/login/', {
-//       username: email.value,
-//       password: password.value,
-//     }, {
-//       headers: {
-//         'X-CSRFToken': csrfToken,
-//         'Accept': 'application/json',
-//       },
-//     });
-
-//     console.log('Login session response:', res.data);
-
-//     const tokenRes = await axios.post('https://api.defonix.com/api/auth-token/', {
-//       username: email.value,
-//       password: password.value,
-//     });
-
-//     const token = tokenRes.data.token;
-//     console.log('Token:', token);
-
-//     localStorage.setItem('token', token);
-//     document.cookie = `token=${token}; path=/; secure; samesite=strict`;
-
-//     // Now fetch the updated (owned) basket
-//     await fetchBasket();
-
-//     router.push('/dashboard');
-//   } catch (error) {
-//     console.error('Login failed:', error);
-//     message.value = error.response?.data?.detail || 'Login failed';
-//   }
-// };
 
 const login = async () => {
-  console.log('Attempting login with:', email.value, password.value);
   try {
-    const res = await axios.post('https://api.defonix.com/api/auth-token/', {
+
+    const res = await axios.post('https://api.defonix.com/api/login/', {
+      username: email.value,
+      password: password.value,
+    }
+  );
+
+    console.log('Login session response:', res.data);
+
+    const tokenRes = await axios.post('https://api.defonix.com/api/auth-token/', {
       username: email.value,
       password: password.value,
     });
 
-    const authToken = res.data.token;
+    const token = tokenRes.data.token;
+    console.log('Token:', token);
 
-    if (authToken) {
-      localStorage.setItem('token', authToken);
-      console.log('Token saved:', authToken);
-      router.push('/dashboard');
-    } else {
-      console.warn('No token received from auth-token endpoint');
-      message.value = 'Login failed: no token received';
-    }
+    localStorage.setItem('token', token);
+    document.cookie = `token=${token}; path=/; secure; samesite=strict`;
+
+    // Now fetch the updated (owned) basket
+    await fetchBasket();
+
+    router.push('/dashboard');
   } catch (error) {
     console.error('Login failed:', error);
-    message.value = error.response?.data?.non_field_errors?.[0] || 'Login failed';
+    message.value = error.response?.data?.detail || 'Login failed';
   }
 };
 
@@ -134,11 +122,11 @@ const registerAndLogin = async () => {
   await login()
 }
 
-//function getCookie(name) {
-  //const value = `; ${document.cookie}`;
-  //const parts = value.split(`; ${name}=`);
-  //if (parts.length === 2) return parts.pop().split(';').shift();
-//}
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+}
 
 </script>
 
