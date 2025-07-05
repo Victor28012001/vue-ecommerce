@@ -78,7 +78,7 @@ const logout = async () => {
     document.cookie = 'token=; Max-Age=0; path=/;'
 
     cart.clearCart()
-    router.push('/login')
+    router.push('/loginRegister')
   } catch (error) {
     console.error('Logout failed:', error)
   }

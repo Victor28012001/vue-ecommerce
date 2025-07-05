@@ -24,9 +24,7 @@
 import { ref } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
-import { useCartStore } from '../stores/cart'
 
-const cart = useCartStore()
 const isLogin = ref(true)
 const email = ref('')
 const password = ref('')
@@ -120,12 +118,6 @@ const registerAndLogin = async () => {
 
   // auto login after successful registration
   await login()
-}
-
-function getCookie(name) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(';').shift();
 }
 
 </script>

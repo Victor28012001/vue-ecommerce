@@ -4,28 +4,16 @@ import { defineStore } from "pinia";
 export const useCartStore = defineStore("cart", {
   state: () => ({
     items: [],
-    basketUrl: null, // <-- NEW: store the basket URL
+    basketUrl: null,
+    basketId: null,
     shipping: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      address: "",
-      city: "",
-      state: "",
-      zip: "",
+      /* ... */
     },
     basketTotals: {
-      total_excl_tax: "0.00",
-      total_incl_tax: "0.00",
-      total_tax: "0.00",
-      currency: "NGN",
+      /* ... */
     },
     payment: {
-      nameOnCard: "",
-      cardNumber: "",
-      expiry: "",
-      cvv: "",
+      /* ... */
     },
   }),
 
@@ -38,79 +26,178 @@ export const useCartStore = defineStore("cart", {
   },
 
   actions: {
-    // async checkout() {
-    //   try {
-    //     const token = localStorage.getItem("token");
-    //     const csrfToken = getCookie("csrftoken");
+    async getRequestConfig() {
+      const token = localStorage.getItem("token");
+      const csrfToken = getCookie("csrftoken");
 
-    //     if (!this.basketUrl) {
-    //       console.warn("No basket URL found, cannot proceed to checkout");
-    //       return;
-    //     }
+      return {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          ...(token && { Authorization: `Token ${token}` }),
+          ...(csrfToken && { "X-CSRFToken": csrfToken }),
+        },
+        withCredentials: true,
+      };
+    },
 
-    //     const payload = {
-    //       basket: this.basketUrl,
-    //       guest_email: this.shipping.email,
-    //       total: this.total.toFixed(2),
-    //       shipping_method_code: "no-shipping-required",
-    //       shipping_charge: {
-    //         currency: this.basketTotals.currency,
-    //         excl_tax: this.basketTotals.total_excl_tax,
-    //         incl_tax: this.basketTotals.total_incl_tax,
-    //         tax: this.basketTotals.total_tax,
-    //       },
-    //       shipping_address: {
-    //         title: "Mr",
-    //         first_name: this.shipping.firstName,
-    //         last_name: this.shipping.lastName,
-    //         line1: this.shipping.address,
-    //         line2: "",
-    //         line3: "",
-    //         line4: this.shipping.city,
-    //         state: this.shipping.state,
-    //         postcode: this.shipping.zip,
-    //         phone_number: this.shipping.phone,
-    //         notes: "",
-    //         country: "https://api.defonix.com/api/countries/NG/",
-    //       },
-    //       billing_address: {
-    //         title: "Mr",
-    //         first_name: this.shipping.firstName,
-    //         last_name: this.shipping.lastName,
-    //         line1: this.shipping.address,
-    //         line2: "",
-    //         line3: "",
-    //         line4: this.shipping.city,
-    //         state: this.shipping.state,
-    //         postcode: this.shipping.zip,
-    //         country: "https://api.defonix.com/api/countries/NG/",
-    //       },
-    //     };
+    async loadBasketItems() {
+      try {
+        const config = await this.getRequestConfig();
 
-    //     const response = await axios.post(
-    //       "https://api.defonix.com/api/checkout/",
-    //       payload,
-    //       {
-    //         withCredentials: true,
-    //         headers: {
-    //           "Content-Type": "application/json",
-    //           Authorization: `Token ${token}`,
-    //           "X-CSRFTOKEN": csrfToken,
-    //           Accept: "application/json",
-    //         },
-    //       }
-    //     );
+        // Try to load existing basket from cookie first
+        const basketCookie = getCookie("oscar_open_basket");
+        if (basketCookie) {
+          try {
+            const basketId = basketCookie.split(":")[0];
+            const basketRes = await axios.get(
+              `https://api.defonix.com/api/baskets/${basketId}/`,
+              config
+            );
+            await this.processBasket(basketRes.data, config);
+            return;
+          } catch (error) {
+            console.log("Existing basket not found, creating new one");
+          }
+        }
 
-    //     console.log("Checkout successful:", response.data);
-    //     return response.data;
-    //   } catch (error) {
-    //     console.error(
-    //       "Checkout failed:",
-    //       error.response?.data || error.message
-    //     );
-    //     throw error;
-    //   }
-    // },
+        // Create new basket if no existing one found
+        const basketRes = await axios.get(
+          "https://api.defonix.com/api/basket/",
+          config
+        );
+        await this.processBasket(basketRes.data, config);
+      } catch (err) {
+        console.error(
+          "Error loading basket:",
+          err.response?.data || err.message
+        );
+      }
+    },
+
+    async processBasket(basket, config) {
+      this.basketUrl = basket.url;
+      this.basketId = basket.id;
+      this.basketTotals = {
+        total_excl_tax: basket.total_excl_tax,
+        total_incl_tax: basket.total_incl_tax,
+        total_tax: basket.total_tax,
+        currency: basket.currency,
+      };
+
+      if (basket.lines) {
+        try {
+          const linesRes = await axios.get(basket.lines, config);
+          await this.processBasketLines(linesRes.data, config);
+        } catch (error) {
+          console.error("Error loading basket lines:", error);
+          // Handle case where lines endpoint requires authentication
+          if (error.response?.status === 403) {
+            this.items = []; // Clear items since we can't access them
+          }
+        }
+      }
+    },
+
+    async processBasketLines(lineItems, config) {
+      const detailedItems = await Promise.all(
+        lineItems.map(async (line) => {
+          try {
+            const productRes = await axios.get(line.product, config);
+            const product = productRes.data;
+
+            return {
+              id: product.id,
+              title: product.title,
+              quantity: line.quantity,
+              new_price: parseFloat(line.price_incl_tax),
+              image:
+                product.images?.[0]?.original ||
+                "https://dummyimage.com/1280x720/fff/aaa",
+              productUrl: product.url,
+              category: product.product_class,
+              basketLineUrl: line.url,
+            };
+          } catch (err) {
+            console.warn(`Failed to load product at ${line.product}`, err);
+            return null;
+          }
+        })
+      );
+
+      this.items = detailedItems.filter(Boolean);
+    },
+
+    async addItem(payload) {
+      if (!payload?.product || !payload?.quantity) {
+        console.warn("Invalid payload: missing product URL or quantity");
+        return;
+      }
+
+      try {
+        const config = await this.getRequestConfig();
+        const existingLine = this.items.find(
+          (line) => line.productUrl === payload.product
+        );
+
+        if (existingLine) {
+          const updatedQuantity = existingLine.quantity + payload.quantity;
+          await axios.patch(
+            existingLine.basketLineUrl,
+            { quantity: updatedQuantity },
+            config
+          );
+        } else {
+          await axios.post(
+            "https://api.defonix.com/api/basket/add-product/",
+            {
+              url: payload.product,
+              quantity: payload.quantity,
+            },
+            config
+          );
+        }
+
+        await this.loadBasketItems();
+      } catch (error) {
+        console.error(
+          "Error adding/updating item:",
+          error.response?.data || error.message
+        );
+      }
+    },
+
+    async removeItem(id) {
+      try {
+        const item = this.items.find((i) => i.id === id);
+        if (!item || !item.basketLineUrl) return;
+
+        const config = await this.getRequestConfig();
+        await axios.delete(item.basketLineUrl, config);
+
+        this.items = this.items.filter((i) => i.id !== id);
+      } catch (error) {
+        console.error(
+          "Failed to remove item:",
+          error.response?.data || error.message
+        );
+      }
+    },
+
+    async clearCart() {
+      try {
+        if (!this.basketUrl) return;
+
+        const config = await this.getRequestConfig();
+        await axios.delete(this.basketUrl, config);
+
+        this.items = [];
+        this.basketUrl = null;
+        this.basketId = null;
+      } catch (error) {
+        console.error("Failed to clear cart:", error);
+      }
+    },
 
     async checkout() {
       try {
@@ -122,6 +209,7 @@ export const useCartStore = defineStore("cart", {
           return;
         }
 
+        // Prepare country payload
         const countryPayload = {
           url: "https://api.defonix.com/api/countries/NG/",
           iso_3166_1_a3: "NGA",
@@ -131,17 +219,20 @@ export const useCartStore = defineStore("cart", {
           is_shipping_country: true,
         };
 
+        // For 'no-shipping-required', shipping charge must be 0.00
+        const shippingCharge = {
+          currency: "NGN",
+          excl_tax: "0.00",
+          incl_tax: "0.00",
+          tax: "0.00",
+        };
+
         const payload = {
           basket: this.basketUrl,
           guest_email: this.shipping.email,
           total: this.total.toFixed(2),
           shipping_method_code: "no-shipping-required",
-          shipping_charge: {
-            currency: this.basketTotals.currency,
-            excl_tax: this.basketTotals.total_excl_tax,
-            incl_tax: this.basketTotals.total_incl_tax,
-            tax: this.basketTotals.total_tax,
-          },
+          shipping_charge: shippingCharge, // Using the zero values
           shipping_address: {
             title: "Mr",
             first_name: this.shipping.firstName,
@@ -170,244 +261,42 @@ export const useCartStore = defineStore("cart", {
           },
         };
 
+        const headers = {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          ...(csrfToken && { "X-CSRFToken": csrfToken }),
+          ...(token && { Authorization: `Token ${token}` }),
+        };
+
         const response = await axios.post(
           "https://api.defonix.com/api/checkout/",
           payload,
           {
             withCredentials: true,
-            headers: {
-              "Content-Type": "application/json",
-              // Authorization: `Token ${token}`,
-              "X-CSRFTOKEN": csrfToken,
-              Accept: "application/json",
-            },
+            headers: headers,
           }
         );
 
         console.log("Checkout successful:", response.data);
         return response.data;
       } catch (error) {
-        console.error(
-          "Checkout failed:",
-          error.response?.data || error.message
-        );
+        console.error("Detailed checkout error:", {
+          status: error.response?.status,
+          data: error.response?.data,
+          config: error.config,
+        });
         throw error;
-      }
-    },
-
-    async loadBasketItems() {
-      try {
-        const token = localStorage.getItem("token");
-        const csrfToken = getCookie("csrftoken");
-        console.log(csrfToken);
-
-        // Build request config with headers and credentials
-        const config = {
-          headers: {
-            Accept: "application/json",
-            ...(token && { Authorization: `Token ${token}` }),
-          },
-          withCredentials: true, // <-- Important to send session cookies (e.g., for anonymous users)
-        };
-
-        // Step 1: Get the basket (works with or without token)
-        const basketRes = await axios.get(
-          "https://api.defonix.com/api/basket/",
-          config
-        );
-
-        const basket = basketRes.data;
-        console.log("Basket response:", basket);
-
-        this.basketUrl = basket.url;
-        this.basketTotals = {
-          total_excl_tax: basket.total_excl_tax,
-          total_incl_tax: basket.total_incl_tax,
-          total_tax: basket.total_tax,
-          currency: basket.currency,
-        };
-
-        // Step 2: Only fetch basket lines if user is authenticated
-        // if (token && basket.lines) {
-        const linesRes = await axios.get(basket.lines, config);
-
-        const lineItems = linesRes.data;
-
-        const detailedItems = await Promise.all(
-          lineItems.map(async (line) => {
-            try {
-              const productRes = await axios.get(line.product);
-              const product = productRes.data;
-
-              return {
-                id: product.id,
-                title: product.title,
-                quantity: line.quantity,
-                new_price: parseFloat(line.price_incl_tax),
-                image:
-                  product.images?.[0]?.original ||
-                  "https://dummyimage.com/1280x720/fff/aaa",
-                productUrl: product.url,
-                category: product.product_class,
-                basketLineUrl: line.url,
-              };
-            } catch (err) {
-              console.warn(`Failed to load product at ${line.product}`, err);
-              return null;
-            }
-          })
-        );
-
-        this.items = detailedItems.filter(Boolean);
-
-        console.log("Loaded cart items:", this.items);
-      } catch (err) {
-        console.error(
-          "Error loading basket:",
-          err.response?.data || err.message
-        );
-      }
-    },
-
-    async addItem(payload) {
-      if (!payload?.product || !payload?.quantity) {
-        console.warn("Invalid payload: missing product URL or quantity");
-        return;
-      }
-
-      const token = localStorage.getItem("token");
-      const csrfToken = getCookie("csrftoken");
-      console.log(csrfToken);
-
-      const postPayload = {
-        url: payload.product,
-        quantity: payload.quantity,
-      };
-
-      // Check if product already exists in basket
-      const existingLine = this.items.find(
-        (line) => line.productUrl === payload.product
-      );
-
-      try {
-        if (existingLine) {
-          const updatedQuantity = existingLine.quantity + payload.quantity;
-          const response = await axios.patch(
-            existingLine.basketLineUrl,
-            { quantity: updatedQuantity },
-            {
-              headers: {
-                "Content-Type": "application/json",
-                ...(token && { Authorization: `Token ${token}` }),
-                "X-CSRFTOKEN": csrfToken,
-              },
-            }
-          );
-          console.log("Updated item quantity:", response.data);
-        } else {
-          const response = await axios.post(
-            "/api/basket/add-product/",
-            postPayload,
-            {
-              headers: {
-                "Content-Type": "application/json",
-                ...(token && { Authorization: `Token ${token}` }),
-                "X-CSRFTOKEN": csrfToken,
-              },
-            }
-          );
-          console.log("Added new item to basket:", response.data);
-        }
-
-        // Refresh basket
-        await this.loadBasketItems();
-      } catch (error) {
-        console.error(
-          "Error adding/updating item:",
-          error.response?.data || error.message
-        );
-      }
-    },
-
-    async removeItem(id) {
-      try {
-        const item = this.items.find((i) => i.id === id);
-        if (!item) {
-          console.warn(`Item with id ${id} not found in cart`);
-          return;
-        }
-        const lineUrl = item.basketLineUrl;
-        if (!lineUrl) {
-          console.warn("No basketLineUrl found for item", item);
-          return;
-        }
-
-        const token = localStorage.getItem("token");
-        const csrfToken = getCookie("csrftoken");
-
-        // Extract basketPk and lineId from lineUrl
-        const match = lineUrl.match(/\/baskets\/(\d+)\/lines\/(\d+)\//);
-        if (!match) {
-          console.error("Invalid line URL:", lineUrl);
-          return;
-        }
-        const basketPk = match[1];
-        const lineId = match[2];
-
-        const deleteUrl = `https://api.defonix.com/api/baskets/${basketPk}/lines/${lineId}/`;
-
-        await axios.delete(deleteUrl, {
-          withCredentials: true,
-          headers: {
-            "X-CSRFTOKEN": csrfToken,
-            Authorization: `Token ${token}`,
-            Accept: "*/*",
-          },
-        });
-
-        // Remove item locally
-        this.items = this.items.filter((i) => i.id !== id);
-
-        console.log(`Removed item with id ${id} successfully`);
-      } catch (error) {
-        console.error(
-          "Failed to remove item:",
-          error.response?.data || error.message
-        );
-      }
-    },
-    // <-- NEW ACTION: clearCart deletes the basket on the server and clears local state
-    async clearCart() {
-      try {
-        if (!this.basketUrl) {
-          console.warn("No basket URL found, cannot clear cart");
-          return;
-        }
-        const csrfToken = getCookie("csrftoken");
-        const token = localStorage.getItem("token");
-
-        await axios.delete(this.basketUrl, {
-          withCredentials: true,
-          headers: {
-            "X-CSRFTOKEN": csrfToken,
-            Authorization: `Token ${token}`,
-            Accept: "*/*",
-          },
-        });
-
-        this.items = [];
-        this.basketUrl = null;
-        console.log("Cart cleared successfully");
-      } catch (error) {
-        console.error("Failed to clear cart:", error);
       }
     },
   },
 });
 
-// Helper function to get cookie (use as you had it previously)
+// Enhanced cookie getter
 function getCookie(name) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(";").shift();
+  const cookies = document.cookie.split("; ");
+  for (const cookie of cookies) {
+    const [cookieName, cookieValue] = cookie.split("=");
+    if (cookieName === name) return decodeURIComponent(cookieValue);
+  }
+  return null;
 }
