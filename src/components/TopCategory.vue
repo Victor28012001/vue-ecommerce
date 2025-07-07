@@ -1,6 +1,7 @@
 <template>
   <section class="top-category">
     <h2>Top Categories</h2>
+    <p v-if="loading">Loading categories<span class="dot-loader">{{ dots }}</span></p>
     <p>Checkout our top-categories</p>
     <ul class="categories-grid">
       <li v-for="cat in categories" :key="cat.name" class="category-card">
@@ -13,8 +14,29 @@
 </template>
 
 <script setup>
-defineProps(['categories'])
+import { ref, onMounted, onUnmounted } from 'vue'
+
+const props = defineProps({
+  categories: Array,
+  loading: Boolean,
+})
+
+const dots = ref('.')
+let interval = null
+
+onMounted(() => {
+  if (props.loading) {
+    interval = setInterval(() => {
+      dots.value = dots.value.length >= 4 ? '.' : dots.value + '.'
+    }, 500)
+  }
+})
+
+onUnmounted(() => {
+  clearInterval(interval)
+})
 </script>
+
 
 <style scoped>
 .top-category {
@@ -27,6 +49,12 @@ p {
   font-size: x-small;
   color: #979494;
 }
+
+.dot-loader {
+  font-weight: bold;
+  font-size: small;
+}
+
 
 .categories-grid {
   display: flex;

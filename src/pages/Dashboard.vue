@@ -61,13 +61,6 @@ const activeSectionLabel = computed(() => {
     return menuItems.find(i => i.key === activeSection.value)?.label || ''
 })
 
-
-// const logout = () => {
-//   localStorage.removeItem('token')
-//   document.cookie = "token=; path=/; max-age=0"
-//   router.push('/')
-// }
-
 const logout = async () => {
   try {
 
@@ -175,6 +168,7 @@ onMounted(() => {
 @media (max-width: 768px) {
     .dashboard-body {
         flex-direction: column;
+        padding: 0;
     }
 
     .sidebar {
@@ -190,11 +184,14 @@ onMounted(() => {
         flex-direction: row;
         gap: 0.5rem;
         width: 100%;
+        padding: 1rem;
     }
 
     .nav-button {
         white-space: nowrap;
-        flex-shrink: 0;
+        font-size: small;
+        margin: 0;
+        padding: 0.5rem;
     }
 
     .main-content {

@@ -146,6 +146,7 @@ onMounted(() => {
 
     .main-content {
         padding: 1rem;
+        font-size: x-small;
     }
 }
 </style>

@@ -98,6 +98,7 @@ onMounted(async () => {
   text-decoration: none;
   font-weight: bold;
   font-size: smaller;
+  text-wrap-mode: nowrap;
 }
 
 .nav-link:hover {
@@ -118,6 +119,7 @@ nav {
 @media (max-width: 768px) {
   nav {
     padding: 12px 2rem;
+    overflow-x: scroll;
   }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="orders">
     <h2>Order History</h2>
     <p v-if="orders.length === 0">No orders found.</p>
     <ul v-else>
@@ -19,24 +19,21 @@ const orders = ref([])
 
 onMounted(async () => {
   try {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token')
 
     if (!token) {
-      throw new Error('No token found. User is probably not logged in.');
+      throw new Error('No token found. User is probably not logged in.')
     }
 
     const response = await axios.get('https://api.defonix.com/api/orders/', {
       headers: {
-        Authorization: `Token ${token}`,  // 👈 Add the token here
+        Authorization: `Token ${token}`,
         Accept: 'application/json',
       }
     })
 
-    if (!response.ok) throw new Error('Failed to fetch orders')
-
-    const data = await response.json()
-    console.log(data)
-    orders.value = data
+    console.log('Fetched orders:', response.data)
+    orders.value = response.data  // ✅ Use the data directly
   } catch (error) {
     console.error('Error fetching orders:', error)
   }
@@ -46,5 +43,14 @@ onMounted(async () => {
 <style scoped>
 h2 {
   margin-bottom: 10px;
+}
+
+#orders {
+  padding: 1rem;
+  font-size: small;
+}
+
+ul{
+  list-style: none;
 }
 </style>

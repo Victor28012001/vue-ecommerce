@@ -4,11 +4,11 @@
 
         <div v-if="showItems">
             <div v-for="item in cart.items" :key="item.id" class="summary-row">
-                <span style="width: 30%;"><img :src="item.image" alt="" style="width: 70%;"></span>
-                <span style="width: 50%; display: flex; flex-direction: column;justify-content: space-between;"><span>{{
-                        item.title.split(' - ')[0] }}</span> <span style="color: #0f0f0f; font-size: smaller;">Qty:
+                <span id="span1"><img :src="item.image" alt="" style="width: 70%;"></span>
+                <span id="span2"><span>{{
+                    item.title.split(' - ')[0] }}</span> <span style="color: #0f0f0f; font-size: smaller;">Qty:
                         {{ item.quantity }}</span></span>
-                <span style="width: 20%;font-weight: 500;font-size: smaller;display: flex;align-items: end;">{{
+                <span id="span3">{{
                     formatCurrency(item.new_price * item.quantity) }}</span>
             </div>
             <hr />
@@ -103,5 +103,34 @@ function formatCurrency(value) {
     border-radius: 6px;
     cursor: pointer;
     width: 100%;
+}
+
+#span1 {
+    width: 30%;
+}
+
+#span2 {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#span3 {
+    width: 30%;
+    font-weight: 500;
+    font-size: smaller;
+    display: flex;
+    align-items: end;
+}
+
+@media (max-width: 766px) {
+    #span2 {
+        width: 40%;
+    }
+
+    #span3 {
+        width: 30%;
+    }
 }
 </style>

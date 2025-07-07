@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="padding: 1rem;">
     <h2>User Addresses</h2>
 
     <p v-if="addresses.length === 0">No addresses found.</p>
@@ -378,10 +378,17 @@ h2 {
 
 li {
   margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-#delete{
+#delete {
   background-color: red;
   color: white;
+}
+
+ul {
+  list-style: none;
 }
 </style>

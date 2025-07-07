@@ -83,7 +83,7 @@ const login = async () => {
       username: email.value,
       password: password.value,
     }
-  );
+    );
 
     console.log('Login session response:', res.data);
 
@@ -124,13 +124,14 @@ const registerAndLogin = async () => {
 
 <style scoped>
 .auth-container {
-  max-width: 400px;
-  margin: 2rem auto;
+  width: 400px;
+  margin: 4.2rem auto;
   padding: 2rem;
   border: 1px solid #ddd;
   border-radius: 10px;
   text-align: center;
   background: #f9f9f9;
+  max-width: 70%;
 }
 
 input {

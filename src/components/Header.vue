@@ -21,7 +21,7 @@
         </template>
         <template v-else>
           <router-link to="/loginRegister" class="router-link links">
-            <span>Login || Register</span>
+            <span>Login</span>
           </router-link>
         </template>
         <router-link to="/wishlist" class="router-link links">

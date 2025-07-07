@@ -12,11 +12,19 @@
       </div>
     </div>
     <div class="product-grid">
+
+      <!-- Loading State -->
+      <p v-if="loading" class="loading-text">
+        Loading products<span class="dot-loader">{{ dots }}</span>
+      </p>
+
+      <!-- Empty State -->
+      <p v-else-if="!products || products.length === 0">No products found.</p>
       <ProductCard v-for="product in visibleProducts" :key="product.id" :product="product"
         @add-to-cart="$emit('add-to-cart', $event)" />
     </div>
     <div class="end">
-      <button class="button" @click="loadMore" :disabled="visibleCount >= products.length">
+      <button class="button" v-if="!loading && visibleProducts.length < products.length" @click="loadMore" :disabled="visibleCount >= products.length">
         View More Products
       </button>
     </div>
@@ -24,22 +32,37 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import ProductCard from './ProductCard.vue'
 
+const props = defineProps({
+  products: Array,
+  loading: Boolean
+})
 
-const props = defineProps(['products'])
 const emit = defineEmits(['add-to-cart'])
 
 const visibleCount = ref(8)
-
-const visibleProducts = computed(() => {
-  return props.products.slice(0, visibleCount.value)
-})
-
+const visibleProducts = computed(() => props.products.slice(0, visibleCount.value))
 function loadMore() {
   visibleCount.value += 8
 }
+
+// Dots Animation for Loading
+const dots = ref('.')
+let interval = null
+
+onMounted(() => {
+  if (props.loading) {
+    interval = setInterval(() => {
+      dots.value = dots.value.length >= 4 ? '.' : dots.value + '.'
+    }, 500)
+  }
+})
+
+onUnmounted(() => {
+  clearInterval(interval)
+})
 </script>
 
 
@@ -72,7 +95,8 @@ p {
   .product-grid {
     grid-template-columns: repeat(3, 1fr);
   }
-  .featured-products{
+
+  .featured-products {
     padding: 12px 4rem;
   }
 }
@@ -112,5 +136,17 @@ p {
 .end button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
+}
+
+.loading-text {
+  font-size: 0.9rem;
+  color: #555;
+  margin-top: 1rem;
+}
+
+.dot-loader {
+  display: inline-block;
+  font-weight: bold;
+  letter-spacing: 1px;
 }
 </style>

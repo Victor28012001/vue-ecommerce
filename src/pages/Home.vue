@@ -2,8 +2,8 @@
     <div class="home">
         <Navbar />
         <HeroSection />
-        <TopCategory v-if="categories.length" :categories="categories" @select="handleCategory" />
-        <FeaturedProducts v-if="filteredProducts.length" :products="filteredProducts" @add-to-cart="addToCart" />
+        <TopCategory v-if="categories.length" :categories="categories" :loading="isLoadingCategories" @select="handleCategory" />
+        <FeaturedProducts v-if="filteredProducts.length" :products="filteredProducts" :loading="isLoadingProducts" @add-to-cart="addToCart" />
         <div class="cta-layout">
             <Cta class="cta-large" title="Premium Laptops" tag="Limited Time Offer"
                 paragraph="Up to 40% off on selected models. Powerful performance for work and play."
@@ -44,6 +44,10 @@ import phone from "../assets/images/phone.jpg"
 const products = ref([])
 const filteredProducts = ref([])
 const categories = ref([]) // now dynamic
+
+const isLoadingProducts = ref(true)
+const isLoadingCategories = ref(true)
+
 const cart = useCartStore()
 
 // Helper: assign default image for categories
@@ -62,6 +66,8 @@ const getCategoryImage = (categoryName) => {
 // Fetch all products and their details
 async function fetchProducts() {
     try {
+        isLoadingProducts.value = true
+        isLoadingCategories.value = true
         // 1. Fetch list of product URLs + basic info
         const listRes = await axios.get('https://api.defonix.com/api/products/')
         const productList = listRes.data
@@ -131,6 +137,9 @@ async function fetchProducts() {
 
     } catch (error) {
         console.error('Failed to fetch products:', error)
+    } finally {
+        isLoadingProducts.value = false
+        isLoadingCategories.value = false
     }
 }
 
