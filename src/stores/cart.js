@@ -55,6 +55,7 @@ export const useCartStore = defineStore("cart", {
               config
             );
             await this.processBasket(basketRes.data, config);
+            console.log(basketRes.data)
             return;
           } catch (error) {
             console.log("Existing basket not found, creating new one");

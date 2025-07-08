@@ -67,6 +67,7 @@ const cart = useCartStore()  // define once at top
 
 onMounted(async () => {
     await cart.loadBasketItems()
+    console.log("ok")
 })
 
 const cartItems = computed(() => cart.items)

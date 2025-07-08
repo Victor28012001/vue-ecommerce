@@ -26,7 +26,7 @@
 </template>
 
 
-<script setup>
+<!-- <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 
@@ -60,6 +60,54 @@ const fetchUserProfile = async () => {
     }
 };
 
+
+onMounted(() => {
+    fetchUserProfile()
+})
+</script> -->
+<script setup>
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
+
+const user = ref(null)
+
+const fetchUserProfile = async () => {
+    try {
+        const token = localStorage.getItem('token')
+        if (!token) throw new Error('No token found.')
+
+        // Step 1: Get basket
+        const basketRes = await axios.get('https://api.defonix.com/api/basket/', {
+            headers: {
+                Authorization: `Token ${token}`,
+                Accept: 'application/json',
+            },
+        })
+
+        const basket = basketRes.data
+        const ownerUrl = basket.owner
+
+        // Step 2: Fetch user from basket.owner
+        const userRes = await axios.get(ownerUrl, {
+            headers: {
+                Authorization: `Token ${token}`,
+                Accept: 'application/json',
+            },
+        })
+
+        const data = userRes.data
+        console.log('User:', data)
+
+        // Step 3: Set user state
+        user.value = {
+            name: data.username,
+            email: data.email,
+            registeredAt: new Date(data.date_joined).toLocaleString(),
+        }
+    } catch (err) {
+        console.error('Failed to fetch user profile:', err)
+    }
+}
 
 onMounted(() => {
     fetchUserProfile()
