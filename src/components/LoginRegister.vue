@@ -112,7 +112,7 @@ const login = async () => {
 const registerAndLogin = async () => {
   await axios.post('https://api.defonix.com/api/register/', {
     email: email.value,
-    password: password.value,
+    password1: password.value,
     password2: confirmPassword.value
   })
 
