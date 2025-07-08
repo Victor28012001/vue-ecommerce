@@ -29,7 +29,7 @@
                             </div>
                             <div class="item-footer">
                                 <p>Qty {{ item.quantity }}</p>
-                                <p>${{ item.new_price?.toFixed(2) }}</p>
+                                <p>NGN{{ item.new_price?.toFixed(2) }}</p>
                             </div>
                         </div>
                     </li>

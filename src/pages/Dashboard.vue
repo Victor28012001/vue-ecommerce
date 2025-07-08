@@ -28,8 +28,10 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
+import { useAuthStore } from '../stores/auth'
 
 const router = useRouter()
+const auth = useAuthStore()
 
 
 // Import external components
@@ -61,16 +63,18 @@ const activeSectionLabel = computed(() => {
     return menuItems.find(i => i.key === activeSection.value)?.label || ''
 })
 
+
 const logout = async () => {
   try {
-
     await axios.delete('https://api.defonix.com/api/login/')
 
-    // Clear token, basket, etc.
+    // Clear tokens and cart
     localStorage.removeItem('token')
     document.cookie = 'token=; Max-Age=0; path=/;'
 
     cart.clearCart()
+    auth.setLoggedIn(false)  // ✅ Update global login state
+
     router.push('/loginRegister')
   } catch (error) {
     console.error('Logout failed:', error)

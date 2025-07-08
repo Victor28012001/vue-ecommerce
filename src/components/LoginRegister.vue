@@ -24,6 +24,8 @@
 import { ref } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '../stores/auth' // adjust path
+const auth = useAuthStore()
 
 const isLogin = ref(true)
 const email = ref('')
@@ -97,6 +99,9 @@ const login = async () => {
 
     localStorage.setItem('token', token);
     document.cookie = `token=${token}; path=/; secure; samesite=strict`;
+
+    auth.setLoggedIn(true) // ✅ Set user as logged in
+
 
     // Now fetch the updated (owned) basket
     await fetchBasket();

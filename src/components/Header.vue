@@ -14,7 +14,7 @@
       </div>
 
       <div class="end">
-        <template v-if="isLoggedIn">
+        <template v-if="auth.isLoggedIn">
           <router-link to="/dashboard" class="router-link links">
             <span>Profile</span>
           </router-link>
@@ -49,24 +49,25 @@
 
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
+import { useAuthStore } from '../stores/auth'
 import { ShoppingCartIcon, HeartIcon, PhotographIcon } from '@heroicons/vue/outline'
 import CartSlideOver from './CartSlideOver.vue'
 
 const isCartOpen = ref(false)
-const isLoggedIn = ref(false)
+const auth = useAuthStore()
 
-onMounted(() => {
-  // Simple login check
-  isLoggedIn.value = !!(localStorage.getItem('token') || getCookie('token'))
-})
+// onMounted(() => {
+//   // Simple login check
+//   isLoggedIn.value = !!(localStorage.getItem('token') || getCookie('token'))
+// })
 
-// Utility to get cookie by name
-function getCookie(name) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(';').shift();
-}
+// // Utility to get cookie by name
+// function getCookie(name) {
+//   const value = `; ${document.cookie}`;
+//   const parts = value.split(`; ${name}=`);
+//   if (parts.length === 2) return parts.pop().split(';').shift();
+// }
 </script>
 
 <style scoped>
