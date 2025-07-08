@@ -394,7 +394,7 @@ watch(categoryProducts, () => {
   /* width: 70%; */
 }
 
-.product-grid[data-v-beeb9691] {
+.product-grid {
   display: grid;
   width: 100%;
   gap: 1rem;
@@ -403,13 +403,13 @@ watch(categoryProducts, () => {
 }
 
 @media (min-width: 768px) and (max-width: 1127px) {
-  .product-grid[data-v-beeb9691] {
+  .product-grid {
     grid-template-columns: repeat(2, 1fr); /* Medium screens */
   }
 }
 
 @media (min-width: 1128px) {
-  .product-grid[data-v-beeb9691] {
+  .product-grid {
     grid-template-columns: repeat(3, 1fr); /* Large desktop */
   }
 }

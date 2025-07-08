@@ -113,7 +113,7 @@ const registerAndLogin = async () => {
   await axios.post('https://api.defonix.com/api/register/', {
     email: email.value,
     password: password.value,
-    confirmPassword: confirmPassword.value
+    password2: confirmPassword.value
   })
 
   // auto login after successful registration
