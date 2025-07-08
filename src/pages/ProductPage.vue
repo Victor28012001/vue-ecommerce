@@ -2,42 +2,31 @@
     <div>
         <Navbar />
 
-        <HeroCategory :background="Bg"
-            :title="'All Products'"
+        <HeroCategory :background="Bg" title="All Products"
             description="Browse our complete collection of premium tech products. Use the filters to find exactly what you're looking for." />
-
 
         <div class="layout">
             <div class="top">
-                <!-- Show filter-toggle on mobile -->
                 <button v-if="!isDesktop" class="filter-toggle" @click="showFilter = !showFilter">
                     FILTER
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}
-                        stroke="currentColor" className="size-6">
-                        <path strokeLinecap="round" strokeLinejoin="round"
-                            d="M6 13.5V3.75m0 9.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 3.75V16.5m12-3V3.75m0 9.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 3.75V16.5m-6-9V3.75m0 3.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 9.75V10.5" />
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 13.5V3.75m0 9.75…" />
                     </svg>
                 </button>
 
-                <!-- Show SortOptions with usage filters only on desktop -->
                 <SortOptions :usageTypes="uniqueUsages" :isDesktop="isDesktop" @sort-changed="handleSortChange"
                     @usage-changed="handleUsageChange" />
-
-
             </div>
 
             <div class="bottom">
-                <!-- Filter Panel: Always visible on desktop, toggleable on mobile -->
                 <div :class="['filter-panel-wrapper', { open: showFilter }]">
                     <FilterPanelAll :products="products" :categories="categories.map(c => c.name)"
                         :brands="categoryBrands" @filter-changed="handleFilterChange" />
-
                 </div>
 
-                <!-- Backdrop (only for mobile) -->
                 <div v-if="showFilter" class="backdrop" @click="showFilter = false"></div>
 
-                <!-- Products Section -->
                 <div class="product">
                     <div class="product-grid">
                         <ProductCard v-for="product in paginatedProducts" :key="product.id" :product="product" />
@@ -50,102 +39,149 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import axios from 'axios'
+
 import Navbar from '../components/Navbar.vue'
 import HeroCategory from '../components/HeroCategory.vue'
 import ProductCard from '../components/ProductCard.vue'
 import FilterPanelAll from '../components/FilterPanelAll.vue'
 import SortOptions from '../components/SortOptions.vue'
 import Paginator from '../components/Paginator.vue'
+
 import Bg from '../assets/images/BgAll.png'
 
 // UI state
 const isDesktop = ref(window.innerWidth >= 768)
-const showFilter = ref(false)
+const showFilter = ref(isDesktop.value)
+
+const setupResize = () => {
+    const onResize = () => {
+        isDesktop.value = window.innerWidth >= 768
+        showFilter.value = isDesktop.value
+    }
+    window.addEventListener('resize', onResize)
+    onResize()
+}
 
 // Data state
 const products = ref([])
 const filteredProducts = ref([])
 const categories = ref([])
-const selectedCategories = ref(['laptops'])
 
 // Filters
 const activeFilters = ref({
     price: { min: 0, max: Infinity },
     brands: [],
     usages: [],
-    categories: ['laptops']
+    categories: []
 })
-
 const sortOrder = ref('featured')
 const selectedUsage = ref(null)
 
-onMounted(async () => {
-    const jsonData = await import('../assets/data/products.json')
-    products.value = jsonData.default
+// Pagination
+const currentPage = ref(1)
+const itemsPerPage = 12
 
-    const categoryMap = {}
-    products.value.forEach(p => {
-        const cat = p.category || 'Uncategorized'
-        if (!categoryMap[cat]) {
-            categoryMap[cat] = {
-                name: cat,
-                image: `${cat.toLowerCase().replace(/\s+/g, '-')}.png`,
-                count: 0
+// Fetch products
+async function fetchProducts() {
+    try {
+        const { data: productList } = await axios.get('https://api.defonix.com/api/products/')
+        const detailed = await Promise.all(productList.map(async p => {
+            try {
+                const { data: d } = await axios.get(p.url)
+                let priceData = null
+                if (d.price) {
+                    try {
+                        const { data: pr } = await axios.get(d.price)
+                        priceData = pr
+                    } catch { }
+                }
+
+                const categoryStr = d.categories?.[0] || ''
+                const [mainCategory, brandFromCategory] = categoryStr.split('>').map(s => s.trim())
+
+                return {
+                    id: d.id,
+                    url: d.url,
+                    stockrecords: d.stockrecords,
+                    title: d.title,
+                    description: d.description,
+                    category: mainCategory || 'Uncategorized',
+                    brand: d.brand || brandFromCategory || null,
+                    image: d.images?.[0]?.original || 'https://dummyimage.com/1280x720/fff/aaa',
+                    images: d.images?.map(img => img.original) || [],
+                    old_price: null,
+                    new_price: priceData ? parseFloat(priceData.incl_tax) : null,
+                    currency: priceData?.currency || 'USD',
+                    priceData,
+                    use: d.use,
+                    rating: d.rating
+                }
+            } catch {
+                return null
             }
-        }
-        categoryMap[cat].count++
-    })
+        }))
 
-    categories.value = Object.values(categoryMap)
-    filteredProducts.value = products.value
+        products.value = detailed.filter(Boolean)
+        filteredProducts.value = [...products.value]
 
-    // Auto set filter panel visibility based on screen size
-    const handleResize = () => {
-        isDesktop.value = window.innerWidth >= 768
-        showFilter.value = isDesktop.value
+        // Build categories list
+        const map = {}
+        products.value.forEach(p => {
+            const cat = p.category
+            if (!map[cat]) map[cat] = { name: cat, count: 0 }
+            map[cat].count++
+        })
+        categories.value = Object.values(map)
+
+        applyFilters()
+    } catch (error) {
+        console.error('Error loading products:', error)
     }
-    window.addEventListener('resize', handleResize)
-    handleResize()
-    // Apply initial filter
-    applyFilters()
-})
-
-// Computed filter data
-const categoryBrands = computed(() => {
-    if (!selectedCategories.value.length) return Array.from(new Set(products.value.map(p => p.brand).filter(Boolean)))
-
-    // Filter products by selected categories first
-    const filteredByCategory = products.value.filter(p => selectedCategories.value.includes(p.category))
-    return Array.from(new Set(filteredByCategory.map(p => p.brand).filter(Boolean)))
-})
-
-
-const categoryUsages = computed(() => {
-    return Array.from(new Set(products.value.map(p => p.use).filter(Boolean)))
-})
-
-const uniqueUsages = categoryUsages
-
-// Filtering handlers
-function handleFilterChange(filters) {
-    // Reset selected brands to those valid for selected categories
-    const validBrands = categoryBrands.value
-
-    // Filter out brands no longer available for the selected categories
-    const filteredBrands = (filters.brands || []).filter(b => validBrands.includes(b))
-
-    activeFilters.value = {
-        price: filters.price,
-        brands: filteredBrands,
-        usages: filters.usages || [],
-        categories: filters.categories || []
-    }
-    selectedCategories.value = activeFilters.value.categories
-
-    applyFilters()
 }
 
+// Computed filters
+const categoryBrands = computed(() =>
+    Array.from(new Set(products.value.map(p => p.brand).filter(Boolean)))
+)
+
+const uniqueUsages = computed(() =>
+    Array.from(new Set(products.value.map(p => p.use).filter(Boolean)))
+)
+
+// Filtering
+function applyFilters() {
+    const { price, brands, usages, categories } = activeFilters.value
+
+    let result = products.value.filter(p => {
+        const matchesPrice = (p.new_price || 0) >= price.min && (p.new_price || 0) <= price.max
+        const matchesBrand = !brands.length || brands.includes(p.brand)
+        const matchesUsage = !usages.length || usages.includes(p.use)
+        const matchesCategory = !categories.length || categories.includes(p.category)
+        return matchesPrice && matchesBrand && matchesUsage && matchesCategory
+    })
+
+    result.sort((a, b) => {
+        switch (sortOrder.value) {
+            case 'price-asc': return (a.new_price || 0) - (b.new_price || 0)
+            case 'price-desc': return (b.new_price || 0) - (a.new_price || 0)
+            case 'rating': return (b.rating || 0) - (a.rating || 0)
+            case 'newest': return b.id - a.id
+            case 'title-a-z': return a.title.localeCompare(b.title)
+            case 'title-z-a': return b.title.localeCompare(a.title)
+            default: return 0
+        }
+    })
+
+    filteredProducts.value = result
+    currentPage.value = 1
+}
+
+function handleFilterChange(filters) {
+    activeFilters.value = filters
+    applyFilters()
+}
 
 function handleSortChange(order) {
     sortOrder.value = order
@@ -158,64 +194,31 @@ function handleUsageChange(usage) {
     applyFilters()
 }
 
-function applyFilters() {
-    const { price, brands, usages, categories } = activeFilters.value
-
-    filteredProducts.value = products.value
-        .filter(p => {
-            const matchesCategory = !categories?.length || categories.includes(p.category)
-            const priceValue = p.new_price || 0
-            const matchesPrice = priceValue >= price.min && priceValue <= price.max
-            const matchesBrand = !brands?.length || brands.includes(p.brand)
-            const matchesUsage = !usages?.length || usages.includes(p.use)
-
-            return matchesCategory && matchesPrice && matchesBrand && matchesUsage
-        })
-        .sort((a, b) => {
-            switch (sortOrder.value) {
-                case 'price-asc': return (a.new_price || 0) - (b.new_price || 0)
-                case 'price-desc': return (b.new_price || 0) - (a.new_price || 0)
-                case 'rating': return (b.rating || 0) - (a.rating || 0)
-                case 'newest': return b.id - a.id
-                case 'title-a-z': return a.name.localeCompare(b.name)
-                case 'title-z-a': return b.name.localeCompare(a.name)
-                default: return 0
-            }
-        })
-}
-
 // Pagination
-const currentPage = ref(1)
-const itemsPerPage = 12
-
 const totalPages = computed(() =>
     Math.ceil(filteredProducts.value.length / itemsPerPage)
 )
 
 const paginatedProducts = computed(() => {
     const start = (currentPage.value - 1) * itemsPerPage
-    const end = start + itemsPerPage
-    return filteredProducts.value.slice(start, end)
+    return filteredProducts.value.slice(start, start + itemsPerPage)
 })
 
-function handlePageChange(newPage) {
-    if (newPage >= 1 && newPage <= totalPages.value) {
-        currentPage.value = newPage
+function handlePageChange(page) {
+    if (page >= 1 && page <= totalPages.value) {
+        currentPage.value = page
         window.scrollTo({ top: 0, behavior: 'smooth' })
     }
 }
 
-watch(selectedCategories, (newCats) => {
-    // Reset active brands if they don't belong to the new category selection
-    const validBrands = categoryBrands.value
-    activeFilters.value.brands = activeFilters.value.brands.filter(b => validBrands.includes(b))
-
-    // Also update the active categories filter
-    activeFilters.value.categories = newCats
-
-    applyFilters()
+// Init
+onMounted(() => {
+    setupResize()
+    fetchProducts()
 })
 </script>
+
+
 
 
 <style scoped>
@@ -329,17 +332,23 @@ watch(selectedCategories, (newCats) => {
     /* width: 70%; */
 }
 
-.product-grid {
-    display: grid;
-    width: 100%;
-    gap: 1rem;
-    grid-template-columns: repeat(1, 1fr);
-    margin-bottom: 12px;
+.product-grid[data-v-beeb9691] {
+  display: grid;
+  width: 100%;
+  gap: 1rem;
+  grid-template-columns: repeat(1, 1fr); /* Default: mobile */
+  margin-bottom: 12px;
 }
 
-@media (min-width: 768px) {
-    .product-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
+@media (min-width: 768px) and (max-width: 1127px) {
+  .product-grid[data-v-beeb9691] {
+    grid-template-columns: repeat(2, 1fr); /* Medium screens */
+  }
+}
+
+@media (min-width: 1128px) {
+  .product-grid[data-v-beeb9691] {
+    grid-template-columns: repeat(3, 1fr); /* Large desktop */
+  }
 }
 </style>

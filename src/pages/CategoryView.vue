@@ -394,17 +394,23 @@ watch(categoryProducts, () => {
   /* width: 70%; */
 }
 
-.product-grid {
+.product-grid[data-v-beeb9691] {
   display: grid;
   width: 100%;
   gap: 1rem;
-  grid-template-columns: repeat(1, 1fr);
+  grid-template-columns: repeat(1, 1fr); /* Default: mobile */
   margin-bottom: 12px;
 }
 
-@media (min-width: 768px) {
-  .product-grid {
-    grid-template-columns: repeat(3, 1fr);
+@media (min-width: 768px) and (max-width: 1127px) {
+  .product-grid[data-v-beeb9691] {
+    grid-template-columns: repeat(2, 1fr); /* Medium screens */
+  }
+}
+
+@media (min-width: 1128px) {
+  .product-grid[data-v-beeb9691] {
+    grid-template-columns: repeat(3, 1fr); /* Large desktop */
   }
 }
 </style>

@@ -91,7 +91,7 @@ p {
 }
 
 /* Medium screens (768px and above) */
-@media (min-width: 768px) {
+@media (min-width: 768px) and (max-width: 1024px) {
   .product-grid {
     grid-template-columns: repeat(3, 1fr);
   }
