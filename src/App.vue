@@ -3,6 +3,7 @@
     <Banner />
     <Header />
     <router-view />
+    <NotificationPopup />
     <Footer />
   </div>
 </template>
@@ -11,4 +12,5 @@
 import Banner from './components/Banner.vue';
 import Header from './components/Header.vue'
 import Footer from './components/Footer.vue'
+import NotificationPopup from './components/NotificationPopup.vue';
 </script>

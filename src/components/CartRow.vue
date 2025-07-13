@@ -7,7 +7,7 @@
         <span>{{ item.category }}</span>
       </div>
     </td>
-    <td class="tr1">${{ item.new_price?.toFixed(2) ?? '0.00' }}</td>
+    <td class="tr1">NGN{{ item.new_price?.toFixed(2) ?? '0.00' }}</td>
     <td class="tr2">
       <div class="quantity">
         <button class="minus" aria-label="Decrease" @click="decrease" :disabled="quantity <= minQuantity">
@@ -21,54 +21,16 @@
       </div>
     </td>
     <td>
-      <span class="total">${{ (item.new_price * quantity)?.toFixed(2) ?? '0.00' }}</span>
+      <span class="total">NGN{{ (item.new_price * quantity)?.toFixed(2) ?? '0.00' }}</span>
       <span class="remove-icon" @click="$emit('remove', item.id)">✖</span>
     </td>
   </tr>
 </template>
 
-<!-- <script setup>
-import { ref, watch } from 'vue'
-
-const props = defineProps({
-  item: {
-    type: Object,
-    required: true
-  }
-})
-
-console.log(props.item)
-
-const emit = defineEmits(['remove', 'update-quantity'])
-
-const minQuantity = 1
-const maxQuantity = 10
-
-const quantity = ref(props.item.quantity ?? 1)
-
-
-function validateQuantity() {
-  if (quantity.value < minQuantity) quantity.value = minQuantity
-  if (quantity.value > maxQuantity) quantity.value = maxQuantity
-}
-
-function decrease() {
-  if (quantity.value > minQuantity) quantity.value--
-}
-
-function increase() {
-  if (quantity.value < maxQuantity) quantity.value++
-}
-
-// Watch quantity and notify parent
-watch(quantity, (newQuantity) => {
-  emit('update-quantity', { id: props.item.id, quantity: newQuantity })
-})
-</script> -->
 
 <script setup>
 import { ref, watch } from 'vue'
-import axios from 'axios'
+import { useCartStore } from '../stores/cart'
 
 // Props passed in from cart store/component
 const props = defineProps({
@@ -80,36 +42,21 @@ const props = defineProps({
 
 const emit = defineEmits(['remove', 'update-quantity'])
 
+const cart = useCartStore()
 const minQuantity = 1
 const maxQuantity = 10
 
 const quantity = ref(props.item.quantity ?? 1)
 
-// Helper to read CSRF token from cookies
-function getCookie(name) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(';').shift();
-}
+
 
 // Update backend with new quantity
 async function updateQuantityAPI(newQuantity) {
   try {
-    const csrfToken = getCookie('csrftoken');
-    const token = localStorage.getItem('token');
-
-    const formData = new FormData();
-    formData.append('quantity', newQuantity);
-
-    await axios.patch(props.item.basketLineUrl, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        'X-CSRFTOKEN': csrfToken,
-        'Authorization': `Token ${token}`,
-        'Accept': 'application/json',
-      },
-      withCredentials: true,
-    });
+    await cart.updateItemQuantity({
+      lineUrl: props.item.basketLineUrl,
+      quantity: newQuantity
+    })
 
     emit('update-quantity', { id: props.item.id, quantity: newQuantity });
   } catch (error) {
@@ -131,10 +78,15 @@ function increase() {
   if (quantity.value < maxQuantity) quantity.value++;
 }
 
-// Watch quantity and trigger API update
+// Watch quantity and trigger API update with debounce
+let updateTimeout
 watch(quantity, (newQuantity) => {
-  updateQuantityAPI(newQuantity);
-});
+  validateQuantity()
+  clearTimeout(updateTimeout)
+  updateTimeout = setTimeout(() => {
+    updateQuantityAPI(newQuantity)
+  }, 500) // 500ms debounce
+})
 </script>
 
 

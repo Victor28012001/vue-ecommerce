@@ -10,8 +10,8 @@
                 :imageSrc="imgSrc" />
 
             <div class="cta-column">
-                <Cta class="cta-small" title="Monitors" paragraph="20% off $5,000." :imageSrc="desktop" />
-                <Cta class="cta-small" title="Accessories" paragraph="20% off $5,000." :imageSrc="accessories" />
+                <Cta class="cta-small" title="Monitors" paragraph="20% off NGN5,000." :imageSrc="desktop" />
+                <Cta class="cta-small" title="Accessories" paragraph="20% off NGN5,000." :imageSrc="accessories" />
             </div>
         </div>
         <ServicesSection />

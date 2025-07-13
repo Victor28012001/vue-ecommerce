@@ -40,7 +40,7 @@
             <div class="cart-footer">
                 <div class="subtotal">
                     <p>Subtotal</p>
-                    <p>${{ total.toFixed(2) }}</p>
+                    <p>NGN{{ total.toFixed(2) }}</p>
                 </div>
                 <router-link to="/checkout" class="checkout-btn" v-if="cartItems.length > 0">
                     Checkout Now
@@ -67,7 +67,6 @@ const cart = useCartStore()  // define once at top
 
 onMounted(async () => {
     await cart.loadBasketItems()
-    console.log("ok")
 })
 
 const cartItems = computed(() => cart.items)
@@ -116,7 +115,7 @@ const removeItem = (id) => cart.removeItem(id)
 
 @media (min-width: 768px) {
     .cart-panel {
-        right: 12%;
+        right: 5%;
         top: 10%;
     }
 

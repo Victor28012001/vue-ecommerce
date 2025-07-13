@@ -106,6 +106,8 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import { useRoute } from 'vue-router';
+import { useCartStore } from "../stores/cart";
+import { useWishlistStore } from "../stores/wishlist";
 import axios from "axios";
 import Navbar from "../components/Navbar.vue";
 
@@ -117,15 +119,17 @@ const product = ref({
   product_class: "",
   // fallback defaults...
 });
-const price = ref({ incl_tax: 0, excl_tax: 0 });
+const price = ref({ incl_tax: 0, excl_tax: 0, currency: 'NGN' });
 const quantity = ref(1);
 const adding = ref(false);
 const addingWishlist = ref(false);
 const alertMessage = ref("");
 const alertVariant = ref("alert-success");
 
+const wishlist = useWishlistStore()
+const cart = useCartStore()
+
 const productAvailability = computed(() => {
-  // Assume availability API maybe returns something fetchable; fallback:
   return { text: "Available", icon: "fas fa-check-circle text-success" };
 });
 
@@ -137,11 +141,19 @@ const formatCurrency = (val) =>
 
 async function loadProduct() {
   const { id } = route.params;
-  const res = await axios.get(`https://api.defonix.com/api/products/${id}/`);
-  product.value = res.data;
-  // Fetch price, availability, reviews if separate...
-  const priceRes = await axios.get(res.data.price);
-  price.value = priceRes.data;
+  try {
+    const res = await axios.get(`https://api.defonix.com/api/products/${id}/`);
+    product.value = res.data;
+
+    // Fetch price if available
+    if (res.data.price) {
+      const priceRes = await axios.get(res.data.price);
+      price.value = priceRes.data;
+    }
+  } catch (error) {
+    console.error('Error loading product:', error);
+    showAlert("Failed to load product details", "alert-danger");
+  }
 }
 
 function showAlert(msg, variant = "alert-success") {
@@ -153,9 +165,32 @@ function showAlert(msg, variant = "alert-success") {
 async function addToBasket() {
   adding.value = true;
   try {
-    /* Implement basket add logic, perhaps axios.post(...) */
-    showAlert("Added to cart!");
-  } catch {
+    // Get stockrecord details
+    let stockrecordUrl = product.value.stockrecords;
+    if (typeof product.value.stockrecords === 'string') {
+      try {
+        const stockrecordRes = await axios.get(product.value.stockrecords);
+        stockrecordUrl = stockrecordRes.data[0]?.url || product.value.stockrecords;
+      } catch (error) {
+        console.warn('Could not fetch stockrecords, using base URL');
+      }
+    }
+
+    // Prepare payload
+    const payload = {
+      product: product.value.url,
+      stockrecord: stockrecordUrl,
+      quantity: quantity.value,
+      price_currency: price.value.currency || 'NGN',
+      price_excl_tax: parseFloat(price.value.excl_tax) || 0,
+      price_incl_tax: parseFloat(price.value.incl_tax) || 0,
+      line_reference: `prod-${product.value.id}-stock-${stockrecordUrl.split('/').filter(Boolean).pop()}`
+    };
+
+    await cart.addItem(payload);
+    showAlert(`${product.value.title} added to cart!`);
+  } catch (error) {
+    console.error('Error adding to cart:', error);
     showAlert("Failed to add to cart", "alert-danger");
   } finally {
     adding.value = false;
@@ -165,10 +200,12 @@ async function addToBasket() {
 async function addToWishlist() {
   addingWishlist.value = true;
   try {
-    /* Implement wishlist logic */
-    showAlert("Added to wish list!");
-  } catch {
-    showAlert("Failed to add to wish list", "alert-danger");
+    await wishlist.toggleItem(product.value);
+    const isInWishlist = wishlist.items.some(item => item.id === product.value.id);
+    showAlert(isInWishlist ? "Added to wishlist!" : "Removed from wishlist!");
+  } catch (error) {
+    console.error('Error updating wishlist:', error);
+    showAlert("Failed to update wishlist", "alert-danger");
   } finally {
     addingWishlist.value = false;
   }

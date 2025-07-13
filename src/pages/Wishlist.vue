@@ -15,5 +15,6 @@ import Navbar from '../components/Navbar.vue';
 .ok {
   text-align: left;
   padding: 2rem 4rem;
+  min-height: 60vh;
 }
 </style>

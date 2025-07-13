@@ -2,7 +2,9 @@
   <footer class="footer">
     <div class="footer_details">
       <div class="footer_logo">
-        <h3>LOGO</h3>
+        <router-link to="/" class="router-link links">
+          <img src="/images/logo.jpg" alt="" width="80">
+        </router-link>
         <p>Premium tech products with flexible payment options and exceptional service.</p>
         <div class="socials">
           <img :src="facebook" alt="Facebook" />
@@ -119,7 +121,7 @@ import footer_img from "../assets/images/footer_img.png";
 .footer_bottom p {
   margin: 0;
   font-size: 0.8rem;
-  position: relative;    
+  position: relative;
   margin-top: 58px;
   margin-bottom: 28px;
 }

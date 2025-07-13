@@ -1,8 +1,10 @@
 <template>
     <section class="hero">
       <div class="new-arrivals">
-        <button class="new-tag">New</button>
-        <span class="sale-text">Sale ₦1200 Off Your First Order</span>
+        <button class="new-tag">+23481234567</button>
+        <!-- <button class="new-tag">New</button> -->
+        <span class="sale-text">Macanthony615@gmail.com</span>
+        <!-- <span class="sale-text">Sale ₦1200 Off Your First Order</span> -->
       </div>
     </section>
   </template>

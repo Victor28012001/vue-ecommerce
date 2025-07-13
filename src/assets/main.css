@@ -39,3 +39,18 @@ a:-webkit-any-link {
     cursor: pointer;
     text-decoration: none;
 }
+
+/* For most modern browsers */
+::placeholder {
+  color: #ccc;  /* Light gray */
+  opacity: 1;   /* Firefox reduces opacity by default */
+}
+
+/* For older browsers */
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: #ccc;
+}
+
+::-ms-input-placeholder { /* Microsoft Edge */
+  color: #ccc;
+}

@@ -4,7 +4,7 @@
       <div class="logo-wrapper">
         <div class="logo">
           <router-link to="/" class="router-link links">
-            <img src="/images/logo.jpg" alt="" width="60">
+            <img src="/images/logo.jpg" alt="" width="80">
           </router-link>
         </div>
         <div class="search-bar1">
@@ -28,9 +28,10 @@
           <HeartIcon class="icon" />
           <span>Wishlist</span>
         </router-link>
-        <div class="router-link links" @click="isCartOpen = true">
+        <div class="router-link links" @click="isCartOpen = true" id="cart">
           <ShoppingCartIcon class="icon" />
           <span>Cart</span>
+          <span id="count">{{ cartItems.length }}</span>
         </div>
       </div>
     </div>
@@ -49,25 +50,17 @@
 
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useAuthStore } from '../stores/auth'
-import { ShoppingCartIcon, HeartIcon, PhotographIcon } from '@heroicons/vue/outline'
+import { useCartStore } from '../stores/cart'
+import { ShoppingCartIcon, HeartIcon } from '@heroicons/vue/outline'
 import CartSlideOver from './CartSlideOver.vue'
 
 const isCartOpen = ref(false)
+const cart = useCartStore()
 const auth = useAuthStore()
 
-// onMounted(() => {
-//   // Simple login check
-//   isLoggedIn.value = !!(localStorage.getItem('token') || getCookie('token'))
-// })
-
-// // Utility to get cookie by name
-// function getCookie(name) {
-//   const value = `; ${document.cookie}`;
-//   const parts = value.split(`; ${name}=`);
-//   if (parts.length === 2) return parts.pop().split(';').shift();
-// }
+const cartItems = computed(() => cart.items)
 </script>
 
 <style scoped>
@@ -178,6 +171,27 @@ const auth = useAuthStore()
   align-items: center;
   justify-content: space-between;
   width: 100%;
+}
+
+#cart {
+  position: relative;
+}
+
+#count {
+  font-size: xx-small;
+  position: absolute;
+  top: -10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  right: -35%;
+  background-color: #053379;
+  color: #fff;
+  border-radius: 50%;
+  aspect-ratio: 1 / 1;
+  box-sizing: border-box;
+  height: auto;
+  width: 15px;
 }
 
 /* Hide .search-bar1 by default (mobile) */

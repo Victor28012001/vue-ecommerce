@@ -55,7 +55,7 @@ export const useCartStore = defineStore("cart", {
               config
             );
             await this.processBasket(basketRes.data, config);
-            console.log(basketRes.data)
+            console.log(basketRes.data);
             return;
           } catch (error) {
             console.log("Existing basket not found, creating new one");
@@ -127,6 +127,28 @@ export const useCartStore = defineStore("cart", {
       );
 
       this.items = detailedItems.filter(Boolean);
+    },
+
+    async updateItemQuantity({ lineUrl, quantity }) {
+      try {
+        const config = await this.getRequestConfig();
+
+        // Ensure we're sending JSON content-type
+        config.headers["Content-Type"] = "application/json";
+
+        const response = await axios.patch(lineUrl, { quantity }, config);
+
+        // Reload basket to get updated totals
+        await this.loadBasketItems();
+        return response.data;
+      } catch (error) {
+        console.error("Error updating quantity:", {
+          status: error.response?.status,
+          data: error.response?.data,
+          config: error.config,
+        });
+        throw error;
+      }
     },
 
     async addItem(payload) {
@@ -268,7 +290,7 @@ export const useCartStore = defineStore("cart", {
           ...(csrfToken && { "X-CSRFToken": csrfToken }),
           ...(token && { Authorization: `Token ${token}` }),
         };
-        console.log(payload)
+        console.log(payload);
 
         const response = await axios.post(
           "https://api.defonix.com/api/checkout/",

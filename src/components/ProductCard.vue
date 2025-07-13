@@ -1,45 +1,45 @@
 <template>
   <!-- <router-link :to="`/products/${props.product.id}`" class="sale-card-link"> -->
-    <div class="sale-card">
-      <div class="img-class">
-        <img class="sale-card-image" :src="props.product.image || 'https://via.placeholder.com/300'"
-          :alt="productTitle" />
-        <button @click="toggleWishlist" class="wishlist-btn">
-          {{ isWishlisted ? '♥' : '♡' }}
-        </button>
-        <span class="tag">{{ discountPercentage }}% Off</span>
-        <span class="gallery"><img :src="gallery_img" alt="">1/8</span>
+  <div class="sale-card">
+    <div class="img-class">
+      <img class="sale-card-image" :src="props.product.image || 'https://dummyimage.com/1280x720/fff/aaa'"
+        :alt="productTitle" />
+      <button @click="toggleWishlist" class="wishlist-btn">
+        {{ isWishlisted ? '♥' : '♡' }}
+      </button>
+      <span class="tag">{{ discountPercentage }}% Off</span>
+      <span class="gallery"><img :src="gallery_img" alt="">1/8</span>
+    </div>
+    <div class="sale-card-content">
+      <router-link :to="`/products/${props.product.id}`" class="sale-card-link">
+        <p>{{ props.product.category }}</p>
+        <h5 class="sale-card-title">
+          {{ productTitle }}
+        </h5>
+      </router-link>
+      <div class="sale-card-rating">
+        <div class="stars">
+          <svg v-for="star in 5" :key="star" :class="star <= props.product.rating ? 'filled' : ''" class="star"
+            viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
+            </path>
+          </svg>
+        </div>
+        <span class="">(125)</span>
       </div>
-      <div class="sale-card-content">
-        <router-link :to="`/products/${props.product.id}`" class="sale-card-link">
-          <p>{{ props.product.category }}</p>
-          <h5 class="sale-card-title">
-            {{ productTitle }}
-          </h5>
-        </router-link>
-        <div class="sale-card-rating">
-          <div class="stars">
-            <svg v-for="star in 5" :key="star" :class="star <= props.product.rating ? 'filled' : ''" class="star"
-              viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
-              </path>
-            </svg>
-          </div>
-          <span class="">(125)</span>
-        </div>
-        <div class="sale-card-price">
-          <div class="prices">
-            <span class="price-new">{{ props.product.currency || '$' }}{{ props.product.new_price?.toFixed(2) ?? '0.00'
+      <div class="sale-card-price">
+        <div class="prices">
+          <span class="price-new">{{ props.product.currency || '$' }}{{ props.product.new_price?.toFixed(2) ?? '0.00'
             }}</span>
-            <span class="price-old">{{ props.product.old_price }}</span>
-          </div>
-          <button @click="addToCart" class="add-to-cart-btn">
-            {{ isCarted ? 'Remove' : 'Add' }}
-          </button>
+          <span class="price-old">{{ props.product.old_price }}</span>
         </div>
+        <button @click="addToCart" class="add-to-cart-btn">
+          {{ isCarted ? 'Remove' : 'Add' }}
+        </button>
       </div>
     </div>
+  </div>
   <!-- </router-link> -->
 </template>
 
@@ -49,6 +49,7 @@ import gallery_img from '/src/assets/images/gallery.png'
 import { useWishlistStore } from '../stores/wishlist'
 import { useCartStore } from '../stores/cart'
 import { v4 as uuidv4 } from 'uuid'; // top of the file
+import { useNotificationStore } from '../stores/notification'
 
 
 // Destructure product prop
@@ -64,6 +65,8 @@ const discountPercentage = computed(() => {
 
 const wishlist = useWishlistStore()
 const cart = useCartStore()
+// Add this ref
+const notificationStore = useNotificationStore()
 
 const isWishlisted = computed(() =>
   wishlist.items.some(item => item.id === props.product.id)
@@ -121,27 +124,34 @@ async function addToCart() {
   // ✅ Use Pinia store directly
   const existingItem = cart.items.find(item => item.line_reference === lineReference);
 
-  if (existingItem) {
-    // Let your store handle quantity updates
-    await cart.addItem({
-      product: productUrl,
-      stockrecord: stockrecordUrl,
-      quantity,
-      price_currency: priceCurrency,
-      price_excl_tax: priceExclTax,
-      price_incl_tax: priceInclTax,
-      line_reference: lineReference,
-    });
-  } else {
-    await cart.addItem({
-      product: productUrl,
-      stockrecord: stockrecordUrl,
-      quantity,
-      price_currency: priceCurrency,
-      price_excl_tax: priceExclTax,
-      price_incl_tax: priceInclTax,
-      line_reference: lineReference,
-    });
+  try {
+    if (existingItem) {
+      // Let your store handle quantity updates
+      await cart.addItem({
+        product: productUrl,
+        stockrecord: stockrecordUrl,
+        quantity,
+        price_currency: priceCurrency,
+        price_excl_tax: priceExclTax,
+        price_incl_tax: priceInclTax,
+        line_reference: lineReference,
+      });
+      notificationStore.show(`${productTitle.value} added to cart`);
+    } else {
+      await cart.addItem({
+        product: productUrl,
+        stockrecord: stockrecordUrl,
+        quantity,
+        price_currency: priceCurrency,
+        price_excl_tax: priceExclTax,
+        price_incl_tax: priceInclTax,
+        line_reference: lineReference,
+      });
+      notificationStore.show(`${productTitle.value} added to cart`);
+    }
+  } catch (error) {
+    console.error('Error adding to cart:', error);
+    notificationStore.show('Failed to add to cart');
   }
 }
 
