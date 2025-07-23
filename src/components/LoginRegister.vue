@@ -18,6 +18,8 @@
 
     <div v-if="message" class="message">{{ message }}</div>
   </div>
+  <ModalMessage v-if="showModal" :title="modalTitle" :message="modalMessage" :type="modalType" :show="showModal"
+    @close="showModal = false" />
 </template>
 
 <script setup>
@@ -25,6 +27,7 @@ import { ref } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth' // adjust path
+import ModalMessage from './ModalMessage.vue'
 const auth = useAuthStore()
 
 const isLogin = ref(true)
@@ -33,6 +36,18 @@ const password = ref('')
 const confirmPassword = ref('')
 const message = ref('')
 const router = useRouter()
+
+const showModal = ref(false)
+const modalMessage = ref('')
+const modalTitle = ref('Error')
+const modalType = ref('error') // or success, info, warning
+
+function showError(message, type = 'error', title = 'Error') {
+  modalMessage.value = message
+  modalType.value = type
+  modalTitle.value = title
+  showModal.value = true
+}
 
 const toggleMode = () => {
   isLogin.value = !isLogin.value
@@ -73,6 +88,7 @@ async function fetchBasket() {
     });
   } catch (error) {
     console.error('Failed to fetch basket:', error);
+    showError("Failed to fetch basket: " + error.message, 'error', 'Basket Error')
     message.value = error.response?.data?.detail || 'Failed to fetch basket';
   }
 }
@@ -108,7 +124,8 @@ const login = async () => {
 
     router.push('/dashboard');
   } catch (error) {
-    console.error('Login failed:', error);
+    showError("Login failed: " + error.message, 'error', 'Login Error')
+    // console.error('Login failed:', error);
     message.value = error.response?.data?.detail || 'Login failed';
   }
 };

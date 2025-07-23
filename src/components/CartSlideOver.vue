@@ -40,7 +40,7 @@
             <div class="cart-footer">
                 <div class="subtotal">
                     <p>Subtotal</p>
-                    <p>NGN{{ total.toFixed(2) }}</p>
+                    <p>{{ formatCurrency(total) }}</p>
                 </div>
                 <router-link to="/checkout" class="checkout-btn" v-if="cartItems.length > 0">
                     Checkout Now
@@ -70,7 +70,14 @@ onMounted(async () => {
 })
 
 const cartItems = computed(() => cart.items)
-const total = computed(() => cart.total)
+const total = computed(() => cart.basketTotals.total_incl_tax || 0)
+
+function formatCurrency(value) {
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: cart.basketTotals.currency || 'NGN',
+    }).format(value)
+}
 
 const closeCart = () => emit('close')
 const removeItem = (id) => cart.removeItem(id)

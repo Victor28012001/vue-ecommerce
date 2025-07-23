@@ -7,9 +7,17 @@
             <img src="/images/logo.jpg" alt="" width="80">
           </router-link>
         </div>
-        <div class="search-bar1">
-          <input placeholder="Search for products, brands.." class="input" name="search" type="text" />
-          <button class="button1">Search</button>
+        <div class="search-bar1" style="position: relative;">
+          <input v-model="searchQuery" @input="onSearchInput" @focus="onSearchInput" @blur="hideSuggestionsWithDelay"
+            placeholder="Search for products, brands.." class="input" name="search" type="text" autocomplete="off" />
+          <button class="button1" @click="onSearchInput">Search</button>
+
+          <ul v-if="showSuggestions && filteredResults.length" class="suggestions">
+            <li v-for="product in filteredResults" :key="product.id" @mousedown.prevent="goToProduct(product.id)"
+              class="suggestion-item">
+              {{ product.title || 'Unnamed Product' }}
+            </li>
+          </ul>
         </div>
       </div>
 
@@ -37,30 +45,98 @@
     </div>
 
     <div class="search-row">
-      <div class="search-bar">
-        <input placeholder="Search for products, brands.." class="input" name="search" type="text" />
-        <button class="button1">Search</button>
+      <div class="search-bar" style="position: relative;">
+        <input v-model="searchQuery" @input="onSearchInput" @focus="onSearchInput" @blur="hideSuggestionsWithDelay"
+          placeholder="Search for products, brands.." class="input" name="search" type="text" autocomplete="off" />
+        <button class="button1" @click="onSearchInput">Search</button>
+
+        <ul v-if="showSuggestions && filteredResults.length" class="suggestions">
+          <li v-for="product in filteredResults" :key="product.id" @mousedown.prevent="goToProduct(product.id)"
+            class="suggestion-item">
+            {{ product.title || 'Unnamed Product' }}
+          </li>
+        </ul>
       </div>
     </div>
 
     <CartSlideOver :isOpen="isCartOpen" @close="isCartOpen = false" />
   </header>
+  <ModalMessage v-if="showModal" :title="modalTitle" :message="modalMessage" :type="modalType" :show="showModal"
+    @close="showModal = false" />
 </template>
 
 
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import axios from 'axios'
+
 import { useAuthStore } from '../stores/auth'
 import { useCartStore } from '../stores/cart'
 import { ShoppingCartIcon, HeartIcon } from '@heroicons/vue/outline'
 import CartSlideOver from './CartSlideOver.vue'
+import ModalMessage from './ModalMessage.vue'
 
 const isCartOpen = ref(false)
 const cart = useCartStore()
 const auth = useAuthStore()
 
 const cartItems = computed(() => cart.items)
+
+const router = useRouter()
+
+const showModal = ref(false)
+const modalMessage = ref('')
+const modalTitle = ref('Error')
+const modalType = ref('error') // or success, info, warning
+
+function showError(message, type = 'error', title = 'Error') {
+  modalMessage.value = message
+  modalType.value = type
+  modalTitle.value = title
+  showModal.value = true
+}
+
+const searchQuery = ref('')
+const allProducts = ref([])
+const filteredResults = ref([])
+const showSuggestions = ref(false)
+
+const loadAllProducts = async () => {
+  if (allProducts.value.length) return // already loaded
+
+  try {
+    const res = await axios.get('https://api.defonix.com/api/products')
+    allProducts.value = res.data || []
+  } catch (err) {
+    showError("Failed to load products: " + err.message, 'error', 'Load Error')
+    console.error('Failed to load products:', err)
+  }
+}
+
+const onSearchInput = async () => {
+  if (!allProducts.value.length) await loadAllProducts()
+
+  const query = searchQuery.value.toLowerCase()
+  filteredResults.value = allProducts.value.filter(
+    (product) =>
+      product.title && product.title.toLowerCase().includes(query)
+  )
+  showSuggestions.value = true
+}
+
+const goToProduct = (id) => {
+  showSuggestions.value = false
+  searchQuery.value = ''
+  router.push(`/products/${id}`)
+}
+
+const hideSuggestionsWithDelay = () => {
+  setTimeout(() => {
+    showSuggestions.value = false
+  }, 200)
+}
 </script>
 
 <style scoped>
@@ -231,5 +307,29 @@ const cartItems = computed(() => cart.items)
   .search-row {
     display: none;
   }
+}
+
+.suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 100;
+  background: white;
+  border: 1px solid #ccc;
+  width: 80%;
+  height: 40vh;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow: auto;
+}
+
+.suggestion-item {
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.suggestion-item:hover {
+  background-color: #f0f0f0;
 }
 </style>

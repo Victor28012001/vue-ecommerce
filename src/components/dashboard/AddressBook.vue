@@ -19,7 +19,7 @@
 
     <!-- Modal -->
     <transition name="fade">
-      <div v-if="showModal" class="modal">
+      <div v-if="showModals" class="modal">
         <div class="modal-content">
           <h3>{{ isEditing ? 'Edit Address' : 'Add Address' }}</h3>
           <form @submit.prevent="submitForm">
@@ -67,19 +67,34 @@
       </div>
     </transition>
   </div>
+  <ModalMessage v-if="showModal" :title="modalTitle" :message="modalMessage" :type="modalType" :show="showModal"
+    @close="showModal = false" />
 </template>
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import axios from 'axios'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import ModalMessage from '../ModalMessage.vue'
 
 const addresses = ref([])
 const countries = ref([])
-const showModal = ref(false)
+const showModals = ref(false)
 const isEditing = ref(false)
 const currentId = ref(null)
 const formErrors = ref({})
+
+const showModal = ref(false)
+const modalMessage = ref('')
+const modalTitle = ref('Error')
+const modalType = ref('error') // or success, info, warning
+
+function showError(message, type = 'error', title = 'Error') {
+  modalMessage.value = message
+  modalType.value = type
+  modalTitle.value = title
+  showModal.value = true
+}
 
 // Reactive form state
 const form = reactive({
@@ -113,6 +128,7 @@ const loadCountries = async () => {
     countries.value = res.data
   } catch (err) {
     console.error('Failed to load countries:', err)
+    showError("Failed to load countries: " + err.message, 'error', 'Country Error')
   }
 }
 
@@ -135,6 +151,7 @@ const loadAddresses = async () => {
     addresses.value = res.data
   } catch (err) {
     console.error('Failed to fetch addresses:', err)
+    showError("Failed to fetch addresses: " + err.message, 'error', 'Address Error')
   }
 }
 
@@ -163,18 +180,18 @@ const resetForm = () => {
 const openAddModal = () => {
   isEditing.value = false
   resetForm()
-  showModal.value = true
+  showModals.value = true
 }
 
 const openEditModal = (address) => {
   isEditing.value = true
   currentId.value = address.id
   Object.assign(form, address)
-  showModal.value = true
+  showModals.value = true
 }
 
 const closeModal = () => {
-  showModal.value = false
+  showModals.value = false
   resetForm()
 }
 
@@ -210,8 +227,10 @@ const submitForm = async () => {
     if (err.response && err.response.data) {
       formErrors.value = err.response.data
       console.error('Validation errors:', formErrors.value)
+      showError("Validation errors: " + JSON.stringify(formErrors.value), 'error', 'Validation Error')
     } else {
       console.error('Unexpected error:', err)
+      showError("Unexpected error: " + err.message, 'error', 'Submission Error')
     }
   }
 }
@@ -235,6 +254,7 @@ const deleteAddress = async (id) => {
     await loadAddresses()
   } catch (err) {
     console.error('Failed to delete address:', err)
+    showError("Failed to delete address: " + err.message, 'error', 'Delete Error')
   }
 }
 

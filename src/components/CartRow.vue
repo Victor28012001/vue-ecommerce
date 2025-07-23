@@ -7,7 +7,7 @@
         <span>{{ item.category }}</span>
       </div>
     </td>
-    <td class="tr1">NGN{{ item.new_price?.toFixed(2) ?? '0.00' }}</td>
+    <td class="tr1">NGN{{ item.new_price?.toFixed(2) / quantity ?? '0.00' }}</td>
     <td class="tr2">
       <div class="quantity">
         <button class="minus" aria-label="Decrease" @click="decrease" :disabled="quantity <= minQuantity">
@@ -21,16 +21,19 @@
       </div>
     </td>
     <td>
-      <span class="total">NGN{{ (item.new_price * quantity)?.toFixed(2) ?? '0.00' }}</span>
+      <span class="total">NGN{{ (item.new_price)?.toFixed(2) ?? '0.00' }}</span>
       <span class="remove-icon" @click="$emit('remove', item.id)">✖</span>
     </td>
   </tr>
+  <ModalMessage v-if="showModal" :title="modalTitle" :message="modalMessage" :type="modalType" :show="showModal"
+    @close="showModal = false" />
 </template>
 
 
 <script setup>
 import { ref, watch } from 'vue'
 import { useCartStore } from '../stores/cart'
+import ModalMessage from './ModalMessage.vue'
 
 // Props passed in from cart store/component
 const props = defineProps({
@@ -41,6 +44,18 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['remove', 'update-quantity'])
+
+const showModal = ref(false)
+const modalMessage = ref('')
+const modalTitle = ref('Error')
+const modalType = ref('error') // or success, info, warning
+
+function showError(message, type = 'error', title = 'Error') {
+  modalMessage.value = message
+  modalType.value = type
+  modalTitle.value = title
+  showModal.value = true
+}
 
 const cart = useCartStore()
 const minQuantity = 1
@@ -60,7 +75,8 @@ async function updateQuantityAPI(newQuantity) {
 
     emit('update-quantity', { id: props.item.id, quantity: newQuantity });
   } catch (error) {
-    console.error('Failed to update quantity:', error);
+    // console.error('Failed to update quantity:', error);
+    showError("Failed to update quantity: " + error.message, 'error', 'Update Error')
   }
 }
 

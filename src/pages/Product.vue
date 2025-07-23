@@ -13,7 +13,7 @@
       </div>
 
       <!-- Main Content -->
-      <div class="content">
+      <div class="content" style="margin: 2rem;">
         <div id="content_inner">
           <article class="product_page">
             <div class="row">
@@ -57,12 +57,13 @@
                 <form @submit.prevent="addToBasket" class="add-to-basket mb-0">
                   <input type="number" v-model.number="quantity" min="1" class="form-control mb-2" />
                   <button type="submit" class="btn btn-lg btn-primary w-100" :disabled="adding">
-                    {{ adding ? "Adding..." : "Add to cart" }}
+                    {{ isCarted ? (adding ? "Removing..." : "Remove from cart") : (adding ? "Adding..." : "Add to cart")
+                    }}
                   </button>
                 </form>
 
                 <button class="btn btn-outline-secondary w-100 mt-2" @click="addToWishlist" :disabled="addingWishlist">
-                  {{ addingWishlist ? "Adding..." : "Add to wish list" }}
+                  {{ isWishlisted ? addingWishlist ? "Adding..." : "Remove from wish list" : "Add to wish list" }}
                 </button>
               </div>
             </div>
@@ -101,15 +102,18 @@
       </div>
     </div>
   </div>
+  <ModalMessage v-if="showModal" :title="modalTitle" :message="modalMessage" :type="modalType" :show="showModal"
+    @close="showModal = false" />
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
 import { useRoute } from 'vue-router';
 import { useCartStore } from "../stores/cart";
 import { useWishlistStore } from "../stores/wishlist";
 import axios from "axios";
 import Navbar from "../components/Navbar.vue";
+import ModalMessage from "../components/ModalMessage.vue";
 
 const route = useRoute();
 
@@ -117,7 +121,6 @@ const product = ref({
   images: [],
   categories: [],
   product_class: "",
-  // fallback defaults...
 });
 const price = ref({ incl_tax: 0, excl_tax: 0, currency: 'NGN' });
 const quantity = ref(1);
@@ -133,6 +136,29 @@ const productAvailability = computed(() => {
   return { text: "Available", icon: "fas fa-check-circle text-success" };
 });
 
+const isWishlisted = computed(() => {
+  const id = parseInt(route.params.id);
+  return wishlist.items.some(item => item.id === id);
+});
+
+const isCarted = computed(() => {
+  const id = parseInt(route.params.id);
+  return cart.items.some(item => item.id === id);
+});
+
+
+const showModal = ref(false)
+const modalMessage = ref('')
+const modalTitle = ref('Error')
+const modalType = ref('error') // or success, info, warning
+
+function showError(message, type = 'error', title = 'Error') {
+  modalMessage.value = message
+  modalType.value = type
+  modalTitle.value = title
+  showModal.value = true
+}
+
 const formatCurrency = (val) =>
   new Intl.NumberFormat("en-NG", {
     style: "currency",
@@ -145,14 +171,14 @@ async function loadProduct() {
     const res = await axios.get(`https://api.defonix.com/api/products/${id}/`);
     product.value = res.data;
 
-    // Fetch price if available
     if (res.data.price) {
       const priceRes = await axios.get(res.data.price);
       price.value = priceRes.data;
     }
   } catch (error) {
     console.error('Error loading product:', error);
-    showAlert("Failed to load product details", "alert-danger");
+    // showAlert("Failed to load product details", "alert-danger");
+    showError("Failed to load product details: " + error.message, 'error', 'Load Error');
   }
 }
 
@@ -165,33 +191,42 @@ function showAlert(msg, variant = "alert-success") {
 async function addToBasket() {
   adding.value = true;
   try {
-    // Get stockrecord details
-    let stockrecordUrl = product.value.stockrecords;
-    if (typeof product.value.stockrecords === 'string') {
-      try {
-        const stockrecordRes = await axios.get(product.value.stockrecords);
-        stockrecordUrl = stockrecordRes.data[0]?.url || product.value.stockrecords;
-      } catch (error) {
-        console.warn('Could not fetch stockrecords, using base URL');
+    const id = parseInt(route.params.id);
+
+    // If product is already in cart, remove it
+    if (isCarted.value) {
+      cart.removeItem(id);
+      showAlert(`${product.value.title} removed from cart`, "alert-warning");
+    } else {
+      // Add to cart
+      let stockrecordUrl = product.value.stockrecords;
+      if (typeof stockrecordUrl === 'string') {
+        try {
+          const stockrecordRes = await axios.get(stockrecordUrl);
+          stockrecordUrl = stockrecordRes.data[0]?.url || stockrecordUrl;
+        } catch (error) {
+          console.warn('Could not fetch stockrecords, using base URL');
+        }
       }
+
+      const payload = {
+        product: product.value.url,
+        stockrecord: stockrecordUrl,
+        quantity: quantity.value,
+        price_currency: price.value.currency || 'NGN',
+        price_excl_tax: parseFloat(price.value.excl_tax) || 0,
+        price_incl_tax: parseFloat(price.value.incl_tax) || 0,
+        line_reference: `prod-${product.value.id}-stock-${stockrecordUrl.split('/').filter(Boolean).pop()}`
+      };
+
+      await cart.addItem(payload);
+      showAlert(`${product.value.title} added to cart!`);
     }
 
-    // Prepare payload
-    const payload = {
-      product: product.value.url,
-      stockrecord: stockrecordUrl,
-      quantity: quantity.value,
-      price_currency: price.value.currency || 'NGN',
-      price_excl_tax: parseFloat(price.value.excl_tax) || 0,
-      price_incl_tax: parseFloat(price.value.incl_tax) || 0,
-      line_reference: `prod-${product.value.id}-stock-${stockrecordUrl.split('/').filter(Boolean).pop()}`
-    };
-
-    await cart.addItem(payload);
-    showAlert(`${product.value.title} added to cart!`);
   } catch (error) {
-    console.error('Error adding to cart:', error);
-    showAlert("Failed to add to cart", "alert-danger");
+    console.error('Error handling cart action:', error);
+    showError("Failed to update cart: " + error.message, 'error', 'Cart Error');
+    showAlert("Cart update failed", "alert-danger");
   } finally {
     adding.value = false;
   }
@@ -205,6 +240,7 @@ async function addToWishlist() {
     showAlert(isInWishlist ? "Added to wishlist!" : "Removed from wishlist!");
   } catch (error) {
     console.error('Error updating wishlist:', error);
+    showError("Failed to update wishlist: " + error.message, 'error', 'Wishlist Error');
     showAlert("Failed to update wishlist", "alert-danger");
   } finally {
     addingWishlist.value = false;
@@ -212,7 +248,14 @@ async function addToWishlist() {
 }
 
 onMounted(loadProduct);
+
+watch(() => route.params.id, (newId, oldId) => {
+  if (newId !== oldId) {
+    loadProduct();
+  }
+});
 </script>
+
 
 <style scoped>
 .container.page {
@@ -253,6 +296,7 @@ onMounted(loadProduct);
 @media (max-width: 768px) {
   .row {
     flex-direction: column;
+    margin-bottom: 2rem;
   }
 
   .col-sm-6:first-child,

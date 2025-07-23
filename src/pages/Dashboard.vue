@@ -22,6 +22,8 @@
             </main>
         </div>
     </div>
+  <ModalMessage v-if="showModal" :title="modalTitle" :message="modalMessage" :type="modalType" :show="showModal"
+    @close="showModal = false" />
 </template>
 
 <script setup>
@@ -40,9 +42,22 @@ import OrderHistory from '../components/dashboard/OrderHistory.vue'
 import AddressBook from '../components/dashboard/AddressBook.vue'
 import Navbar from '../components/Navbar.vue'
 import { useCartStore } from '../stores/cart'
+import ModalMessage from '../components/ModalMessage.vue'
 
 const cart = useCartStore()
 const activeSection = ref('profile')
+
+const showModal = ref(false)
+const modalMessage = ref('')
+const modalTitle = ref('Error')
+const modalType = ref('error') // or success, info, warning
+
+function showError(message, type = 'error', title = 'Error') {
+  modalMessage.value = message
+  modalType.value = type
+  modalTitle.value = title
+  showModal.value = true
+}
 
 const menuItems = [
     { key: 'profile', label: 'Profile' },
@@ -78,6 +93,7 @@ const logout = async () => {
     router.push('/loginRegister')
   } catch (error) {
     console.error('Logout failed:', error)
+    showError("Logout failed: " + error.message, 'error', 'Logout Error')
   }
 }
 

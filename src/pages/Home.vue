@@ -16,6 +16,8 @@
         </div>
         <ServicesSection />
     </div>
+  <ModalMessage v-if="showModal" :title="modalTitle" :message="modalMessage" :type="modalType" :show="showModal"
+    @close="showModal = false" />
 </template>
 
 <script setup>
@@ -39,6 +41,7 @@ import accessories1 from "../assets/images/accessories.jpg"
 import printer from "../assets/images/printer.jpg"
 import monitor from "../assets/images/monitor.jpg"
 import phone from "../assets/images/phone.jpg"
+import ModalMessage from '../components/ModalMessage.vue'
 
 
 const products = ref([])
@@ -60,6 +63,18 @@ const getCategoryImage = (categoryName) => {
     if (lower.includes('mobile')) return phone
     if (lower.includes('accessor')) return accessories1
     return 'images/cat.png' // default fallback
+}
+
+const showModal = ref(false)
+const modalMessage = ref('')
+const modalTitle = ref('Error')
+const modalType = ref('error') // or success, info, warning
+
+function showError(message, type = 'error', title = 'Error') {
+  modalMessage.value = message
+  modalType.value = type
+  modalTitle.value = title
+  showModal.value = true
 }
 
 
@@ -137,6 +152,7 @@ async function fetchProducts() {
 
     } catch (error) {
         console.error('Failed to fetch products:', error)
+        showError("Failed to fetch products: " + error.message, 'error', 'Fetch Error')
     } finally {
         isLoadingProducts.value = false
         isLoadingCategories.value = false

@@ -1,6 +1,6 @@
 <template>
   <transition name="fade">
-    <div v-if="store.isVisible" class="notification-popup">
+    <div v-if="store.isVisible" class="notification-popup" :style="store.type === 'error' ? { backgroundColor: '#f44336' } : { backgroundColor: '#4CAF50' }">
       {{ store.message }}
     </div>
   </transition>
@@ -15,7 +15,7 @@ const store = useNotificationStore()
 <style scoped>
 .notification-popup {
   position: fixed;
-  bottom: 20px;
+  bottom: 50%;
   right: 20px;
   background-color: #4CAF50;
   color: white;
@@ -24,6 +24,7 @@ const store = useNotificationStore()
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   z-index: 9999;
   font-size: 14px;
+  transform: translateY(-50%);
 }
 
 .fade-enter-active,
@@ -34,6 +35,6 @@ const store = useNotificationStore()
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
-  transform: translateY(10px);
+  transform: translateX(10px);
 }
 </style>

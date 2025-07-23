@@ -78,6 +78,8 @@
       </div>
     </form>
   </div>
+  <ModalMessage v-if="showModal" :title="modalTitle" :message="modalMessage" :type="modalType" :show="showModal"
+    @close="showModal = false" />
 </template>
 
 
@@ -86,6 +88,7 @@ import { ref, onMounted, watch, reactive } from 'vue';
 import { useCartStore } from '../../stores/cart';
 import nigeriaData from "../../assets/data/statesAndCities.json"
 import axios from 'axios'
+import ModalMessage from '../ModalMessage.vue'
 
 const cart = useCartStore();
 const form = cart.shipping;
@@ -164,6 +167,18 @@ const validateForm = () => {
   errors.state = form.state ? '' : 'Please select a state.';
 };
 
+const showModal = ref(false)
+const modalMessage = ref('')
+const modalTitle = ref('Error')
+const modalType = ref('error') // or success, info, warning
+
+function showError(message, type = 'error', title = 'Error') {
+  modalMessage.value = message
+  modalType.value = type
+  modalTitle.value = title
+  showModal.value = true
+}
+
 const submitCheckout = async () => {
   validateForm();
 
@@ -193,6 +208,7 @@ async function fetchDefaultAddress() {
     ) || null
   } catch (err) {
     console.error('Failed to fetch default user address', err)
+    showError("Failed to fetch default address: " + err.message, 'error', 'Address Error')
   }
 }
 

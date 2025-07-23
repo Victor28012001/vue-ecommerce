@@ -45,15 +45,31 @@
             </div>
         </div>
     </div>
+  <ModalMessage v-if="showModal" :title="modalTitle" :message="modalMessage" :type="modalType" :show="showModal"
+    @close="showModal = false" />
 </template>
 
 
 <script setup>
 import { useCartStore } from '../../stores/cart'
 import { CreditCardIcon } from '@heroicons/vue/outline'
+import { ref } from 'vue'
+import ModalMessage from '../ModalMessage.vue'
 
 const cart = useCartStore()
 
+
+const showModal = ref(false)
+const modalMessage = ref('')
+const modalTitle = ref('Error')
+const modalType = ref('error') // or success, info, warning
+
+function showError(message, type = 'error', title = 'Error') {
+  modalMessage.value = message
+  modalType.value = type
+  modalTitle.value = title
+  showModal.value = true
+}
 
 function formatCurrency(value) {
     return new Intl.NumberFormat('en-US', {
@@ -69,6 +85,7 @@ const checkout = async () => {
         console.log("Order response:", order);
         return true;
     } catch (error) {
+        showError("Checkout error: " + error.message, 'error', 'Checkout Error')
         console.error("Checkout error:", error);
         return false;
     }

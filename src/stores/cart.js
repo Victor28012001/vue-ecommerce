@@ -164,12 +164,13 @@ export const useCartStore = defineStore("cart", {
         );
 
         if (existingLine) {
-          const updatedQuantity = existingLine.quantity + payload.quantity;
-          await axios.patch(
-            existingLine.basketLineUrl,
-            { quantity: updatedQuantity },
-            config
-          );
+          // const updatedQuantity = existingLine.quantity + payload.quantity;
+          // await axios.patch(
+          //   existingLine.basketLineUrl,
+          //   { quantity: updatedQuantity },
+          //   config
+          // );
+          this.removeItem(existingLine.id);
         } else {
           await axios.post(
             "https://api.defonix.com/api/basket/add-product/",
@@ -199,6 +200,7 @@ export const useCartStore = defineStore("cart", {
         await axios.delete(item.basketLineUrl, config);
 
         this.items = this.items.filter((i) => i.id !== id);
+        await this.loadBasketItems();
       } catch (error) {
         console.error(
           "Failed to remove item:",
@@ -217,6 +219,7 @@ export const useCartStore = defineStore("cart", {
         this.items = [];
         this.basketUrl = null;
         this.basketId = null;
+        await this.loadBasketItems();
       } catch (error) {
         console.error("Failed to clear cart:", error);
       }

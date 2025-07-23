@@ -20,7 +20,7 @@
         </div>
 
         <div class="summary-row">
-            <span>Tax (10%):</span>
+            <span>Tax:</span>
             <span>{{ formatCurrency(tax) }}</span>
         </div>
 

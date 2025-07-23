@@ -23,51 +23,27 @@
             </tbody>
         </table>
     </main>
+  <ModalMessage v-if="showModal" :title="modalTitle" :message="modalMessage" :type="modalType" :show="showModal"
+    @close="showModal = false" />
 </template>
 
 
-<!-- <script setup>
-import { ref, onMounted } from 'vue'
-import axios from 'axios'
-
-const user = ref(null)
-
-const fetchUserProfile = async () => {
-    try {
-        const token = localStorage.getItem('token');
-
-        if (!token) {
-            throw new Error('No token found. User is probably not logged in.');
-        }
-
-        const response = await axios.get('https://api.defonix.com/api/users/3/', {
-            headers: {
-                Authorization: `Token ${token}`,  // 👈 Add the token here
-                Accept: 'application/json',
-            },
-        });
-
-        const data = response.data;
-        console.log(data);
-
-        user.value = {
-            name: data.username,
-            email: data.email,
-            registeredAt: new Date(data.date_joined).toLocaleString(),
-        };
-    } catch (err) {
-        console.error('Failed to fetch user profile:', err);
-    }
-};
-
-
-onMounted(() => {
-    fetchUserProfile()
-})
-</script> -->
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
+import ModalMessage from '../ModalMessage.vue'
+
+const showModal = ref(false)
+const modalMessage = ref('')
+const modalTitle = ref('Error')
+const modalType = ref('error') // or success, info, warning
+
+function showError(message, type = 'error', title = 'Error') {
+    modalMessage.value = message
+    modalType.value = type
+    modalTitle.value = title
+    showModal.value = true
+}
 
 const user = ref(null)
 
@@ -106,6 +82,7 @@ const fetchUserProfile = async () => {
         }
     } catch (err) {
         console.error('Failed to fetch user profile:', err)
+        showError("Failed to fetch user profile: " + err.message, 'error', 'Profile Error')
     }
 }
 

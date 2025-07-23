@@ -36,6 +36,8 @@
             </div>
         </div>
     </div>
+  <ModalMessage v-if="showModal" :title="modalTitle" :message="modalMessage" :type="modalType" :show="showModal"
+    @close="showModal = false" />
 </template>
 
 
@@ -49,6 +51,7 @@ import ProductCard from '../components/ProductCard.vue'
 import FilterPanelAll from '../components/FilterPanelAll.vue'
 import SortOptions from '../components/SortOptions.vue'
 import Paginator from '../components/Paginator.vue'
+import ModalMessage from '../components/ModalMessage.vue'
 
 import Bg from '../assets/images/BgAll.png'
 
@@ -63,6 +66,18 @@ const setupResize = () => {
     }
     window.addEventListener('resize', onResize)
     onResize()
+}
+
+const showModal = ref(false)
+const modalMessage = ref('')
+const modalTitle = ref('Error')
+const modalType = ref('error') // or success, info, warning
+
+function showError(message, type = 'error', title = 'Error') {
+  modalMessage.value = message
+  modalType.value = type
+  modalTitle.value = title
+  showModal.value = true
 }
 
 // Data state
@@ -139,6 +154,7 @@ async function fetchProducts() {
         applyFilters()
     } catch (error) {
         console.error('Error loading products:', error)
+        showError("Failed to load products: " + error.message, 'error', 'Fetch Error')
     }
 }
 

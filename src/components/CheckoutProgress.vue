@@ -67,7 +67,7 @@
 
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { HomeIcon, CreditCardIcon, CheckCircleIcon } from '@heroicons/vue/outline'
 import ShippingForm from './checkout/ShippingForm.vue'
 import PaymentForm from './checkout/PaymentForm.vue'
@@ -81,6 +81,7 @@ const shippingFormRef = ref(null);
 const step = ref(1)
 const totalSteps = 3
 const reviewRef = ref(null);
+const total = computed(() => cart.basketTotals.total_incl_tax || 0)
 
 const paymentSuccess = ref(false)
 
@@ -108,13 +109,14 @@ const handleDone = async () => {
     const success = await reviewRef.value?.checkout();
     if (success) {
         // const { email } = cart.shipping;
+        console.log(total.value)
 
         const { firstName, lastName, email, phone, address, city, state: shippingState, zip } = cart.shipping;
 
         const handler = PaystackPop.setup({
             key: 'pk_test_78d3d54a8141e85996cb25d6cbd082558f9e0b35', // Replace with your real Paystack key
             email: email,
-            amount: cart.total * 100, // total from the store, in kobo
+            amount: total.value * 100, // total from the store, in kobo
             currency: 'NGN',
             ref: 'ref-' + Math.floor(Math.random() * 1000000000 + 1),
             metadata: {

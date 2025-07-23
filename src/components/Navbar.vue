@@ -44,12 +44,15 @@
 
     </div>
   </nav>
+  <ModalMessage v-if="showModal" :title="modalTitle" :message="modalMessage" :type="modalType" :show="showModal"
+    @close="showModal = false" />
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
+import ModalMessage from './ModalMessage.vue'
 
 const props = defineProps({
   customLabel: String,
@@ -62,6 +65,18 @@ const props = defineProps({
     default: '',
   },
 })
+
+const showModal = ref(false)
+const modalMessage = ref('')
+const modalTitle = ref('Error')
+const modalType = ref('error') // or success, info, warning
+
+function showError(message, type = 'error', title = 'Error') {
+  modalMessage.value = message
+  modalType.value = type
+  modalTitle.value = title
+  showModal.value = true
+}
 
 const route = useRoute()
 const isCategoryView = route.path.startsWith('/category/')
@@ -86,6 +101,7 @@ onMounted(async () => {
       }))
   } catch (err) {
     console.error('Failed to load categories:', err)
+    showError("Failed to load categories: " + err.message, 'error', 'Category Error')
   }
 })
 </script>

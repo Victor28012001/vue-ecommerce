@@ -40,16 +40,19 @@
       </div>
     </div>
   </div>
+  <ModalMessage v-if="showModal" :title="modalTitle" :message="modalMessage" :type="modalType" :show="showModal"
+    @close="showModal = false" />
   <!-- </router-link> -->
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import gallery_img from '/src/assets/images/gallery.png'
 import { useWishlistStore } from '../stores/wishlist'
 import { useCartStore } from '../stores/cart'
 import { v4 as uuidv4 } from 'uuid'; // top of the file
 import { useNotificationStore } from '../stores/notification'
+import ModalMessage from './ModalMessage.vue';
 
 
 // Destructure product prop
@@ -62,6 +65,18 @@ const discountPercentage = computed(() => {
   if (!props.product || !props.product.old_price || !props.product.new_price) return 0;
   return ((props.product.old_price - props.product.new_price) / props.product.old_price * 100).toFixed(0);
 });
+
+const showModal = ref(false)
+const modalMessage = ref('')
+const modalTitle = ref('Error')
+const modalType = ref('error') // or success, info, warning
+
+function showError(message, type = 'error', title = 'Error') {
+  modalMessage.value = message
+  modalType.value = type
+  modalTitle.value = title
+  showModal.value = true
+}
 
 const wishlist = useWishlistStore()
 const cart = useCartStore()
@@ -136,7 +151,7 @@ async function addToCart() {
         price_incl_tax: priceInclTax,
         line_reference: lineReference,
       });
-      notificationStore.show(`${productTitle.value} added to cart`);
+      isCarted.value ? notificationStore.show(`${productTitle.value} added to cart`, 'success') : notificationStore.show(`${productTitle.value} removed from cart`, 'error');
     } else {
       await cart.addItem({
         product: productUrl,
@@ -147,11 +162,12 @@ async function addToCart() {
         price_incl_tax: priceInclTax,
         line_reference: lineReference,
       });
-      notificationStore.show(`${productTitle.value} added to cart`);
+      isCarted.value ? notificationStore.show(`${productTitle.value} added to cart`, 'success') : notificationStore.show(`${productTitle.value} removed from cart`, 'error');
     }
   } catch (error) {
     console.error('Error adding to cart:', error);
-    notificationStore.show('Failed to add to cart');
+    showError('Error adding to cart:', error.message, 'Cart Error');
+    notificationStore.show('Failed to add to cart', 'error');
   }
 }
 
