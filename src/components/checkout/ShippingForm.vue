@@ -127,32 +127,38 @@ onMounted(fetchStates);
 watch(() => form.state, fetchCities);
 
 const validateFirstName = () => {
-  errors.firstName = /^[a-zA-Z\s]+$/.test(form.firstName)
+  const val = form.firstName || '';
+  errors.firstName = /^[a-zA-Z\s]+$/.test(val)
     ? ''
     : 'Only letters and spaces allowed.';
 };
 const validateLastName = () => {
-  errors.lastName = /^[a-zA-Z\s]+$/.test(form.lastName)
+  const val = form.lastName || '';
+  errors.lastName = /^[a-zA-Z\s]+$/.test(val)
     ? ''
     : 'Only letters and spaces allowed.';
 };
 const validateAddress = () => {
-  errors.address = form.address.length >= 5
+  const val = form.address || '';
+  errors.address = val.length >= 5
     ? ''
     : 'Address must be at least 5 characters.';
 };
 const validatePhone = () => {
-  errors.phone = /^\+?\d{7,15}$/.test(form.phone)
+  const val = form.phone || '';
+  errors.phone = /^\+?\d{7,15}$/.test(val)
     ? ''
     : 'Invalid phone number.';
 };
 const validateEmail = () => {
-  errors.email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)
+  const val = form.email || '';
+  errors.email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)
     ? ''
     : 'Invalid email address.';
 };
 const validateZip = () => {
-  errors.zip = /^[0-9]{4,10}$/.test(form.zip)
+  const val = form.zip || '';
+  errors.zip = /^[0-9]{4,10}$/.test(val)
     ? ''
     : 'Invalid ZIP/postal code.';
 };
@@ -184,28 +190,30 @@ const submitCheckout = async () => {
 
   const hasErrors = Object.values(errors).some((e) => e !== '');
   if (hasErrors) {
-    console.warn("Fix form errors before submitting.");
+    showError("Please fix the highlighted errors before submitting the form.", 'error', 'Validation Error');
     return false;
-  }else{
+  } else {
     console.log("Form is valid, proceeding with checkout...");
     return true; // Indicate success
   }
 };
 
-defineExpose({ submitCheckout }); 
+defineExpose({ submitCheckout });
 
 async function fetchDefaultAddress() {
   try {
     const token = localStorage.getItem('token')
-    const res = await axios.get('https://api.defonix.com/api/useraddresses/', {
-      headers: {
-        Authorization: `Token ${token}`,
-        Accept: 'application/json'
-      }
-    })
-    defaultAddress.value = res.data.find(
-      addr => addr.is_default_for_shipping || addr.is_default_for_billing
-    ) || null
+    if (token) {
+      const res = await axios.get('https://api.defonix.com/api/useraddresses/', {
+        headers: {
+          Authorization: `Token ${token}`,
+          Accept: 'application/json'
+        }
+      })
+      defaultAddress.value = res.data.find(
+        addr => addr.is_default_for_shipping || addr.is_default_for_billing
+      ) || null
+    }
   } catch (err) {
     console.error('Failed to fetch default user address', err)
     showError("Failed to fetch default address: " + err.message, 'error', 'Address Error')

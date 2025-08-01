@@ -8,6 +8,14 @@ export const useCartStore = defineStore("cart", {
     basketId: null,
     shipping: {
       /* ... */
+      firstName: '',
+      lastName: '',
+      address: '',
+      phone: '',
+      email: '',
+      zip: '',
+      city: '',
+      state: '',
     },
     basketTotals: {
       /* ... */
