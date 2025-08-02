@@ -101,6 +101,7 @@ const removeItem = (id) => cart.removeItem(id)
     display: flex;
     flex-direction: column;
     height: 50%;
+    min-height: 380px;
     overflow-y: auto;
     box-shadow: -2px 0 10px rgba(0, 0, 0, 0.4);
     animation: slideIn-37e5d91e 0.4s ease forwards;

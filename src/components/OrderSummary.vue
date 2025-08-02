@@ -9,7 +9,7 @@
                     item.title.split(' - ')[0] }}</span> <span style="color: #0f0f0f; font-size: smaller;">Qty:
                         {{ item.quantity }}</span></span>
                 <span id="span3">{{
-                    formatCurrency(item.new_price * item.quantity) }}</span>
+                    formatCurrency(item.new_price) }}</span>
             </div>
             <hr />
         </div>
