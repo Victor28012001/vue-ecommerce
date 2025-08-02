@@ -6,7 +6,7 @@
             <p style="color: gray;">Your order has been placed successfully. We've sent a confirmation email to {{
                 cart.shipping.email }}.</p>
             <div class="hero-buttons">
-                <button @click="goBack" class="btn primary">Continue Shopping</button>
+                <router-link to="/allProducts" class="nav-link"><button class="btn primary">Continue Shopping</button></router-link>
                 <button class="btn secondary">Track Order</button>
             </div>
         </div>
