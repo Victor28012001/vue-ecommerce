@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div class="auth-container">
     <h2>{{ isLogin ? 'Login' : 'Register' }}</h2>
 
@@ -6,8 +6,8 @@
       <input v-model="email" type="email" placeholder="Email" required />
       <input v-model="password" type="password" placeholder="Password" required />
 
-      <!-- Only show confirm password for register -->
       <input v-if="!isLogin" v-model="confirmPassword" type="password" placeholder="Confirm Password" required />
+      <div v-if="!isLogin && confirmPasswordError" class="input-error">{{ confirmPasswordError }}</div>
 
       <button type="submit">{{ isLogin ? 'Login' : 'Register' }}</button>
     </form>
@@ -36,6 +36,10 @@ const password = ref('')
 const confirmPassword = ref('')
 const message = ref('')
 const router = useRouter()
+
+const emailError = ref('')
+const passwordError = ref('')
+const confirmPasswordError = ref('')
 
 const showModal = ref(false)
 const modalMessage = ref('')
@@ -142,6 +146,189 @@ const registerAndLogin = async () => {
   await login()
 }
 
+</script> -->
+<template>
+  <div class="auth-container">
+    <h2>{{ isLogin ? 'Login' : 'Register' }}</h2>
+
+    <form @submit.prevent="handleSubmit">
+      <!-- Email -->
+      <input v-model="email" type="email" placeholder="Email" required />
+      <div v-if="emailError" class="input-error">{{ emailError }}</div>
+
+      <!-- Password -->
+      <input v-model="password" type="password" placeholder="Password" required />
+      <div v-if="passwordError" class="input-error">{{ passwordError }}</div>
+
+      <!-- Confirm Password (only on Register) -->
+      <input v-if="!isLogin" v-model="confirmPassword" type="password" placeholder="Confirm Password" required />
+      <div v-if="!isLogin && confirmPasswordError" class="input-error">
+        {{ confirmPasswordError }}
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit">{{ isLogin ? 'Login' : 'Register' }}</button>
+    </form>
+
+    <!-- Toggle Mode -->
+    <p @click="toggleMode" class="toggle">
+      {{ isLogin ? "Don't have an account? Register" : "Already have an account? Login" }}
+    </p>
+
+    <!-- Message -->
+    <div v-if="message" class="message">{{ message }}</div>
+  </div>
+
+  <!-- Modal -->
+  <ModalMessage v-if="showModal" :title="modalTitle" :message="modalMessage" :type="modalType" :show="showModal"
+    @close="showModal = false" />
+</template>
+<script setup>
+import { ref } from 'vue'
+import axios from 'axios'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '../stores/auth'
+import ModalMessage from './ModalMessage.vue'
+
+const auth = useAuthStore()
+const router = useRouter()
+
+// Auth state
+const isLogin = ref(true)
+const email = ref('')
+const password = ref('')
+const confirmPassword = ref('')
+const message = ref('')
+
+// Field-specific errors
+const emailError = ref('')
+const passwordError = ref('')
+const confirmPasswordError = ref('')
+
+// Modal state
+const showModal = ref(false)
+const modalMessage = ref('')
+const modalTitle = ref('Error')
+const modalType = ref('error')
+
+function showError(message, type = 'error', title = 'Error') {
+  modalMessage.value = message
+  modalType.value = type
+  modalTitle.value = title
+  showModal.value = true
+}
+
+const toggleMode = () => {
+  isLogin.value = !isLogin.value
+  message.value = ''
+  password.value = ''
+  confirmPassword.value = ''
+  emailError.value = ''
+  passwordError.value = ''
+  confirmPasswordError.value = ''
+}
+
+const handleSubmit = async () => {
+  // Reset previous errors
+  emailError.value = ''
+  passwordError.value = ''
+  confirmPasswordError.value = ''
+  message.value = ''
+
+  // Email validation
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailPattern.test(email.value)) {
+    emailError.value = 'Please enter a valid email address.'
+    return
+  }
+
+  // Password validation
+  if (password.value.length < 8 || password.value.length > 50) {
+    passwordError.value = 'Password must be between 8 and 50 characters.'
+    return
+  }
+
+  if (/^\d+$/.test(password.value)) {
+    passwordError.value = 'Password cannot be all numbers.'
+    return
+  }
+
+  // Confirm password validation (only on register)
+  if (!isLogin.value) {
+    if (password.value !== confirmPassword.value) {
+      confirmPasswordError.value = "Passwords don't match."
+      return
+    }
+  }
+
+  try {
+    if (isLogin.value) {
+      await login()
+    } else {
+      await registerAndLogin()
+    }
+  } catch (error) {
+    message.value = error.response?.data?.message || 'An error occurred'
+  }
+}
+
+async function fetchBasket() {
+  try {
+    const token = localStorage.getItem('token') || document.cookie.split('; ').find(row => row.startsWith('token=')).split('=')[1];
+    if (!token) throw new Error('No authentication token found');
+
+    const res = await axios.get('https://api.defonix.com/api/basket/', {
+      headers: {
+        'Accept': 'application/json',
+      },
+    });
+  } catch (error) {
+    console.error('Failed to fetch basket:', error);
+    showError("Failed to fetch basket: " + error.message, 'error', 'Basket Error')
+    message.value = error.response?.data?.detail || 'Failed to fetch basket';
+  }
+}
+
+const login = async () => {
+  try {
+    const res = await axios.post('https://api.defonix.com/api/login/', {
+      username: email.value,
+      password: password.value,
+    })
+
+    console.log('Login session response:', res.data)
+
+    const tokenRes = await axios.post('https://api.defonix.com/api/auth-token/', {
+      username: email.value,
+      password: password.value,
+    })
+
+    const token = tokenRes.data.token
+    console.log('Token:', token)
+
+    localStorage.setItem('token', token)
+    document.cookie = `token=${token}; path=/; secure; samesite=strict`
+
+    auth.setLoggedIn(true)
+
+    await fetchBasket()
+
+    router.push('/dashboard')
+  } catch (error) {
+    showError("Login failed: " + error.message, 'error', 'Login Error')
+    message.value = error.response?.data?.detail || 'Login failed'
+  }
+}
+
+const registerAndLogin = async () => {
+  await axios.post('https://api.defonix.com/api/register/', {
+    email: email.value,
+    password1: password.value,
+    password2: confirmPassword.value
+  })
+
+  await login()
+}
 </script>
 
 <style scoped>
@@ -203,5 +390,13 @@ h2 {
   font-weight: bold;
   border-bottom: 1px solid #ddd;
   border-top: none;
+}
+
+.input-error {
+  color: red;
+  font-size: 0.85rem;
+  margin-top: -0.5rem;
+  margin-bottom: 1rem;
+  text-align: left;
 }
 </style>

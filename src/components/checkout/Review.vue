@@ -38,7 +38,7 @@
                                 {{ item.quantity }}</span></span>
                         <span
                             style="width: 20%;font-weight: 500;font-size: smaller;display: flex;align-items: center;">{{
-                                formatCurrency(item.new_price * item.quantity) }}</span>
+                                formatCurrency(item.new_price) }}</span>
                     </div>
                 </div>
 

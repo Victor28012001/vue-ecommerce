@@ -13,12 +13,9 @@
         </div>
       </div>
       <ul class="right">
-        <li><a href="#">Laptops</a></li>
-        <li><a href="#">Desktops</a></li>
-        <li><a href="#">Printers</a></li>
-        <li><a href="#">Monitors</a></li>
-        <li><a href="#">Phones</a></li>
-        <li><a href="#">Accessories</a></li>
+        <li v-for="category in apiCategories" :key="category.slug">
+          <router-link :to="`/category/${category.slug}/`">{{ category.name }}</router-link>
+        </li>
       </ul>
     </div>
     <div class="footer_bottom">
@@ -30,11 +27,30 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
 const date = new Date().getFullYear();
 import facebook from "../assets/images/facebook.png";
 import insta from "../assets/images/insta.png";
 import linkedin from "../assets/images/linkedin.png";
 import footer_img from "../assets/images/footer_img.png";
+
+const apiCategories = ref([])
+
+onMounted(async () => {
+  try {
+    const { data } = await axios.get('https://api.defonix.com/api/categories/')
+    apiCategories.value = data
+      .filter(c => c.is_public && c.ancestors_are_public)
+      .map(c => ({
+        name: c.name,
+        slug: c.slug,
+      }))
+  } catch (err) {
+    console.error('Failed to load categories:', err)
+    showError("Failed to load categories: " + err.message, 'error', 'Category Error')
+  }
+})
 </script>
 
 <style scoped>
