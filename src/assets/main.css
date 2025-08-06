@@ -17,6 +17,10 @@ a.router-link-exact-active,
     padding: 0;
 }
 
+body{
+  overflow-x: hidden;
+}
+
 .button{
   padding: 6px 8px;
   border: 1px #2d2388 solid;

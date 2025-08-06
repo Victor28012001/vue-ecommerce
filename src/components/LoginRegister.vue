@@ -157,11 +157,22 @@ const registerAndLogin = async () => {
       <div v-if="emailError" class="input-error">{{ emailError }}</div>
 
       <!-- Password -->
-      <input v-model="password" type="password" placeholder="Password" required />
+      <div class="input-with-icon">
+        <input :type="showPassword ? 'text' : 'password'" v-model="password" placeholder="Password" required />
+        <span class="icon-wrapper" @click="showPassword = !showPassword">
+          <component :is="showPassword ? EyeOffIcon : EyeIcon" class="eye-icon" />
+        </span>
+      </div>
       <div v-if="passwordError" class="input-error">{{ passwordError }}</div>
 
-      <!-- Confirm Password (only on Register) -->
-      <input v-if="!isLogin" v-model="confirmPassword" type="password" placeholder="Confirm Password" required />
+      <!-- Confirm Password (Register only) -->
+      <div v-if="!isLogin" class="input-with-icon">
+        <input :type="showConfirmPassword ? 'text' : 'password'" v-model="confirmPassword"
+          placeholder="Confirm Password" required />
+        <span class="icon-wrapper" @click="showConfirmPassword = !showConfirmPassword">
+          <component :is="showConfirmPassword ? EyeOffIcon : EyeIcon" class="eye-icon" />
+        </span>
+      </div>
       <div v-if="!isLogin && confirmPasswordError" class="input-error">
         {{ confirmPasswordError }}
       </div>
@@ -189,6 +200,7 @@ import axios from 'axios'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import ModalMessage from './ModalMessage.vue'
+import { EyeIcon, EyeOffIcon } from '@heroicons/vue/outline'
 
 const auth = useAuthStore()
 const router = useRouter()
@@ -204,6 +216,10 @@ const message = ref('')
 const emailError = ref('')
 const passwordError = ref('')
 const confirmPasswordError = ref('')
+
+const showPassword = ref(false)
+const showConfirmPassword = ref(false)
+
 
 // Modal state
 const showModal = ref(false)
@@ -315,20 +331,45 @@ const login = async () => {
 
     router.push('/dashboard')
   } catch (error) {
-    showError("Login failed: " + error.message, 'error', 'Login Error')
-    message.value = error.response?.data?.detail || 'Login failed'
+    const data = error.response?.data;
+
+    if (data?.non_field_errors) {
+      showError(data.non_field_errors.join(', '), 'error', 'Login Error');
+    } else if (data?.detail) {
+      showError(data.detail, 'error', 'Login Error');
+    } else {
+      showError("Login failed. Please try again.", 'error', 'Login Error');
+    }
+
+    message.value = data?.non_field_errors?.[0] || data?.detail || 'Login failed';
   }
 }
 
 const registerAndLogin = async () => {
-  await axios.post('https://api.defonix.com/api/register/', {
-    email: email.value,
-    password1: password.value,
-    password2: confirmPassword.value
-  })
+  try {
+    await axios.post('https://api.defonix.com/api/register/', {
+      email: email.value,
+      password1: password.value,
+      password2: confirmPassword.value
+    });
 
-  await login()
-}
+    await login(); // Auto-login if registration succeeds
+  } catch (error) {
+    const data = error.response?.data;
+
+    if (data?.non_field_errors) {
+      showError(data.non_field_errors.join(', '), 'error', 'Registration Error');
+    } else if (data?.email) {
+      emailError.value = data.email.join(', ');
+    } else if (data?.password1) {
+      passwordError.value = data.password1.join(', ');
+    } else if (data?.password2) {
+      confirmPasswordError.value = data.password2.join(', ');
+    } else {
+      showError("Registration failed. Please try again.", 'error', 'Registration Error');
+    }
+  }
+};
 </script>
 
 <style scoped>
@@ -399,4 +440,27 @@ h2 {
   margin-bottom: 1rem;
   text-align: left;
 }
+
+.input-with-icon {
+  position: relative;
+}
+
+.input-with-icon input {
+  width: 100%;
+}
+
+.icon-wrapper {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.eye-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #6b7280; /* Tailwind gray-500 */
+}
+
 </style>

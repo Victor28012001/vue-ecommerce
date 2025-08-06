@@ -19,7 +19,7 @@
 
     <!-- Modal -->
     <transition name="fade">
-      <div v-if="showModals" class="modal">
+      <div v-if="showModals" class="modal" @click.self="closeModal">
         <div class="modal-content">
           <h3>{{ isEditing ? 'Edit Address' : 'Add Address' }}</h3>
           <form @submit.prevent="submitForm">
@@ -298,6 +298,14 @@ button {
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
   position: relative;
+  height: 80%;
+  overflow: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.modal-content::-webkit-scrollbar {
+  display: none;
 }
 
 .modal-content h3 {
