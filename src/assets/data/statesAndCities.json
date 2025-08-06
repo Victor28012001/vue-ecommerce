@@ -40,7 +40,8 @@
             "id": 4,
             "cities": [
                 { "name": "Awka", "id": 41 },
-                { "name": "Onitsha", "id": 42 }
+                { "name": "Nnewi", "id": 42 },
+                { "name": "Onitsha", "id": 43 }
             ]
         }
     },
