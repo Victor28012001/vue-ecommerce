@@ -180,7 +180,7 @@ export const useCartStore = defineStore("cart", {
           // );
           this.removeItem(existingLine.id);
         } else {
-          await axios.post(
+          let ok = await axios.post(
             "https://api.defonix.com/api/basket/add-product/",
             {
               url: payload.product,
@@ -188,7 +188,7 @@ export const useCartStore = defineStore("cart", {
             },
             config
           );
-          alert('addToCart called')
+          alert('addToCart called', ok);
         }
 
         await this.loadBasketItems();
