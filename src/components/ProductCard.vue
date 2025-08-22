@@ -31,7 +31,7 @@
       <div class="sale-card-price">
         <div class="prices">
           <span class="price-new">{{ props.product.currency || '$' }}{{ props.product.new_price?.toFixed(2) ?? '0.00'
-            }}</span>
+          }}</span>
           <span class="price-old">{{ props.product.old_price }}</span>
         </div>
         <button @click="handleCartClick" class="add-to-cart-btn" :disabled="cartLoading">
@@ -150,9 +150,9 @@ async function addToCart() {
   try {
     if (existingItemIndex !== -1) {
       await cart.removeItem(cart.items[existingItemIndex].id);
-      notificationStore.show(`${productTitle.value} removed from cart`, 'error');
+      notificationStore.show(`${productTitle.value} removed from cart`, 'info');
     } else {
-      await cart.addItem({
+      const result = await cart.addItem({
         product: productUrl,
         stockrecord: stockrecordUrl,
         quantity,
@@ -161,7 +161,13 @@ async function addToCart() {
         price_incl_tax: priceInclTax,
         line_reference: lineReference,
       });
-      notificationStore.show(`${productTitle.value} added to cart`, 'success');
+
+      // If `result` contains a success response
+      if (result?.url || result?.id) {
+        notificationStore.show(`${productTitle.value} added to cart`, 'success');
+      } else {
+        notificationStore.show(`${productTitle.value} could not be added`, 'error');
+      }
     }
   } catch (error) {
     console.error('Error adding to cart:', error);
