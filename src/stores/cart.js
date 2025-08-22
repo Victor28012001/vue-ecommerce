@@ -172,15 +172,15 @@ export const useCartStore = defineStore("cart", {
         );
 
         if (existingLine) {
-          // const updatedQuantity = existingLine.quantity + payload.quantity;
-          // await axios.patch(
-          //   existingLine.basketLineUrl,
-          //   { quantity: updatedQuantity },
-          //   config
-          // );
-          this.removeItem(existingLine.id);
+          const updatedQuantity = existingLine.quantity + payload.quantity;
+          await axios.patch(
+            existingLine.basketLineUrl,
+            { quantity: updatedQuantity },
+            config
+          );
+          // this.removeItem(existingLine.id);
         } else {
-          let ok = await axios.post(
+          await axios.post(
             "https://api.defonix.com/api/basket/add-product/",
             {
               url: payload.product,
@@ -188,7 +188,6 @@ export const useCartStore = defineStore("cart", {
             },
             config
           );
-          alert(`addToCart called: ${JSON.stringify(ok?.data || ok)}`);
         }
 
         await this.loadBasketItems();
