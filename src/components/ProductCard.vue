@@ -31,10 +31,10 @@
       <div class="sale-card-price">
         <div class="prices">
           <span class="price-new">{{ props.product.currency || '$' }}{{ props.product.new_price?.toFixed(2) ?? '0.00'
-          }}</span>
+            }}</span>
           <span class="price-old">{{ props.product.old_price }}</span>
         </div>
-        <button @click="addToCart" class="add-to-cart-btn">
+        <button @click="handleCartClick" class="add-to-cart-btn" :disabled="cartLoading">
           {{ isCarted ? 'Remove' : 'Add' }}
         </button>
       </div>
@@ -82,6 +82,15 @@ const wishlist = useWishlistStore()
 const cart = useCartStore()
 // Add this ref
 const notificationStore = useNotificationStore()
+
+const cartLoading = ref(false);
+
+async function handleCartClick() {
+  if (cartLoading.value) return;
+  cartLoading.value = true;
+  await addToCart();
+  cartLoading.value = false;
+}
 
 const isWishlisted = computed(() =>
   wishlist.items.some(item => item.id === props.product.id)
