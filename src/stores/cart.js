@@ -188,6 +188,7 @@ export const useCartStore = defineStore("cart", {
             },
             config
           );
+          alert('addToCart called')
         }
 
         await this.loadBasketItems();
