@@ -8,14 +8,14 @@ export const useCartStore = defineStore("cart", {
     basketId: null,
     shipping: {
       /* ... */
-      firstName: "",
-      lastName: "",
-      address: "",
-      phone: "",
-      email: "",
-      zip: "",
-      city: "",
-      state: "",
+      firstName: '',
+      lastName: '',
+      address: '',
+      phone: '',
+      email: '',
+      zip: '',
+      city: '',
+      state: '',
     },
     basketTotals: {
       /* ... */
@@ -180,7 +180,7 @@ export const useCartStore = defineStore("cart", {
           // );
           this.removeItem(existingLine.id);
         } else {
-          const res = await axios.post(
+          let ok = await axios.post(
             "https://api.defonix.com/api/basket/add-product/",
             {
               url: payload.product,
@@ -188,8 +188,7 @@ export const useCartStore = defineStore("cart", {
             },
             config
           );
-          alert(`addToCart called: ${JSON.stringify(res?.data || res)}`);
-          return res.data;
+          alert(`addToCart called: ${JSON.stringify(ok?.data || ok)}`);
         }
 
         await this.loadBasketItems();

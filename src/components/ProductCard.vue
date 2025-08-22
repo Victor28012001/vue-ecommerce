@@ -31,10 +31,10 @@
       <div class="sale-card-price">
         <div class="prices">
           <span class="price-new">{{ props.product.currency || '$' }}{{ props.product.new_price?.toFixed(2) ?? '0.00'
-          }}</span>
+            }}</span>
           <span class="price-old">{{ props.product.old_price }}</span>
         </div>
-        <button @click="handleCartClick" class="add-to-cart-btn" :disabled="cartLoading">
+        <button @click="addToCart" class="add-to-cart-btn">
           {{ isCarted ? 'Remove' : 'Add' }}
         </button>
       </div>
@@ -82,15 +82,6 @@ const wishlist = useWishlistStore()
 const cart = useCartStore()
 // Add this ref
 const notificationStore = useNotificationStore()
-
-const cartLoading = ref(false);
-
-async function handleCartClick() {
-  if (cartLoading.value) return;
-  cartLoading.value = true;
-  await addToCart();
-  cartLoading.value = false;
-}
 
 const isWishlisted = computed(() =>
   wishlist.items.some(item => item.id === props.product.id)
@@ -145,14 +136,13 @@ async function addToCart() {
     ? `prod-${product.id}-stock-${stockrecordId}`
     : `line-${uuidv4()}`;
 
-  const existingItemIndex = cart.items.findIndex(item => item.line_reference === lineReference);
+  // ✅ Use Pinia store directly
+  const existingItem = cart.items.find(item => item.line_reference === lineReference);
 
   try {
-    if (existingItemIndex !== -1) {
-      await cart.removeItem(cart.items[existingItemIndex].id);
-      notificationStore.show(`${productTitle.value} removed from cart`, 'info');
-    } else {
-      const result = await cart.addItem({
+    if (existingItem) {
+      // Let your store handle quantity updates
+      await cart.addItem({
         product: productUrl,
         stockrecord: stockrecordUrl,
         quantity,
@@ -161,13 +151,18 @@ async function addToCart() {
         price_incl_tax: priceInclTax,
         line_reference: lineReference,
       });
-
-      // If `result` contains a success response
-      if (result?.url || result?.id) {
-        notificationStore.show(`${productTitle.value} added to cart`, 'success');
-      } else {
-        notificationStore.show(`${productTitle.value} could not be added`, 'error');
-      }
+      isCarted.value ? notificationStore.show(`${productTitle.value} added to cart`, 'success') : notificationStore.show(`${productTitle.value} removed from cart`, 'error');
+    } else {
+      await cart.addItem({
+        product: productUrl,
+        stockrecord: stockrecordUrl,
+        quantity,
+        price_currency: priceCurrency,
+        price_excl_tax: priceExclTax,
+        price_incl_tax: priceInclTax,
+        line_reference: lineReference,
+      });
+      isCarted.value ? notificationStore.show(`${productTitle.value} added to cart`, 'success') : notificationStore.show(`${productTitle.value} removed from cart`, 'error');
     }
   } catch (error) {
     console.error('Error adding to cart:', error);
