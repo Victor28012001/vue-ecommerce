@@ -106,6 +106,18 @@ const errors = reactive({
   state: ''
 });
 
+const touchedFields = reactive({
+  firstName: false,
+  lastName: false,
+  address: false,
+  phone: false,
+  email: false,
+  zip: false,
+  city: false,
+  state: false
+});
+
+
 const states = ref([]);
 const cities = ref([]);
 

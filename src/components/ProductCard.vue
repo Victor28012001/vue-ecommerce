@@ -31,7 +31,7 @@
       <div class="sale-card-price">
         <div class="prices">
           <span class="price-new">{{ props.product.currency || '$' }}{{ props.product.new_price?.toFixed(2) ?? '0.00'
-            }}</span>
+          }}</span>
           <span class="price-old">{{ props.product.old_price }}</span>
         </div>
         <button @click="addToCart" class="add-to-cart-btn">
@@ -136,22 +136,12 @@ async function addToCart() {
     ? `prod-${product.id}-stock-${stockrecordId}`
     : `line-${uuidv4()}`;
 
-  // ✅ Use Pinia store directly
-  const existingItem = cart.items.find(item => item.line_reference === lineReference);
+  const existingItemIndex = cart.items.findIndex(item => item.line_reference === lineReference);
 
   try {
-    if (existingItem) {
-      // Let your store handle quantity updates
-      await cart.addItem({
-        product: productUrl,
-        stockrecord: stockrecordUrl,
-        quantity,
-        price_currency: priceCurrency,
-        price_excl_tax: priceExclTax,
-        price_incl_tax: priceInclTax,
-        line_reference: lineReference,
-      });
-      isCarted.value ? notificationStore.show(`${productTitle.value} added to cart`, 'success') : notificationStore.show(`${productTitle.value} removed from cart`, 'error');
+    if (existingItemIndex !== -1) {
+      await cart.removeItem(cart.items[existingItemIndex].id);
+      notificationStore.show(`${productTitle.value} removed from cart`, 'error');
     } else {
       await cart.addItem({
         product: productUrl,
@@ -162,7 +152,7 @@ async function addToCart() {
         price_incl_tax: priceInclTax,
         line_reference: lineReference,
       });
-      isCarted.value ? notificationStore.show(`${productTitle.value} added to cart`, 'success') : notificationStore.show(`${productTitle.value} removed from cart`, 'error');
+      notificationStore.show(`${productTitle.value} added to cart`, 'success');
     }
   } catch (error) {
     console.error('Error adding to cart:', error);
