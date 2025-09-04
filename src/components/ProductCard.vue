@@ -34,10 +34,7 @@
             }}</span>
           <span class="price-old">{{ props.product.old_price }}</span>
         </div>
-        <!-- <button @touchstart="addToCart" @click="addToCart" class="add-to-cart-btn">
-          {{ isCarted ? 'Remove' : 'Add' }}
-        </button> -->
-        <button @touchstart.prevent="handleAddToCart" @click="handleAddToCart" class="add-to-cart-btn">
+        <button @touchstart="addToCart" @click="addToCart" class="add-to-cart-btn">
           {{ isCarted ? 'Remove' : 'Add' }}
         </button>
       </div>
@@ -85,22 +82,6 @@ const wishlist = useWishlistStore()
 const cart = useCartStore()
 // Add this ref
 const notificationStore = useNotificationStore()
-
-let touchHandled = false;
-
-function handleAddToCart(event) {
-  if (event.type === 'touchstart') {
-    touchHandled = true;
-    addToCart();
-  } else if (event.type === 'click') {
-    if (touchHandled) {
-      // Already handled in touchstart, prevent double call
-      touchHandled = false;
-      return;
-    }
-    addToCart();
-  }
-}
 
 const isWishlisted = computed(() =>
   wishlist.items.some(item => item.id === props.product.id)
