@@ -172,13 +172,13 @@ export const useCartStore = defineStore("cart", {
         );
 
         if (existingLine) {
-          const updatedQuantity = existingLine.quantity + payload.quantity;
-          await axios.patch(
-            existingLine.basketLineUrl,
-            { quantity: updatedQuantity },
-            config
-          );
-          // this.removeItem(existingLine.id);
+          // const updatedQuantity = existingLine.quantity + payload.quantity;
+          // await axios.patch(
+          //   existingLine.basketLineUrl,
+          //   { quantity: updatedQuantity },
+          //   config
+          // );
+          this.removeItem(existingLine.id);
         } else {
           await axios.post(
             "https://api.defonix.com/api/basket/add-product/",
